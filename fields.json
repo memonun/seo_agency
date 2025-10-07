@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55ce4376-465d-4356-b9ed-1d9d7009e916",
+              "name": "Main Keyword",
+              "value": "={{ $json.body.keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "c0977ff9-bac4-4321-aa8d-86cc0a511433",
+              "name": "Location",
+              "value": "={{ $json.body.location }}",
+              "type": "string"
+            },
+            {
+              "id": "d24e87d4-06bb-4b1c-a735-cc8e3884ed15",
+              "name": "Language",
+              "value": "={{ $json.body.language }}",
+              "type": "string"
+            },
+            {
+              "id": "06b42c55-a32a-46d5-b7bf-4c3a978efd8a",
+              "name": "Limit",
+              "value": "={{ $json.body.limit }}",
+              "type": "string"
+            },
+            {
+              "id": "b3644672-b968-4041-a316-8ead501466a9",
+              "name": "Client Email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        208
+      ],
+      "id": "877ba030-8b44-486a-a03f-74a836516d45",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ef6bf1f0b971cb4f6213bcce68190c06f333e44fa55d8adea43ced744293028"
+  }
+}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            color: #000;
+            line-height: 1.6;
+            padding: 60px 20px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #0a0a0a;
+                color: #e5e5e5;
+            }
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .date {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .date {
+                color: #999;
+            }
+        }
+        
+        .keyword {
+            background: #000;
+            color: #fff;
+            padding: 8px 16px;
+            display: inline-block;
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .keyword {
+                background: #fff;
+                color: #000;
+            }
+        }
+        
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 30px 0;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 30px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .meta {
+                border-top-color: #2a2a2a;
+                border-bottom-color: #2a2a2a;
+            }
+        }
+        
+        .meta-item label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .meta-item label {
+                color: #666;
+            }
+        }
+        
+        .meta-item value {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .notice {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 30px 0;
+            font-size: 14px;
+            border-left: 2px solid #000;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .notice {
+                background: #1a1a1a;
+                border-left-color: #fff;
+            }
+        }
+        
+        .sheets {
+            margin: 30px 0;
+        }
+        
+        .sheets h2 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .sheets ul {
+            list-style: none;
+            font-size: 14px;
+        }
+        
+        .sheets li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .sheets li {
+                border-bottom-color: #2a2a2a;
+            }
+        }
+        
+        .sheets li:last-child {
+            border-bottom: none;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e5e5;
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .footer {
+                border-top-color: #2a2a2a;
+                color: #666;
+            }
+        }
+        
+        .footer .id {
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 40px 20px;
+            }
+            
+            .meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SEO Keyword Research</h1>
+        <div class="date">{{ $now.format('MMMM dd, yyyy') }}</div>
+        
+        <div class="keyword">{{ $('Set Main Fields').item.json['main keyword'] }}</div>
+        
+        <div class="meta">
+            <div class="meta-item">
+                <label>Location</label>
+                <value>{{ $('Edit Fields').item.json.Location }}</value>
+            </div>
+            <div class="meta-item">
+                <label>Language</label>
+                <value>{{ $('Edit Fields').item.json.Language }}</value>
+            </div>
+            <div class="meta-item">
+                <label>Limit</label>
+                <value>{{ $('Edit Fields').item.json.Limit }} keywords</value>
+            </div>
+            <div class="meta-item">
+                <label>Client</label>
+                <value>{{ $('Edit Fields').item.json['Client Email'] }}</value>
+            </div>
+        </div>
+        
+        <div class="notice">
+            📎 Excel report attached with complete keyword analysis and metrics.
+        </div>
+        
+        <div class="sheets">
+            <h2>Included Data</h2>
+            <ul>
+                <li>Related Keywords & Search Volume</li>
+                <li>Keyword Difficulty Scores</li>
+                <li>Search Intent Analysis</li>
+                <li>SERP Competition Data</li>
+                <li>People Also Ask Questions</li>
+                <li>Autocomplete Suggestions</li>
+                <li>Topic Clusters</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            DataForSEO × n8n
+            <div class="id">ID: {{ $('Edit Fields').item.json.search_id }}</div>
+        </div>
+    </div>
+</body>
+</html>

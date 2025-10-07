@@ -1,0 +1,87 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55ce4376-465d-4356-b9ed-1d9d7009e916",
+              "name": "Main Keyword",
+              "value": "={{ $json.body.keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "c0977ff9-bac4-4321-aa8d-86cc0a511433",
+              "name": "Location",
+              "value": "={{ $json.body.location }}",
+              "type": "string"
+            },
+            {
+              "id": "9582f3d6-eeb8-4435-9d97-dafef7aecbeb",
+              "name": "Language",
+              "value": "={{ $json.body.language }}",
+              "type": "string"
+            },
+            {
+              "id": "06b42c55-a32a-46d5-b7bf-4c3a978efd8a",
+              "name": "Limit",
+              "value": "={{ $json.body.limit }}",
+              "type": "string"
+            },
+            {
+              "id": "b3644672-b968-4041-a316-8ead501466a9",
+              "name": "Client Email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "d0480fec-be55-4225-922c-8e8682863339",
+              "name": "user_id",
+              "value": "={{ $json.body.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "3481c3a5-1c18-4b17-8c60-40aa33b775bb",
+              "name": "search_id",
+              "value": "={{ $json.body.search_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        208
+      ],
+      "id": "877ba030-8b44-486a-a03f-74a836516d45",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "pinData": {
+    "Edit Fields": [
+      {
+        "Main Keyword": "crypto",
+        "Location": "Turkiye",
+        "Language": "Turkish",
+        "Limit": "50",
+        "Client Email": "m.eminyilmaz2003@gmail.com",
+        "user_id": null,
+        "search_id": null
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ef6bf1f0b971cb4f6213bcce68190c06f333e44fa55d8adea43ced744293028"
+  }
+}
