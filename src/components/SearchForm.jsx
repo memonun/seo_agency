@@ -102,7 +102,7 @@ export default function SearchForm({ user }) {
         body: JSON.stringify({
           user_id: user.id,
           search_id: currentSearchId,
-          client_mail: user.email
+          client_mail: formData.email || user.email
         })
       })
 
