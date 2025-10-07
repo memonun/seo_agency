@@ -1,0 +1,10 @@
+# Dependencies
+@supabase/supabase-js@^2.58.0
+react@^19.2.0
+react-dom@^19.2.0
+uuid@^13.0.0
+xlsx@^0.18.5
+
+# Dev Dependencies
+@vitejs/plugin-react@^5.0.4
+vite@^7.1.9
