@@ -342,6 +342,214 @@ input:disabled {
   opacity: 0.6;
 }
 
+/* Tab Navigation */
+.form-container-wrapper {
+  width: 100%;
+}
+
+.tab-navigation {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 16px 24px;
+  background: transparent;
+  color: #999;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 0;
+  text-align: center;
+}
+
+.tab-btn:hover {
+  color: #000;
+  background: transparent;
+}
+
+.tab-btn.active {
+  color: #000;
+  border-bottom-color: #000;
+  font-weight: 500;
+}
+
+.tab-content {
+  width: 100%;
+}
+
+/* Form Select Styling */
+.form-select {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  background: transparent;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 20px;
+  padding-right: 24px;
+}
+
+.form-select:focus {
+  outline: none;
+  border-bottom-color: #000;
+}
+
+.form-select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Domain Analytics Results */
+.results-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px 20px;
+}
+
+.domain-results {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  margin-top: 40px;
+}
+
+.results-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: #000;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #000;
+  background: none;
+}
+
+.results-container {
+  padding: 20px;
+}
+
+.domain-card {
+  border: 1px solid #e5e5e5;
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.domain-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.domain-card:last-child {
+  margin-bottom: 0;
+}
+
+.domain-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.domain-card-header h4 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: #000;
+}
+
+.domain-status {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  background: #f5f5f5;
+  padding: 4px 12px;
+  border-radius: 2px;
+}
+
+.domain-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.info-section h5 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  margin: 0 0 12px 0;
+  font-weight: 400;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 13px;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #666;
+  font-weight: 300;
+}
+
+.info-value {
+  color: #000;
+  font-weight: 400;
+  text-align: right;
+}
+
 @media (max-width: 600px) {
   .header-content {
     padding: 20px 30px;
@@ -362,5 +570,30 @@ input:disabled {
     grid-template-columns: 1fr;
     gap: 4px;
     padding: 16px 0;
+  }
+
+  .tab-navigation {
+    padding: 0;
+  }
+
+  .tab-btn {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .domain-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .domain-card {
+    padding: 16px;
+  }
+
+  .results-header {
+    padding: 16px 20px;
+  }
+
+  .results-header h3 {
+    font-size: 14px;
   }
 }

@@ -3,7 +3,7 @@ import './App.css'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth'
 import Header from './components/Header'
-import SearchForm from './components/SearchForm'
+import FormContainer from './components/FormContainer'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -40,7 +40,7 @@ function App() {
       {user ? (
         <>
           <Header user={user} />
-          <SearchForm user={user} />
+          <FormContainer user={user} />
         </>
       ) : (
         <Auth />
