@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '../lib/supabase'
 import SearchHistory from './SearchHistory'
+import { saveSearchCache, loadSearchCache, clearSearchCache } from '../utils/searchCache'
 
 const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || ''
 const CONTENT_IDEAS_WEBHOOK_URL = import.meta.env.VITE_CONTENT_IDEAS_WEBHOOK_URL || ''
 
 export default function SearchForm({ user }) {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     keyword: '',
     location: '',
@@ -19,6 +22,18 @@ export default function SearchForm({ user }) {
   const [stage, setStage] = useState('idle') // idle | search_success | search_error | ideas_pending | ideas_success | ideas_error
   const [currentSearchId, setCurrentSearchId] = useState(null)
   const [historyRefresh, setHistoryRefresh] = useState(0)
+  const [youtubeCount, setYoutubeCount] = useState(0)
+
+  // Restore cache on component mount
+  useEffect(() => {
+    const cache = loadSearchCache(user.id)
+    if (cache && cache.searchId) {
+      setFormData(cache.formData)
+      setCurrentSearchId(cache.searchId)
+      setYoutubeCount(cache.youtubeCount || 0)
+      setStage(cache.stage || 'idle')
+    }
+  }, [user.id])
 
   const handleChange = (e) => {
     setFormData({
@@ -76,6 +91,30 @@ export default function SearchForm({ user }) {
         setCurrentSearchId(searchId)
         setStage('search_success')
         setHistoryRefresh(prev => prev + 1) // Trigger history refresh
+
+        // Fetch YouTube video count
+        const { data: youtubeData, error: youtubeError } = await supabase
+          .from('serp_results')
+          .select('id', { count: 'exact' })
+          .eq('search_id', searchId)
+          .eq('domain', 'www.youtube.com')
+
+        const ytCount = (!youtubeError && youtubeData) ? youtubeData.length : 0
+        setYoutubeCount(ytCount)
+
+        // Save search state to cache for retry functionality
+        saveSearchCache(user.id, {
+          searchId,
+          formData: {
+            keyword: formData.keyword,
+            location: formData.location,
+            language: formData.language,
+            limit: formData.limit,
+            email: formData.email
+          },
+          youtubeCount: ytCount,
+          stage: 'search_success'
+        })
       } else {
         throw new Error(data.message || 'Request failed')
       }
@@ -130,7 +169,19 @@ export default function SearchForm({ user }) {
     await handleSubmit(e)
   }
 
+  const handleGetYoutubeContents = () => {
+    navigate('/youtube-contents', {
+      state: {
+        searchId: currentSearchId,
+        email: formData.email || user.email
+      }
+    })
+  }
+
   const handleNewSearch = () => {
+    // Clear cache when starting new search
+    clearSearchCache(user.id)
+
     setFormData({
       keyword: '',
       location: '',
@@ -141,6 +192,7 @@ export default function SearchForm({ user }) {
     setStage('idle')
     setCurrentSearchId(null)
     setMessage({ text: '', type: '' })
+    setYoutubeCount(0)
   }
 
   const isFormDisabled = stage === 'search_success' || stage === 'ideas_pending' || stage === 'ideas_success' || stage === 'ideas_error'
@@ -234,13 +286,27 @@ export default function SearchForm({ user }) {
       <div className="action-buttons">
         {/* After successful search */}
         {stage === 'search_success' && (
-          <button
-            onClick={handleGetContentIdeas}
-            disabled={loading}
-            className="primary-btn"
-          >
-            {loading ? 'Processing...' : 'Get Content Ideas'}
-          </button>
+          <div className="button-group">
+            <button
+              onClick={handleGetContentIdeas}
+              disabled={loading}
+              className="primary-btn"
+            >
+              {loading ? 'Processing...' : 'Get Content Ideas'}
+            </button>
+            {youtubeCount > 0 && (
+              <>
+                <span className="divider">|</span>
+                <button
+                  onClick={handleGetYoutubeContents}
+                  disabled={loading}
+                  className="primary-btn"
+                >
+                  Get YouTube Contents ({youtubeCount})
+                </button>
+              </>
+            )}
+          </div>
         )}
 
         {/* After search error */}

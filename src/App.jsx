@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth'
 import Header from './components/Header'
 import FormContainer from './components/FormContainer'
+import YouTubeContents from './components/YouTubeContents'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -40,7 +42,10 @@ function App() {
       {user ? (
         <>
           <Header user={user} />
-          <FormContainer user={user} />
+          <Routes>
+            <Route path="/" element={<FormContainer user={user} />} />
+            <Route path="/youtube-contents" element={<YouTubeContents user={user} />} />
+          </Routes>
         </>
       ) : (
         <Auth />
