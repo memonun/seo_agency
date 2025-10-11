@@ -286,27 +286,37 @@ export default function SearchForm({ user }) {
       <div className="action-buttons">
         {/* After successful search */}
         {stage === 'search_success' && (
-          <div className="button-group">
+          <>
+            <div className="button-group">
+              <button
+                onClick={handleGetContentIdeas}
+                disabled={loading}
+                className="primary-btn"
+              >
+                {loading ? 'Processing...' : 'Get Content Ideas'}
+              </button>
+              {youtubeCount > 0 && (
+                <>
+                  <span className="divider">|</span>
+                  <button
+                    onClick={handleGetYoutubeContents}
+                    disabled={loading}
+                    className="primary-btn"
+                  >
+                    Get YouTube Contents ({youtubeCount})
+                  </button>
+                </>
+              )}
+            </div>
             <button
-              onClick={handleGetContentIdeas}
+              onClick={handleNewSearch}
               disabled={loading}
-              className="primary-btn"
+              className="secondary-btn"
+              style={{ marginTop: '12px' }}
             >
-              {loading ? 'Processing...' : 'Get Content Ideas'}
+              Start New Search
             </button>
-            {youtubeCount > 0 && (
-              <>
-                <span className="divider">|</span>
-                <button
-                  onClick={handleGetYoutubeContents}
-                  disabled={loading}
-                  className="primary-btn"
-                >
-                  Get YouTube Contents ({youtubeCount})
-                </button>
-              </>
-            )}
-          </div>
+          </>
         )}
 
         {/* After search error */}
