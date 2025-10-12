@@ -22,7 +22,6 @@ export default function SearchForm({ user }) {
   const [stage, setStage] = useState('idle') // idle | search_success | search_error | ideas_pending | ideas_success | ideas_error
   const [currentSearchId, setCurrentSearchId] = useState(null)
   const [historyRefresh, setHistoryRefresh] = useState(0)
-  const [youtubeCount, setYoutubeCount] = useState(0)
 
   // Restore cache on component mount
   useEffect(() => {
@@ -30,7 +29,6 @@ export default function SearchForm({ user }) {
     if (cache && cache.searchId) {
       setFormData(cache.formData)
       setCurrentSearchId(cache.searchId)
-      setYoutubeCount(cache.youtubeCount || 0)
       setStage(cache.stage || 'idle')
     }
   }, [user.id])
@@ -92,16 +90,6 @@ export default function SearchForm({ user }) {
         setStage('search_success')
         setHistoryRefresh(prev => prev + 1) // Trigger history refresh
 
-        // Fetch YouTube video count
-        const { data: youtubeData, error: youtubeError } = await supabase
-          .from('serp_results')
-          .select('id', { count: 'exact' })
-          .eq('search_id', searchId)
-          .eq('domain', 'www.youtube.com')
-
-        const ytCount = (!youtubeError && youtubeData) ? youtubeData.length : 0
-        setYoutubeCount(ytCount)
-
         // Save search state to cache for retry functionality
         saveSearchCache(user.id, {
           searchId,
@@ -112,7 +100,6 @@ export default function SearchForm({ user }) {
             limit: formData.limit,
             email: formData.email
           },
-          youtubeCount: ytCount,
           stage: 'search_success'
         })
       } else {
@@ -170,8 +157,9 @@ export default function SearchForm({ user }) {
   }
 
   const handleGetYoutubeContents = () => {
-    navigate('/youtube-contents', {
+    navigate('/modules/youtube', {
       state: {
+        keyword: formData.keyword,
         searchId: currentSearchId,
         email: formData.email || user.email
       }
@@ -192,7 +180,6 @@ export default function SearchForm({ user }) {
     setStage('idle')
     setCurrentSearchId(null)
     setMessage({ text: '', type: '' })
-    setYoutubeCount(0)
   }
 
   const isFormDisabled = stage === 'search_success' || stage === 'ideas_pending' || stage === 'ideas_success' || stage === 'ideas_error'
@@ -294,18 +281,14 @@ export default function SearchForm({ user }) {
             >
               {loading ? 'Processing...' : 'Get Content Ideas'}
             </button>
-            {youtubeCount > 0 && (
-              <>
-                <span className="divider">|</span>
-                <button
-                  onClick={handleGetYoutubeContents}
-                  disabled={loading}
-                  className="primary-btn"
-                >
-                  Get YouTube Contents ({youtubeCount})
-                </button>
-              </>
-            )}
+            <span className="divider">|</span>
+            <button
+              onClick={handleGetYoutubeContents}
+              disabled={loading}
+              className="primary-btn"
+            >
+              Get 10 YouTube Contents
+            </button>
           </div>
         )}
 

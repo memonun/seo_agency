@@ -1,88 +1,132 @@
 import { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
-import { loadSearchCache } from '../utils/searchCache'
+import { saveYouTubeResults, loadYouTubeResults } from '../utils/searchCache'
 
-const YOUTUBE_WEBHOOK_URL = import.meta.env.VITE_YOUTUBE_WEBHOOK_URL || ''
+// New backend endpoint
+const YOUTUBE_SEARCH_API = '/api/youtube-search'
 
-export default function YouTubeContents({ user }) {
-  const location = useLocation()
-  const navigate = useNavigate()
+export default function YouTubeContents({ user, keyword, searchId, email, onNewSearch }) {
   const [loading, setLoading] = useState(true)
   const [youtubeVideos, setYoutubeVideos] = useState([])
   const [error, setError] = useState('')
-
-  // Try to get searchId from navigation state, fallback to cache
-  const cache = loadSearchCache(user.id)
-  const searchId = location.state?.searchId || cache?.searchId
-  const email = location.state?.email || cache?.formData?.email || user.email
+  const [expandedCards, setExpandedCards] = useState(new Set())
+  const [analysisData, setAnalysisData] = useState({}) // Cache for analysis results
 
   const fetchYoutubeContent = async () => {
     try {
       setLoading(true)
       setError('')
 
-      // Fetch YouTube videos from Supabase
-      const { data: youtubeData, error: dbError } = await supabase
-        .from('serp_results')
-        .select('url, title, description')
-        .eq('search_id', searchId)
-        .eq('domain', 'www.youtube.com')
+      console.log('Calling backend API for YouTube search + summarization')
 
-      if (dbError) {
-        throw new Error('Failed to fetch YouTube videos from database')
-      }
-
-      if (!youtubeData || youtubeData.length === 0) {
-        setYoutubeVideos([])
-        setLoading(false)
-        return
-      }
-
-      const response = await fetch(YOUTUBE_WEBHOOK_URL, {
+      // Call new backend endpoint that handles everything
+      const response = await fetch(YOUTUBE_SEARCH_API, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          keyword,
           user_id: user.id,
           search_id: searchId,
-          client_mail: email,
-          youtube_videos: youtubeData
+          email: email
         })
       })
 
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `API request failed: ${response.status}`)
+      }
+
       const data = await response.json()
 
-      if (response.ok && data.status === 'success') {
-        setYoutubeVideos(data.data || [])
-      } else {
-        throw new Error(data.message || 'Failed to fetch YouTube content')
+      if (data.status !== 'success' || !data.videos || data.videos.length === 0) {
+        setError('No YouTube videos found for this keyword')
+        setLoading(false)
+        return
       }
+
+      // Extract videos and summaries from response
+      const videoResults = data.videos
+
+      // Display videos with summaries
+      setYoutubeVideos(videoResults)
+
+      // Populate analysis data from summaries
+      const analysisDataFromBackend = {}
+      videoResults.forEach((video, index) => {
+        analysisDataFromBackend[index] = {
+          summary: video.summary || 'No summary available',
+          video_name: video.title,
+          url: video.url,
+          video_id: video.video_id
+        }
+      })
+      setAnalysisData(analysisDataFromBackend)
+
+      // Save results to localStorage
+      saveYouTubeResults(user.id, {
+        keyword,
+        searchId,
+        email,
+        videos: videoResults,
+        analysisData: analysisDataFromBackend
+      })
     } catch (err) {
       console.error('Error fetching YouTube content:', err)
-      setError(err.message || 'An error occurred while analyzing YouTube videos')
+
+      let errorMessage = err.message || 'An error occurred while fetching YouTube videos'
+
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        errorMessage = 'Network error: Unable to connect to API. Please check your connection.'
+      }
+
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    if (!searchId) {
-      setError('No search ID provided. Please go back and try again.')
+    if (!keyword) {
+      setError('No keyword provided. Please enter a keyword to search.')
       setLoading(false)
       return
     }
 
-    fetchYoutubeContent()
-  }, [searchId])
+    // Check if we have cached data for this user
+    const cachedData = loadYouTubeResults(user.id)
 
-  const handleBack = () => {
-    navigate('/')
-  }
+    if (cachedData && cachedData.keyword === keyword) {
+      // Load from cache instead of fetching
+      setYoutubeVideos(cachedData.videos || [])
+      setAnalysisData(cachedData.analysisData || {})
+      setLoading(false)
+    } else {
+      // No cache or different keyword - fetch fresh data
+      fetchYoutubeContent()
+    }
+  }, [keyword, user.id])
 
   const handleRetry = () => {
     fetchYoutubeContent()
+  }
+
+  const toggleExpand = (video, index) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(index)) {
+        newSet.delete(index)
+      } else {
+        newSet.add(index)
+      }
+      return newSet
+    })
+  }
+
+  const copyLink = (url) => {
+    navigator.clipboard.writeText(url)
+      .then(() => alert('Link copied to clipboard!'))
+      .catch(err => console.error('Failed to copy:', err))
   }
 
   if (loading) {
@@ -90,9 +134,9 @@ export default function YouTubeContents({ user }) {
       <div className="youtube-contents-container">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Analyzing YouTube videos...</p>
+          <p>Searching and analyzing YouTube videos...</p>
           <small style={{ marginTop: '10px', color: '#666' }}>
-            This may take a few moments
+            Fetching 10 videos for "{keyword}" and generating summaries
           </small>
         </div>
       </div>
@@ -107,12 +151,16 @@ export default function YouTubeContents({ user }) {
             {error}
           </div>
           <div style={{ marginTop: '20px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
-            <button onClick={handleRetry} className="primary-btn">
-              Retry Analysis
-            </button>
-            <button onClick={handleBack} className="secondary-btn">
-              Back to Search
-            </button>
+            {keyword && (
+              <button onClick={handleRetry} className="primary-btn">
+                Retry Analysis
+              </button>
+            )}
+            {onNewSearch && (
+              <button onClick={onNewSearch} className="secondary-btn">
+                New Search
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -123,9 +171,11 @@ export default function YouTubeContents({ user }) {
     <div className="youtube-contents-container">
       <div className="youtube-header">
         <h2>YouTube Content Analysis</h2>
-        <button onClick={handleBack} className="secondary-btn">
-          Back to Search
-        </button>
+        {onNewSearch && (
+          <button onClick={onNewSearch} className="secondary-btn">
+            New Search
+          </button>
+        )}
       </div>
 
       {youtubeVideos.length === 0 ? (
@@ -133,33 +183,138 @@ export default function YouTubeContents({ user }) {
           <p>No YouTube videos found for this search.</p>
         </div>
       ) : (
-        <div className="youtube-videos-grid">
-          {youtubeVideos.map((video, index) => (
-            <div key={index} className="youtube-video-card">
-              <div className="video-card-header">
-                <h3>{video.video_name || video.title || 'Untitled Video'}</h3>
-                {video.url && (
-                  <a
-                    href={video.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="video-link"
-                  >
-                    Watch →
-                  </a>
-                )}
-              </div>
-              <div className="video-summary">
-                <h4>Summary</h4>
-                <p>{video.text_summary || video.summary || 'No summary available'}</p>
-              </div>
-              {video.thumbnail && (
-                <div className="video-thumbnail">
-                  <img src={video.thumbnail} alt={video.video_name || 'Video thumbnail'} />
+        <div className="youtube-videos-list">
+          {youtubeVideos.map((video, index) => {
+            const isExpanded = expandedCards.has(index)
+
+            return (
+              <div key={index} className="youtube-card">
+                {/* Thumbnail */}
+                <a
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="youtube-card-thumbnail"
+                >
+                  <img
+                    src={video.thumbnail}
+                    alt={video.video_name || video.title || 'Video thumbnail'}
+                  />
+                  {video.duration && video.duration !== 'N/A' && (
+                    <span className="video-duration">{video.duration}</span>
+                  )}
+                  {video.position && (
+                    <span className="video-rank">#{video.position}</span>
+                  )}
+                  {video.isLive && (
+                    <span className="video-live-badge">LIVE</span>
+                  )}
+                </a>
+
+                {/* Content */}
+                <div className="youtube-card-content">
+                  {/* Title */}
+                  <h3 className="video-title">
+                    <a
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {video.video_name || video.title || 'Untitled Video'}
+                    </a>
+                  </h3>
+
+                  {/* Channel Info with Verified Badge */}
+                  <div className="youtube-channel-info">
+                    <span className="channel-name">
+                      {video.channel}
+                      {video.isVerified && (
+                        <svg className="verified-badge" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <path d="M7 0L8.5 2.5L11 3L9.5 5.5L10 8L7 6.5L4 8L4.5 5.5L3 3L5.5 2.5L7 0Z" fill="#666"/>
+                          <circle cx="7" cy="7" r="5" fill="none" stroke="#666" strokeWidth="0.5"/>
+                        </svg>
+                      )}
+                    </span>
+                    {video.subscribers && (
+                      <span className="subscriber-count">{video.subscribers} subscribers</span>
+                    )}
+                  </div>
+
+                  {/* Metadata with Engagement */}
+                  <div className="youtube-card-meta">
+                    <span className="view-count">{video.views} views</span>
+                    {video.likes && (
+                      <>
+                        <span className="meta-separator">•</span>
+                        <span className="like-count">👍 {video.likes}</span>
+                      </>
+                    )}
+                    <span className="meta-separator">•</span>
+                    <span className="publish-time">{video.publishedTime}</span>
+                  </div>
+
+                  {/* Description */}
+                  <p className="video-description">
+                    {video.description || 'No description available'}
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="youtube-card-actions">
+                    <a
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="action-btn primary"
+                    >
+                      Watch on YouTube
+                    </a>
+                    <button
+                      onClick={() => copyLink(video.url)}
+                      className="action-btn secondary"
+                    >
+                      Copy Link
+                    </button>
+                    <button
+                      onClick={() => toggleExpand(video, index)}
+                      className="action-btn secondary expand-btn"
+                    >
+                      {isExpanded ? 'Hide Analysis ▲' : 'View Analysis ▼'}
+                    </button>
+                  </div>
+
+                  {/* Expandable Analytics Section */}
+                  {isExpanded && (
+                    <div className="youtube-card-analytics">
+                      {analysisData[index] ? (
+                        <>
+                          <div className="analytics-section">
+                            <h4>AI Summary</h4>
+                            <p className={analysisData[index].error ? 'error-text' : ''}>
+                              {analysisData[index].summary}
+                            </p>
+                          </div>
+
+                          {video.channelThumbnail && !analysisData[index].error && (
+                            <div className="analytics-section">
+                              <h4>Channel Information</h4>
+                              <div className="channel-info">
+                                <img src={video.channelThumbnail} alt={video.channel} className="channel-avatar" />
+                                <span>{video.channel}</span>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="analytics-section">
+                          <p>Summary not available</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            )
+          })}
         </div>
       )}
     </div>

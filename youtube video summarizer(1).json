@@ -1,0 +1,387 @@
+{
+  "name": "youtube video summarizer",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://youtube-transcript3.p.rapidapi.com/api/transcript",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $json.body.youtube_videos[0].video_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-RapidAPI-Host",
+              "value": "youtube-transcript3.p.rapidapi.com"
+            },
+            {
+              "name": "X-RapidAPI-Key",
+              "value": "553b90a274msh8d67b80de1ab290p190ecdjsn7d2cbbfb0589"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 3000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        288
+      ],
+      "id": "17023750-c74f-4c58-b38b-f8d616d20064",
+      "name": "HTTP Request",
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pBWDr6UIvPXCOuBQ",
+          "name": "Rapid API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        288
+      ],
+      "id": "fa7eae97-e53d-49a1-9de0-f1e4fe3390db",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.hasValidTranscript ? 'Please summarize the following video transcript. For each key point, include the timestamp where the topic is discussed.\\n\\nThe transcript is provided as a JSON array, with the text and formatted timestamp for each segment.\\n\\nHere is the transcript:\\n\\n' + $json.transcript.toJsonString() : 'SKIP_THIS_VIDEO' }}",
+        "options": {
+          "systemMessage": "You are a professional video content summarizer. Given the transcript of a YouTube video, your task is to produce a clear, concise summary that captures the key points, main ideas, and any notable quotes or takeaways.\n\nIf you receive the message 'SKIP_THIS_VIDEO', respond ONLY with: \"⚠️ Transcript not available for this video.\"\n\nOtherwise, follow this format:\n\nSummary: Write a detailed summary of the video in 3–5 paragraphs.\n\nKey Takeaways: List bullet points summarizing the main ideas or insights with corresponding timestamps.\n\nTimestamps: If timestamps are provided in the transcript, match them to the corresponding summarized content.\n\nGuidelines:\n\nKeep the tone neutral and informative.\nDo not copy/paste large chunks of the transcript.\nDo not include filler words or irrelevant segments.\nEmphasize educational, emotional, or value-driven content.\n\nOutput: A structured summary using the format above.\nTHE WHOLE OUTPUT LENGTH SHOULD BE MAXIMUM 4000 CHARACTERS."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1456,
+        288
+      ],
+      "id": "3901ca73-5d8e-4d03-80a6-e79543a7773b",
+      "name": "YouTube Summarizer Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        608
+      ],
+      "id": "e3960ab2-50b0-4872-8b00-d3634bed71b8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "JsPhzen0GL8v69ro",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the transcript array from the input\n// Add error handling for missing or invalid transcripts\n\ntry {\n  const inputData = items[0].json;\n  \n  // Check if there was an error in the API response\n  if (inputData.success === false || inputData.error) {\n    return [{\n      json: {\n        error: true,\n        message: inputData.error || 'Transcript not available',\n        transcript: [],\n        hasValidTranscript: false\n      }\n    }];\n  }\n  \n  const transcript = inputData.transcript;\n  \n  // Check if transcript exists and is an array\n  if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {\n    return [{\n      json: {\n        error: true,\n        message: 'No valid transcript found',\n        transcript: [],\n        hasValidTranscript: false\n      }\n    }];\n  }\n  \n  // Map through transcript items and add timestamp\n  const updatedTranscript = transcript.map(entry => {\n    const offsetInSeconds = entry.offset;\n\n    // Calculate hours, minutes and seconds\n    const hours = Math.floor(offsetInSeconds / 3600);\n    const minutes = Math.floor((offsetInSeconds % 3600) / 60);\n    const seconds = Math.floor(offsetInSeconds % 60);\n\n    // Pad minutes and seconds with leading zero if < 10\n    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;\n    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;\n\n    // Build final timestamp string\n    const timestamp =\n      hours > 0\n        ? `${hours}:${formattedMinutes}:${formattedSeconds}` // HH:MM:SS\n        : `${minutes}:${formattedSeconds}`;                  // MM:SS (if under 1h)\n\n    // Return updated entry\n    return {\n      ...entry,\n      timestamp\n    };\n  });\n\n  // Return as n8n output\n  return [{\n    json: {\n      transcript: updatedTranscript,\n      error: false,\n      hasValidTranscript: true\n    }\n  }];\n  \n} catch (error) {\n  // Return error but don't fail the workflow\n  return [{\n    json: {\n      error: true,\n      message: error.message || 'Failed to process transcript',\n      transcript: [],\n      hasValidTranscript: false\n    }\n  }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "409dad6b-389a-4008-9686-aa461122b563",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "content": "## Generate YouTube video summaries with timestamps to Telegram and Gmail\n\n## Who’s it for\nThis workflow is designed for **busy professionals, content researchers, and lifelong learners** who want to quickly extract value from long YouTube videos. Instead of watching an entire 30–60 minute video, you can skim the summary, identify key moments, and decide in seconds if the content is worth your time.\n\n## How it works / What it does\nThe workflow automates the process of converting YouTube videos into **digestible summaries with clickable timestamps**:\n\n1. Send a YouTube video link to your **Telegram bot**.  \n2. An **AI node** extracts the video ID and retrieves the transcript.  \n3. A **Code node** converts raw offsets into **HH:MM:SS timestamps**.  \n4. An **AI agent** processes the transcript to:  \n   - Summarize the full video.  \n   - Highlight key takeaways with exact timestamps.  \n5. The final output is delivered directly:  \n   - 📲 As a Telegram message.  \n   - 📧 As an email in your inbox.  \n\nThis lets you decide in seconds if the video is valuable and jump straight to the sections that matter most.\n\n## How to set up\n- Connect your Telegram bot to receive YouTube URLs.  \n- Add an AI node to extract the video ID from the received URL.  \n- Insert a Code node to format timestamps.  \n- Configure the AI agent to summarize and extract highlights.  \n- Add delivery nodes for Telegram and email.  \n\n## Requirements\n- A Telegram bot connected to your workflow.  \n- Access to a transcript extraction service (from rapidapi.com).  \n- Gmail integration for delivery.  \n\n## How to customize the workflow\n- Adjust the **AI summary prompt** to match your preferred style (short, detailed, bullet points, etc.).  \n- Choose additional delivery channels (Slack, Notion, Google Docs).  \n- Extend the workflow to save summaries into a **personal knowledge base** for future reference.  \n\n\nWorkflow by Philip Couboura\nhttps://www.linkedin.com/in/pcouboura/\nhttps://aiaugmentedpm.com/\n\n",
+        "height": 1184,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "87648453-d563-4e78-a67a-253d490d8773",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Extract video ID\n\n- A **Basic LLM Chain** identifies the YouTube video ID from the shared link.  \n- A **Structured Output Parser** ensures the video ID is returned in JSON format.  \n- This ID is required for transcript retrieval in the next step.\n",
+        "height": 224,
+        "width": 352,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "afdf978d-a619-458e-8475-351140b400c8",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Transcript retrieval\n\n- An **HTTP Request node** calls the YouTube Transcript API (via RapidAPI).  \n- The API returns the full transcript as a JSON array.  \n- This transcript is then sent for processing to add clean timestamps.\n",
+        "height": 224,
+        "width": 336,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "7ec0b50a-2cca-4bdd-a773-c47f50303bf5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Add timestamps with JavaScript\n\n- A **Code node (JavaScript)** converts raw transcript offsets (in seconds) into formatted **HH:MM:SS timestamps**.  \n- Each transcript entry is enriched with a timestamp for accurate navigation.  \n- Example formats: `12:05` or `1:03:45` depending on video length.\n",
+        "height": 224,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "87967105-f9f0-4ef1-afeb-2412352dc039",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Summarize with AI agent\n\n- The **YouTube Summarizer Agent** (OpenRouter LLM) processes the enriched transcript.  \n- Output includes:  \n  - A structured **multi-paragraph summary**.  \n  - **Key takeaways** with aligned timestamps.  \n- The agent ensures clarity, conciseness, and value-driven highlights.\n",
+        "height": 256,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1584,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "27379d7d-5207-4ece-a1b3-823f6645a031",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Deliver results\n\nThe summarized content is delivered in two ways:  \n\n- **Email (Gmail node)** → Delivered to the configured email inbox with subject “YouTube video summary”.\n",
+        "height": 224,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2208,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "0aac7e95-241e-4260-81e2-48bea3a892fe",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get-youtube-video-summarization",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        288
+      ],
+      "id": "9aabc38b-4a77-4648-8aaa-9429b4ad0f7f",
+      "name": "Webhook",
+      "webhookId": "fe4426ae-8e9d-4d46-9441-b795565811f3"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"status\": \"success\",\n  \"message\": \"Video analysis completed\",\n  \"data\": $('Aggregate All Summaries').all().map((item, index) => ({\n    video_name: $('Webhook').item.json.body.youtube_videos[index]?.title || 'Video ' + (index + 1),\n    url: $('Webhook').item.json.body.youtube_videos[index]?.url || '',\n    summary: item.json.data || 'No summary available',\n    video_id: $('Webhook').item.json.body.youtube_videos[index]?.video_id || ''\n  }))\n} }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2608,
+        288
+      ],
+      "id": "7d80de07-360a-4fe4-927b-bdfcfb4fc97d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6",
+      "name": "Aggregate All Summaries",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine all summaries into one formatted email\nconst summaries = items.map((item, index) => {\n  const summary = item.json.data || item.json.output || 'No summary available';\n  const videoNum = index + 1;\n  \n  return `\\n══════════════════════════════════════\\n📹 VIDEO ${videoNum}\\n══════════════════════════════════════\\n\\n${summary}\\n\\n`;\n}).join('\\n');\n\nconst totalVideos = items.length;\n\nconst emailBody = `<html>\\n<body style=\"font-family: Arial, sans-serif;\">\\n<div style=\"background-color: #FF0000; color: white; padding: 20px; text-align: center;\">\\n<h1>🎬 YouTube Video Summaries</h1>\\n<p>Total Videos Processed: ${totalVideos}</p>\\n</div>\\n<div style=\"padding: 20px;\">\\n${summaries.split('══════════').map((section, idx) => {\n  if (idx === 0) return '';\n  return `<div style=\"border-left: 4px solid #FF0000; padding-left: 15px; margin: 20px 0;\">${section.replace(/\\n/g, '<br>')}</div>`;\n}).join('')}\\n</div>\\n<div style=\"background-color: #f4f4f4; padding: 15px; text-align: center;\">\\n<p>Generated by n8n YouTube Summarizer</p>\\n</div>\\n</body>\\n</html>`;\n\nreturn [{\n  json: {\n    emailBody: emailBody,\n    plainText: summaries,\n    totalVideos: totalVideos\n  }\n}];"
+      },
+      "id": "z9y8x7w6-v5u4-t3s2-r1q0-p9o8n7m6l5k4",
+      "name": "Format Combined Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        288
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube Summarizer Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "YouTube Summarizer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Aggregate All Summaries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "YouTube Summarizer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Summaries": {
+      "main": [
+        [
+          {
+            "node": "Format Combined Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Combined Email": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b5463269-e7df-4ea3-8060-bd0c5773700f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ef6bf1f0b971cb4f6213bcce68190c06f333e44fa55d8adea43ced744293028"
+  },
+  "id": "DkH07E3giAr69hM1",
+  "tags": [
+    {
+      "createdAt": "2025-10-08T16:08:44.363Z",
+      "updatedAt": "2025-10-08T16:08:44.363Z",
+      "id": "eZi3c1S5QiTkXX3q",
+      "name": "To share"
+    }
+  ]
+}
