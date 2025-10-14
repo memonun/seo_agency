@@ -41,27 +41,23 @@ function App() {
     )
   }
 
-  return (
+  return user ? (
     <div className="app">
-      {user ? (
-        <>
-          <SideNav />
-          <div className="app-content">
-            <Header user={user} />
-            <Routes>
-              <Route path="/" element={<Navigate to="/modules/seo" replace />} />
-              <Route path="/modules/seo" element={<SEOModule user={user} />} />
-              <Route path="/modules/youtube" element={<YouTubeModule user={user} />} />
-              <Route path="/modules/social-listening" element={<SocialListeningModule user={user} />} />
-              <Route path="/modules/twitter" element={<TwitterAnalyticsModule user={user} />} />
-              <Route path="/modules/news" element={<NewsModule user={user} />} />
-            </Routes>
-          </div>
-        </>
-      ) : (
-        <Auth />
-      )}
+      <SideNav />
+      <div className="app-content">
+        <Header user={user} />
+        <Routes>
+          <Route path="/" element={<Navigate to="/modules/seo" replace />} />
+          <Route path="/modules/seo" element={<SEOModule user={user} />} />
+          <Route path="/modules/youtube" element={<YouTubeModule user={user} />} />
+          <Route path="/modules/social-listening" element={<SocialListeningModule user={user} />} />
+          <Route path="/modules/twitter" element={<TwitterAnalyticsModule user={user} />} />
+          <Route path="/modules/news" element={<NewsModule user={user} />} />
+        </Routes>
+      </div>
     </div>
+  ) : (
+    <Auth />
   )
 }
 

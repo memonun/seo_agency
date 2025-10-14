@@ -691,36 +691,15 @@ async function handleKeywordSearch(client, params, res) {
       }
     })
     
-    // If mentions enabled, fetch top 10 replies for each tweet (enhanced version)
-    if (includeMentions) {
-      console.log('📱 Fetching replies for tweets...')
-      
-      // Fetch replies for each tweet (limit to first 5 tweets to avoid rate limits)
-      const tweetsToFetchReplies = formattedTweets.slice(0, 5)
-      
-      for (const tweet of tweetsToFetchReplies) {
-        console.log(`🔍 Attempting to fetch replies for tweet ${tweet.id} by @${tweet.author.username}`)
-        
-        const replies = await fetchTweetReplies(client, tweet.id, 10, tweet.author.username)
-        tweet.replies = replies
-        
-        if (replies.length > 0) {
-          console.log(`  ✅ Found ${replies.length} replies for tweet by @${tweet.author.username}`)
-        } else {
-          console.log(`  ⚠️ No replies found for tweet by @${tweet.author.username}`)
-        }
-        
-        // Add delay between reply fetches to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 500))
-      }
-    }
+    // Fetch replies if mentions are enabled
+    const tweetsWithReplies = await fetchRepliesForTweets(client, formattedTweets, includeMentions)
     
     // Calculate analytics (now includes reply analytics if available)
-    const analytics = generateAnalytics(formattedTweets, keyword, includeMentions)
+    const analytics = generateAnalytics(tweetsWithReplies, keyword, includeMentions)
     
     return res.status(200).json({
       success: true,
-      data: formattedTweets,
+      data: tweetsWithReplies,
       analytics,
       query: keyword,
       timestamp: new Date().toISOString()
@@ -792,14 +771,17 @@ async function handleCombinedSearch(client, params, res) {
     }
     
     // Remove duplicates and sort using helper function
-    const uniqueTweets = deduplicateAndSort(allTweets, limit)
+    const uniqueTweets = deduplicateAndSort(allTweets, limit, sortOrder)
+    
+    // Fetch replies if mentions are enabled
+    const tweetsWithReplies = await fetchRepliesForTweets(client, uniqueTweets, includeMentions)
     
     // Generate analytics
-    const analytics = generateCombinedAnalytics(uniqueTweets, keyword, hashtags)
+    const analytics = generateCombinedAnalytics(tweetsWithReplies, keyword, hashtags)
     
     return res.status(200).json({
       success: true,
-      data: uniqueTweets,
+      data: tweetsWithReplies,
       analytics,
       query: `${keyword} ${hashtags.join(' ')}`.trim(),
       timestamp: new Date().toISOString()
@@ -817,7 +799,7 @@ async function handleCombinedSearch(client, params, res) {
 // Hashtag discovery handler
 async function handleHashtagDiscovery(client, params, res) {
   try {
-    const { keyword } = params
+    const { keyword, language } = params
     
     if (!keyword) {
       return res.status(400).json({
@@ -826,12 +808,28 @@ async function handleHashtagDiscovery(client, params, res) {
       })
     }
     
-    const discoveredHashtags = await discoverTopHashtags(client, keyword)
+    console.log(`🏷️ Discovering hashtags for "${keyword}" with language: ${language || 'en'}`)
+    const discoveredHashtags = await discoverTopHashtags(client, keyword, language)
+    
+    // Check if discovery was successful
+    if (!discoveredHashtags.success) {
+      return res.status(200).json({
+        success: false,
+        keyword,
+        hashtags: [],
+        message: discoveredHashtags.totalTweetsAnalyzed === 0 
+          ? `No tweets found for "${keyword}". Try a different keyword or language.`
+          : 'No hashtags found in the analyzed tweets.',
+        timestamp: new Date().toISOString()
+      })
+    }
     
     return res.status(200).json({
       success: true,
       keyword,
       hashtags: discoveredHashtags.hashtags || [],
+      totalTweetsAnalyzed: discoveredHashtags.totalTweetsAnalyzed,
+      totalHashtagsFound: discoveredHashtags.totalHashtagsFound,
       timestamp: new Date().toISOString()
     })
     
@@ -998,7 +996,7 @@ function generateCombinedAnalytics(tweets, keyword, hashtags) {
 }
 
 // Utility functions from production API
-function deduplicateAndSort(tweets, limit) {
+function deduplicateAndSort(tweets, limit, sortOrder = 'recent') {
   const uniqueTweets = tweets.reduce((acc, tweet) => {
     if (!acc.some(t => t.id === tweet.id)) {
       acc.push(tweet);
@@ -1006,19 +1004,50 @@ function deduplicateAndSort(tweets, limit) {
     return acc;
   }, []);
   
-  // Sort by engagement (likes + retweets) then by date
-  return uniqueTweets
-    .sort((a, b) => {
-      const aEngagement = a.metrics.likes + a.metrics.retweets;
-      const bEngagement = b.metrics.likes + b.metrics.retweets;
-      
-      if (bEngagement !== aEngagement) {
-        return bEngagement - aEngagement;
-      }
-      
-      return new Date(b.created_at) - new Date(a.created_at);
-    })
-    .slice(0, limit);
+  if (sortOrder === 'popular' || sortOrder === 'relevancy') {
+    // For popular: Filter out very low engagement, then sort by engagement
+    const minEngagement = 5; // Minimum total engagement threshold
+    const filtered = uniqueTweets.filter(tweet => 
+      (tweet.metrics.likes + tweet.metrics.retweets) >= minEngagement
+    );
+    
+    // FALLBACK: If filtering removes all tweets, return top tweets by engagement
+    // even if they're below threshold
+    if (filtered.length === 0) {
+      console.log('⚠️ No tweets met engagement threshold, using top tweets as fallback');
+      return uniqueTweets
+        .sort((a, b) => {
+          const aEngagement = a.metrics.likes + a.metrics.retweets;
+          const bEngagement = b.metrics.likes + b.metrics.retweets;
+          
+          if (bEngagement !== aEngagement) {
+            return bEngagement - aEngagement;
+          }
+          
+          return new Date(b.created_at) - new Date(a.created_at);
+        })
+        .slice(0, limit);
+    }
+    
+    // Normal case: return filtered and sorted tweets
+    return filtered
+      .sort((a, b) => {
+        const aEngagement = a.metrics.likes + a.metrics.retweets;
+        const bEngagement = b.metrics.likes + b.metrics.retweets;
+        
+        if (bEngagement !== aEngagement) {
+          return bEngagement - aEngagement;
+        }
+        
+        return new Date(b.created_at) - new Date(a.created_at);
+      })
+      .slice(0, limit);
+  } else {
+    // For recent: Sort by date only, no engagement filtering
+    return uniqueTweets
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, limit);
+  }
 }
 
 function formatTweets(tweets, users) {
@@ -1055,7 +1084,8 @@ function formatTweets(tweets, users) {
         confidence: sentiment.confidence
       },
       hashtags,
-      url: `https://twitter.com/${author?.username}/status/${tweet.id}`
+      url: `https://twitter.com/${author?.username}/status/${tweet.id}`,
+      replies: [] // Initialize replies array - will be populated if mentions is enabled
     };
   });
 }
@@ -1096,9 +1126,14 @@ async function searchByKeyword(client, params) {
     
     console.log(`🔍 Search query: "${searchQuery}"`)
     
+    // Fetch more tweets for popular searches to get better quality results
+    const fetchLimit = sortOrder === 'popular' ? 
+      Math.min(100, Math.max(50, limit * 2)) :  // Popular: fetch 2x requested (min 50, max 100)
+      Math.max(50, Math.min(limit, 100));        // Recent: fetch requested amount (min 50)
+    
     // Build API parameters with sort order
     const apiParams = {
-      max_results: Math.max(10, Math.min(limit, 100)), // Twitter API requires min 10, max 100
+      max_results: fetchLimit,
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1176,9 +1211,14 @@ async function searchByHashtags(client, params) {
     
     console.log(`🏷️ Hashtag search query: "${searchQuery}"`)
     
+    // Fetch more tweets for popular searches to get better quality results
+    const fetchLimit = sortOrder === 'popular' ? 
+      Math.min(100, Math.max(50, limit * 2)) :  // Popular: fetch 2x requested (min 50, max 100)
+      Math.max(50, Math.min(limit, 100));        // Recent: fetch requested amount (min 50)
+    
     // Build API parameters with sort order
     const apiParams = {
-      max_results: Math.max(10, Math.min(limit, 100)), // Twitter API requires min 10, max 100
+      max_results: fetchLimit,
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1336,6 +1376,36 @@ async function fetchTweetReplies(client, tweetId, limit = 10, originalTweetAutho
   return [];
 }
 
+// Reusable function to fetch replies for tweets
+async function fetchRepliesForTweets(client, tweets, includeMentions) {
+  if (!includeMentions || !tweets || tweets.length === 0) {
+    return tweets;
+  }
+
+  console.log('📱 Fetching replies for tweets...')
+  
+  // Fetch replies for each tweet (limit to first 5 tweets to avoid rate limits)
+  const tweetsToFetchReplies = tweets.slice(0, 5)
+  
+  for (const tweet of tweetsToFetchReplies) {
+    console.log(`🔍 Attempting to fetch replies for tweet ${tweet.id} by @${tweet.author.username}`)
+    
+    const replies = await fetchTweetReplies(client, tweet.id, 10, tweet.author.username)
+    tweet.replies = replies
+    
+    if (replies.length > 0) {
+      console.log(`  ✅ Found ${replies.length} replies for tweet by @${tweet.author.username}`)
+    } else {
+      console.log(`  ⚠️ No replies found for tweet by @${tweet.author.username}`)
+    }
+    
+    // Add delay between reply fetches to respect rate limits
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }
+  
+  return tweets;
+}
+
 // Helper method to format and filter replies
 function formatAndFilterReplies(replies, users, originalTweetId, limit) {
   // Create user map
@@ -1381,12 +1451,20 @@ function formatAndFilterReplies(replies, users, originalTweetId, limit) {
 }
 
 // Hashtag discovery function
-async function discoverTopHashtags(client, keyword, limit = 5) {
+async function discoverTopHashtags(client, keyword, language, limit = 5) {
   try {
-    console.log(`🔍 Discovering top hashtags for keyword: "${keyword}"`)
+    console.log(`🔍 Discovering top hashtags for keyword: "${keyword}" with language: ${language || 'en'}`)
     
     // Search tweets with the keyword to find hashtags
-    const searchQuery = `${keyword} -is:retweet lang:en`
+    // Build query with language filter if provided
+    let searchQuery = `${keyword} -is:retweet`
+    if (language && language.trim()) {
+      searchQuery += ` lang:${language.trim()}`
+    } else {
+      searchQuery += ` lang:en` // Default to English
+    }
+    
+    console.log(`🔍 Hashtag discovery query: "${searchQuery}"`)
     
     const searchResults = await client.v2.search(searchQuery, {
       max_results: 100, // Get maximum tweets for better hashtag discovery

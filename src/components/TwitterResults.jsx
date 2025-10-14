@@ -8,11 +8,25 @@ export default function TwitterResults({
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [tweetsPerPage] = useState(10);
+  const [expandedTweets, setExpandedTweets] = useState(new Set());
 
   // Simple pagination without complex filtering
   const totalPages = Math.ceil(data.length / tweetsPerPage);
   const startIndex = (currentPage - 1) * tweetsPerPage;
   const currentTweets = data.slice(startIndex, startIndex + tweetsPerPage);
+
+  // Toggle replies expansion for a specific tweet
+  const toggleRepliesExpansion = (tweetId) => {
+    setExpandedTweets(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(tweetId)) {
+        newSet.delete(tweetId);
+      } else {
+        newSet.add(tweetId);
+      }
+      return newSet;
+    });
+  };
 
   // Helper functions
   const formatNumber = (num) => {
@@ -308,58 +322,103 @@ export default function TwitterResults({
                   borderRadius: '6px',
                   border: '1px solid #e5e5e5'
                 }}>
-                  <h6 style={{ 
-                    margin: '0 0 10px 0',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#333'
-                  }}>
-                    📱 Replies ({tweet.replies.length})
-                  </h6>
-                  {tweet.replies.slice(0, 3).map((reply, replyIndex) => (
-                    <div key={replyIndex} style={{
-                      marginBottom: '8px',
-                      fontSize: '12px',
-                      padding: '8px',
-                      background: '#fff',
+                  <div 
+                    onClick={() => toggleRepliesExpansion(tweet.id)}
+                    style={{ 
+                      margin: '0 0 10px 0',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#333',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '4px',
                       borderRadius: '4px',
-                      border: '1px solid #e0e0e0'
-                    }}>
-                      <div style={{ 
-                        fontWeight: '500',
-                        marginBottom: '4px',
-                        color: '#007bff'
+                      transition: 'background 0.2s ease',
+                      ':hover': { background: '#f0f0f0' }
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f0f0f0'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <span>📱 Replies ({tweet.replies.length})</span>
+                    <span style={{ fontSize: '16px', color: '#666' }}>
+                      {expandedTweets.has(tweet.id) ? '▲' : '▼'}
+                    </span>
+                  </div>
+                  
+                  <div style={{
+                    maxHeight: expandedTweets.has(tweet.id) ? '2000px' : '320px',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s ease-in-out'
+                  }}>
+                    {(expandedTweets.has(tweet.id) ? tweet.replies : tweet.replies.slice(0, 3)).map((reply, replyIndex) => (
+                      <div key={replyIndex} style={{
+                        marginBottom: '8px',
+                        fontSize: '12px',
+                        padding: '8px',
+                        background: '#fff',
+                        borderRadius: '4px',
+                        border: '1px solid #e0e0e0'
                       }}>
-                        @{reply.author.username}
+                        <div style={{ 
+                          fontWeight: '500',
+                          marginBottom: '4px',
+                          color: '#007bff'
+                        }}>
+                          @{reply.author.username}
+                        </div>
+                        <div style={{ 
+                          color: '#333',
+                          lineHeight: '1.4',
+                          marginBottom: '4px'
+                        }}>
+                          {expandedTweets.has(tweet.id) ? reply.text : 
+                           (reply.text.length > 100 ? `${reply.text.substring(0, 100)}...` : reply.text)}
+                        </div>
+                        <div style={{ 
+                          color: '#666',
+                          fontSize: '11px',
+                          display: 'flex',
+                          gap: '8px'
+                        }}>
+                          <span>👍 {reply.metrics.likes}</span>
+                          <span>🔁 {reply.metrics.retweets}</span>
+                          <span>{getSentimentEmoji({label: reply.sentiment.label})}</span>
+                        </div>
                       </div>
-                      <div style={{ 
-                        color: '#333',
-                        lineHeight: '1.4',
-                        marginBottom: '4px'
-                      }}>
-                        {reply.text.length > 100 ? `${reply.text.substring(0, 100)}...` : reply.text}
-                      </div>
-                      <div style={{ 
-                        color: '#666',
-                        fontSize: '11px',
-                        display: 'flex',
-                        gap: '8px'
-                      }}>
-                        <span>👍 {reply.metrics.likes}</span>
-                        <span>🔁 {reply.metrics.retweets}</span>
-                        <span>{getSentimentEmoji({label: reply.sentiment.label})}</span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  
                   {tweet.replies.length > 3 && (
-                    <div style={{ 
-                      fontSize: '11px',
-                      color: '#666',
-                      textAlign: 'center',
-                      marginTop: '8px'
-                    }}>
-                      ... and {tweet.replies.length - 3} more replies
-                    </div>
+                    <button
+                      onClick={() => toggleRepliesExpansion(tweet.id)}
+                      style={{ 
+                        width: '100%',
+                        padding: '8px',
+                        marginTop: '8px',
+                        fontSize: '12px',
+                        color: '#007bff',
+                        background: '#fff',
+                        border: '1px solid #007bff',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        fontWeight: '500'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#007bff';
+                        e.currentTarget.style.color = '#fff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.color = '#007bff';
+                      }}
+                    >
+                      {expandedTweets.has(tweet.id) ? 
+                        'Show less' : 
+                        `Show all ${tweet.replies.length} replies`}
+                    </button>
                   )}
                 </div>
               )}

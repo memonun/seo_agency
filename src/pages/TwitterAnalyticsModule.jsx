@@ -3,15 +3,26 @@ import TwitterSearch from '../components/TwitterSearch';
 import TwitterResults from '../components/TwitterResults';
 import TwitterDashboard from '../components/TwitterDashboard';
 import { callTwitterApi, isDev } from '../utils/apiConfig';
+import { loadTwitterSearchParams, saveTwitterSearchParams, clearTwitterSearchParams } from '../utils/searchCache';
 
 export default function TwitterAnalyticsModule({ user }) {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchHistory, setSearchHistory] = useState([]);
+  const [cachedParams, setCachedParams] = useState(null);
+  const [showResults, setShowResults] = useState(false);
 
-  // Load search history from localStorage on component mount
+  // Load cached search params and search history on component mount
   useEffect(() => {
+    // Load cached search parameters
+    const cached = loadTwitterSearchParams(user?.id || 'anonymous');
+    if (cached) {
+      setCachedParams(cached);
+      setShowResults(true);
+    }
+
+    // Load search history
     const savedHistory = localStorage.getItem('twitter_search_history');
     if (savedHistory) {
       try {
@@ -20,7 +31,7 @@ export default function TwitterAnalyticsModule({ user }) {
         console.error('Failed to parse search history:', e);
       }
     }
-  }, []);
+  }, [user]);
 
   // Save search to history
   const saveToHistory = (searchData) => {
@@ -41,6 +52,7 @@ export default function TwitterAnalyticsModule({ user }) {
     setLoading(true);
     setError(null);
     setResults(null);
+    setShowResults(true);
 
     try {
       if (isDev()) {
@@ -51,7 +63,7 @@ export default function TwitterAnalyticsModule({ user }) {
         action: searchData.type,
         keyword: searchData.keyword || '',
         hashtags: searchData.hashtags || [],
-        location: searchData.location || null,
+        language: searchData.language || null,
         sortOrder: searchData.sortOrder || 'recent',
         includeMentions: searchData.includeMentions || false,
         global: searchData.global || false,
@@ -63,6 +75,10 @@ export default function TwitterAnalyticsModule({ user }) {
       
       setResults(data);
       saveToHistory(searchData);
+      
+      // Save search params for persistence
+      saveTwitterSearchParams(user?.id || 'anonymous', searchData);
+      setCachedParams(searchData);
       
       if (isDev()) {
         console.log('✅ Search completed:', data);
@@ -88,7 +104,16 @@ export default function TwitterAnalyticsModule({ user }) {
     }
   };
 
-  // Clear results
+  // Clear results and start new search
+  const handleNewSearch = () => {
+    setResults(null);
+    setError(null);
+    setShowResults(false);
+    setCachedParams(null);
+    clearTwitterSearchParams(user?.id || 'anonymous');
+  };
+
+  // Clear results only
   const clearResults = () => {
     setResults(null);
     setError(null);
@@ -135,6 +160,9 @@ export default function TwitterAnalyticsModule({ user }) {
           loading={loading}
           searchHistory={searchHistory}
           onLoadHistory={loadFromHistory}
+          initialValues={cachedParams}
+          showNewSearchButton={showResults && cachedParams}
+          onNewSearch={handleNewSearch}
         />
 
         {/* Message display */}

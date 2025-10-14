@@ -5,16 +5,24 @@ export default function TwitterSearch({
   onSearch, 
   loading, 
   searchHistory = [], 
-  onLoadHistory 
+  onLoadHistory,
+  initialValues = null,
+  showNewSearchButton = false,
+  onNewSearch
 }) {
-  // Main form state
-  const [keyword, setKeyword] = useState('');
+  // Main form state - use initial values if available
+  const [keyword, setKeyword] = useState(initialValues?.keyword || '');
   
   // Hashtag state - simplified approach
   const [isAutoMode, setIsAutoMode] = useState(false);
   const [discoveredHashtags, setDiscoveredHashtags] = useState([]);
   const [selectedHashtags, setSelectedHashtags] = useState([]);
-  const [manualHashtags, setManualHashtags] = useState(['']);
+  const [manualHashtags, setManualHashtags] = useState(() => {
+    if (initialValues?.hashtags && initialValues.hashtags.length > 0) {
+      return initialValues.hashtags.map(h => h.replace(/^#/, ''));
+    }
+    return [''];
+  });
   
   // Discovery state
   const [isDiscovering, setIsDiscovering] = useState(false);
@@ -40,21 +48,26 @@ export default function TwitterSearch({
     { code: 'pl', name: 'Polish', variations: ['polish', 'polski', 'polaco', 'polonais', 'polnisch', 'lehçe'] }
   ];
   
-  // Search options
-  const [language, setLanguage] = useState('');
-  const [languageInput, setLanguageInput] = useState('');
+  // Search options - use initial values if available
+  const [language, setLanguage] = useState(initialValues?.language || '');
+  const [languageInput, setLanguageInput] = useState(() => {
+    if (initialValues?.language) {
+      const lang = languageData.find(l => l.code === initialValues.language);
+      return lang?.name || initialValues.language;
+    }
+    return '';
+  });
   const [showLanguageSuggestions, setShowLanguageSuggestions] = useState(false);
   const [languageSuggestions, setLanguageSuggestions] = useState([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const languageInputRef = useRef(null);
   const suggestionsRef = useRef(null);
-  const [sortOrder, setSortOrder] = useState('recent');
-  const [limit, setLimit] = useState(25);
-  const [includeMentions, setIncludeMentions] = useState(false);
-  const [global, setGlobal] = useState(false);
+  const [sortOrder, setSortOrder] = useState(initialValues?.sortOrder || 'recent');
+  const [limit, setLimit] = useState(initialValues?.limit || 25);
+  const [includeMentions, setIncludeMentions] = useState(initialValues?.includeMentions || false);
+  const [global, setGlobal] = useState(initialValues?.global || false);
   
   // UI state
-  const [showHistory, setShowHistory] = useState(false);
   const [errors, setErrors] = useState({});
   
   // Hashtag discovery API call
@@ -66,22 +79,28 @@ export default function TwitterSearch({
     setDiscoveryComplete(false);
     
     try {
-      // Call hashtag discovery API
+      // Call hashtag discovery API with language parameter
       const response = await callTwitterApi({
         action: 'discover-hashtags',
-        keyword: searchKeyword.trim()
+        keyword: searchKeyword.trim(),
+        language: language || undefined // Pass current language selection
       });
       
-      if (response.success && response.hashtags) {
+      if (response.success && response.hashtags && response.hashtags.length > 0) {
         setDiscoveredHashtags(response.hashtags);
         setSelectedHashtags(response.hashtags); // Auto-select all by default
         setDiscoveryComplete(true);
+      } else if (response.message) {
+        // Use the specific message from backend
+        throw new Error(response.message);
       } else {
         throw new Error('Failed to discover hashtags');
       }
     } catch (error) {
       console.error('Hashtag discovery error:', error);
-      setDiscoveryError('Failed to discover hashtags. Please try manual mode.');
+      // Use the error message from backend or default message
+      const errorMessage = error.message || 'Failed to discover hashtags. Please try manual mode.';
+      setDiscoveryError(errorMessage);
       setDiscoveredHashtags([]);
       setSelectedHashtags([]);
     } finally {
@@ -111,43 +130,6 @@ export default function TwitterSearch({
     }
   };
 
-  // Validation functions
-  const validateKeyword = (value) => {
-    if (!value.trim()) {
-      return 'Keyword is required';
-    }
-    if (value.length < 2) {
-      return 'Keyword must be at least 2 characters';
-    }
-    if (value.length > 100) {
-      return 'Keyword must be less than 100 characters';
-    }
-    return null;
-  };
-
-  const validateHashtags = (hashtagList) => {
-    const nonEmptyHashtags = hashtagList.filter(h => h.trim());
-    
-    if (nonEmptyHashtags.length === 0) {
-      return 'At least one hashtag is required';
-    }
-    
-    if (nonEmptyHashtags.length > 10) {
-      return 'Maximum 10 hashtags allowed';
-    }
-    
-    for (const hashtag of nonEmptyHashtags) {
-      const cleanTag = hashtag.trim().replace(/^#/, '');
-      if (!/^[a-zA-Z0-9_]+$/.test(cleanTag)) {
-        return `Invalid hashtag format: ${hashtag}`;
-      }
-      if (cleanTag.length < 1 || cleanTag.length > 100) {
-        return `Hashtag length must be 1-100 characters: ${hashtag}`;
-      }
-    }
-    
-    return null;
-  };
 
   // Check if form can be submitted
   const canSubmitSearch = () => {
@@ -364,7 +346,15 @@ export default function TwitterSearch({
     <form onSubmit={handleSubmit}>
       {/* Step 1: Keyword Input */}
       <div className="form-group">
-        <label htmlFor="keyword">1. Keyword (Optional)</label>
+        <label htmlFor="keyword" style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>1. Keyword (Optional)</label>
         <input
           type="text"
           id="keyword"
@@ -383,7 +373,15 @@ export default function TwitterSearch({
 
       {/* Step 2: Hashtags */}
       <div className="form-group">
-        <label>2. Hashtags (Optional)</label>
+        <label style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>2. Hashtags (Optional)</label>
         {errors.hashtag && (
           <small style={{ color: '#f00' }}>{errors.hashtag}</small>
         )}
@@ -569,7 +567,15 @@ export default function TwitterSearch({
 
       {/* Step 3: Language Filter */}
       <div className="form-group" style={{ position: 'relative' }}>
-        <label htmlFor="language">3. Language Filter (Optional)</label>
+        <label htmlFor="language" style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>3. Language Filter (Optional)</label>
         <input
           ref={languageInputRef}
           type="text"
@@ -712,7 +718,8 @@ export default function TwitterSearch({
             htmlFor="global"
             style={{ 
               fontSize: '13px',
-              color: '#000',
+              color: '#333',
+              fontWeight: '400',
               margin: 0,
               cursor: 'pointer'
             }}
@@ -727,7 +734,15 @@ export default function TwitterSearch({
 
       {/* Step 5: Sort Options */}
       <div className="form-group">
-        <label htmlFor="sortOrder">4. Sort Order</label>
+        <label htmlFor="sortOrder" style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>4. Sort Order</label>
         <select
           id="sortOrder"
           value={sortOrder}
@@ -742,7 +757,15 @@ export default function TwitterSearch({
 
       {/* Step 6: Final Options */}
       <div className="form-group">
-        <label htmlFor="limit">5. Results & Options</label>
+        <label htmlFor="limit" style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>5. Results & Options</label>
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '8px' }}>
           <select
             id="limit"
@@ -779,15 +802,16 @@ export default function TwitterSearch({
               width: 'auto',
               padding: 0,
               border: '1px solid #e5e5e5',
-              borderRadius: '2px'
+              borderRadius: '2px',
+              marginLeft: '8px'
             }}
           />
           <label 
             htmlFor="mentions"
             style={{ 
               fontSize: '14px',
-              color: '#000',
-              fontWeight: '300',
+              color: '#333',
+              fontWeight: '400',
               textTransform: 'none',
               letterSpacing: '0',
               margin: 0,
@@ -806,20 +830,56 @@ export default function TwitterSearch({
         )}
       </div>
 
-      {/* Search Button */}
-      <button
-        type="submit"
-        disabled={!canSubmitSearch() || loading}
-        style={{
-          opacity: !canSubmitSearch() || loading ? 0.6 : 1,
-          cursor: !canSubmitSearch() || loading ? 'not-allowed' : 'pointer'
-        }}
-      >
-        {loading ? 'Analyzing...' : 
-         isDiscovering ? 'Discovering hashtags...' :
-         !canSubmitSearch() ? 'Complete form to search' :
-         'Start Analysis'}
-      </button>
+      {/* Search Buttons */}
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <button
+          type="submit"
+          disabled={!canSubmitSearch() || loading}
+          style={{
+            opacity: !canSubmitSearch() || loading ? 0.6 : 1,
+            cursor: !canSubmitSearch() || loading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {loading ? 'Analyzing...' : 
+           isDiscovering ? 'Discovering hashtags...' :
+           !canSubmitSearch() ? 'Complete form to search' :
+           'Start Analysis'}
+        </button>
+        
+        {showNewSearchButton && (
+          <button
+            type="button"
+            onClick={onNewSearch}
+            style={{
+              background: '#fff',
+              color: '#1DA1F2',
+              border: '1px solid #1DA1F2',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1DA1F2';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#fff';
+              e.currentTarget.style.color = '#1DA1F2';
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+            New Search
+          </button>
+        )}
+      </div>
     </form>
   );
 }

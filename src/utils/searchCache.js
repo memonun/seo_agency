@@ -139,3 +139,63 @@ export const clearYouTubeResults = (userId) => {
     return false
   }
 }
+
+// Twitter Search Cache
+const TWITTER_CACHE_PREFIX = 'twitter_search_params_'
+
+const getTwitterCacheKey = (userId) => {
+  return `${TWITTER_CACHE_PREFIX}${userId}`
+}
+
+/**
+ * Save Twitter search parameters to localStorage
+ */
+export const saveTwitterSearchParams = (userId, params) => {
+  try {
+    const cacheData = {
+      ...params,
+      timestamp: Date.now()
+    }
+    localStorage.setItem(getTwitterCacheKey(userId), JSON.stringify(cacheData))
+    return true
+  } catch (error) {
+    console.error('Error saving Twitter search params:', error)
+    return false
+  }
+}
+
+/**
+ * Load Twitter search parameters from localStorage
+ */
+export const loadTwitterSearchParams = (userId) => {
+  try {
+    const cached = localStorage.getItem(getTwitterCacheKey(userId))
+    if (!cached) return null
+
+    const parsedCache = JSON.parse(cached)
+
+    // Check if cache is still valid (24 hours)
+    if (!isCacheValid(parsedCache)) {
+      clearTwitterSearchParams(userId)
+      return null
+    }
+
+    return parsedCache
+  } catch (error) {
+    console.error('Error loading Twitter search params:', error)
+    return null
+  }
+}
+
+/**
+ * Clear Twitter search parameters from localStorage
+ */
+export const clearTwitterSearchParams = (userId) => {
+  try {
+    localStorage.removeItem(getTwitterCacheKey(userId))
+    return true
+  } catch (error) {
+    console.error('Error clearing Twitter search params:', error)
+    return false
+  }
+}
