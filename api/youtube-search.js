@@ -21,34 +21,46 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'No videos found' })
     }
 
-    // Step 2: Process all 10 videos in parallel
-    const videosWithSummaries = await Promise.all(
-      youtubeVideos.map(async (video, index) => {
-        try {
-          // Fetch transcript
-          const transcript = await fetchTranscript(video.video_id)
+    // Step 2: Process videos sequentially with rate limiting to avoid 429 errors
+    const videosWithSummaries = []
+    
+    for (let i = 0; i < youtubeVideos.length; i++) {
+      const video = youtubeVideos[i]
+      
+      try {
+        console.log(`   [${i + 1}/${youtubeVideos.length}] Processing: ${video.title.substring(0, 50)}...`)
+        
+        // Fetch transcript with retry logic
+        const transcript = await fetchTranscriptWithRetry(video.video_id, 3)
 
-          // Process timestamps
-          const processedTranscript = processTimestamps(transcript)
+        // Process timestamps
+        const processedTranscript = processTimestamps(transcript)
 
-          // Summarize with AI
-          const summary = await summarizeWithAI(processedTranscript, video.title)
+        // Summarize with AI
+        const summary = await summarizeWithAI(processedTranscript, video.title)
 
-          return {
-            ...video,
-            summary: summary,
-            position: index + 1
-          }
-        } catch (error) {
-          console.error(`Error processing video ${video.video_id}:`, error)
-          return {
-            ...video,
-            summary: '⚠️ Transcript not available for this video.',
-            position: index + 1
-          }
+        videosWithSummaries.push({
+          ...video,
+          summary: summary,
+          position: i + 1
+        })
+
+        console.log(`   ✓ [${i + 1}/${youtubeVideos.length}] Summary complete`)
+        
+        // Add delay between requests to prevent rate limiting (only if not the last video)
+        if (i < youtubeVideos.length - 1) {
+          await sleep(1000) // 1 second delay between requests
         }
-      })
-    )
+        
+      } catch (error) {
+        console.error(`   ✗ [${i + 1}/${youtubeVideos.length}] Error: ${error.message}`)
+        videosWithSummaries.push({
+          ...video,
+          summary: '⚠️ Transcript not available for this video.',
+          position: i + 1
+        })
+      }
+    }
 
     // Return combined response
     return res.status(200).json({
@@ -151,6 +163,31 @@ async function fetchTranscript(videoId) {
   return data.transcript
 }
 
+// Helper function to add delays
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// Retry wrapper for fetchTranscript to handle rate limiting
+async function fetchTranscriptWithRetry(videoId, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchTranscript(videoId)
+    } catch (error) {
+      // If it's a 429 (rate limit) and we have retries left, wait and try again
+      if (error.message.includes('429') && attempt < maxRetries) {
+        const waitTime = attempt * 2000 // Progressive backoff: 2s, 4s, 6s
+        console.log(`   ⏳ Rate limited, waiting ${waitTime/1000}s before retry ${attempt}/${maxRetries}...`)
+        await sleep(waitTime)
+        continue
+      }
+      
+      // If it's not rate limiting or we're out of retries, throw the error
+      throw error
+    }
+  }
+}
+
 function processTimestamps(transcript) {
   // Replicate n8n Code node logic
   return transcript.map(entry => {
@@ -196,7 +233,13 @@ Otherwise, follow this format:
 
 Summary: Write a detailed summary of the video in 3–5 paragraphs.
 
-Key Takeaways: List bullet points summarizing the main ideas or insights with corresponding timestamps.
+Key Takeaways: 
+* First key point with timestamp (MM:SS)
+* Second key point with timestamp (MM:SS)
+* Third key point with timestamp (MM:SS)
+(Continue with additional bullet points as needed)
+
+IMPORTANT: Each key takeaway MUST start with "* " to create proper markdown bullet points. Include the timestamp in parentheses at the end of each bullet point.
 
 Timestamps: If timestamps are provided in the transcript, match them to the corresponding summarized content.
 
@@ -206,6 +249,7 @@ Keep the tone neutral and informative.
 Do not copy/paste large chunks of the transcript.
 Do not include filler words or irrelevant segments.
 Emphasize educational, emotional, or value-driven content.
+ALWAYS format Key Takeaways as markdown bullet points starting with "* ".
 
 Output: A structured summary using the format above.
 THE WHOLE OUTPUT LENGTH SHOULD BE MAXIMUM 4000 CHARACTERS.`

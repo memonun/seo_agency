@@ -1,0 +1,758 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-12T18:16:54.912Z",
+    "totalResults": 1,
+    "testType": "custom-keyword"
+  },
+  "results": [
+    {
+      "keyword": "arda güler",
+      "success": true,
+      "totalTweets": 25,
+      "responseTime": 1557,
+      "analytics": {
+        "total_tweets": 25,
+        "avg_sentiment": 0.03,
+        "sentiment_distribution": {
+          "positive": 2,
+          "negative": 0,
+          "neutral": 23
+        },
+        "top_hashtags": [
+          "#News",
+          "#Turkey",
+          "#Bulgaria",
+          "#ArdaGüler",
+          "#WorldCupQualifiers",
+          "#KenanYıldız",
+          "#Turks",
+          "#Spain"
+        ],
+        "engagement_stats": {
+          "avg_likes": 162,
+          "avg_retweets": 8,
+          "total_engagement": 4531
+        },
+        "top_influencers": [
+          {
+            "username": "TouchlineX",
+            "name": "The Touchline | 𝐓",
+            "followers": 1408147,
+            "verified": false
+          },
+          {
+            "username": "TouchlineX",
+            "name": "The Touchline | 𝐓",
+            "followers": 1408147,
+            "verified": false
+          },
+          {
+            "username": "MadridUniversal",
+            "name": "Madrid Universal",
+            "followers": 383338,
+            "verified": false
+          },
+          {
+            "username": "FotMob",
+            "name": "FotMob",
+            "followers": 161761,
+            "verified": false
+          },
+          {
+            "username": "mediocentr0",
+            "name": "Ahead of the Curve",
+            "followers": 43002,
+            "verified": false
+          }
+        ]
+      },
+      "tweets": [
+        {
+          "id": "1977412659843907690",
+          "text": "Arda Güler has more goal contributions than Lamine Yamal this season in all competitions. 😳 https://t.co/u4uFGdHCvL",
+          "created_at": "2025-10-12T16:34:51.000Z",
+          "author": {
+            "id": "3324689194",
+            "username": "TouchlineX",
+            "name": "The Touchline | 𝐓",
+            "verified": false,
+            "followers": 1408147,
+            "profile_image": "https://pbs.twimg.com/profile_images/1899468014799511552/qLpjVNF2_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1504,
+            "retweets": 86,
+            "replies": 156,
+            "quotes": 20,
+            "views": 63152
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/TouchlineX/status/1977412659843907690"
+        },
+        {
+          "id": "1977377465438708020",
+          "text": "Arda Güler producing 4 goals + 7 assists in 12 games this season is going way too unnoticed.\n\nIs your starboy doing better? ✨ https://t.co/YGdOE9e6Te",
+          "created_at": "2025-10-12T14:15:00.000Z",
+          "author": {
+            "id": "3324689194",
+            "username": "TouchlineX",
+            "name": "The Touchline | 𝐓",
+            "verified": false,
+            "followers": 1408147,
+            "profile_image": "https://pbs.twimg.com/profile_images/1899468014799511552/qLpjVNF2_normal.jpg"
+          },
+          "metrics": {
+            "likes": 684,
+            "retweets": 43,
+            "replies": 86,
+            "quotes": 2,
+            "views": 26892
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/TouchlineX/status/1977377465438708020"
+        },
+        {
+          "id": "1977341828652507224",
+          "text": "No player has created more chances in La Liga this season than Arda Güler. 🌟 https://t.co/v1vUV30obV",
+          "created_at": "2025-10-12T11:53:23.000Z",
+          "author": {
+            "id": "1390468360459128832",
+            "username": "MadridUniversal",
+            "name": "Madrid Universal",
+            "verified": false,
+            "followers": 383338,
+            "profile_image": "https://pbs.twimg.com/profile_images/1633959378243002368/VlCq8u34_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1627,
+            "retweets": 68,
+            "replies": 18,
+            "quotes": 1,
+            "views": 16795
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/MadridUniversal/status/1977341828652507224"
+        },
+        {
+          "id": "1977325858047115415",
+          "text": "🇹🇷 The future of Turkish football looks good with Kenan Yıldız and Arda Güler already delivering for the national team. https://t.co/tTVDTcSMVz",
+          "created_at": "2025-10-12T10:49:56.000Z",
+          "author": {
+            "id": "443643057",
+            "username": "FotMob",
+            "name": "FotMob",
+            "verified": false,
+            "followers": 161761,
+            "profile_image": "https://pbs.twimg.com/profile_images/1570026479806717954/KOLTFlS8_normal.jpg"
+          },
+          "metrics": {
+            "likes": 62,
+            "retweets": 3,
+            "replies": 0,
+            "quotes": 0,
+            "views": 5002
+          },
+          "sentiment": {
+            "label": "positive",
+            "score": 0.47619047619047616,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/FotMob/status/1977325858047115415"
+        },
+        {
+          "id": "1977335919436058786",
+          "text": "Real Madrid could start next season with the following midfielders in the squad: Tchouameni, Camavinga, Ceballos, Valverde, Arda Güler, Nico Paz, Bellingham. \n\nAlmost every profile available and every player there besides Ceballos is still not at his peak.",
+          "created_at": "2025-10-12T11:29:54.000Z",
+          "author": {
+            "id": "193466736",
+            "username": "mediocentr0",
+            "name": "Ahead of the Curve",
+            "verified": false,
+            "followers": 43002,
+            "profile_image": "https://pbs.twimg.com/profile_images/1970445293851185152/UPDZsgbu_normal.jpg"
+          },
+          "metrics": {
+            "likes": 158,
+            "retweets": 7,
+            "replies": 6,
+            "quotes": 1,
+            "views": 14481
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/mediocentr0/status/1977335919436058786"
+        },
+        {
+          "id": "1977434048839700912",
+          "text": "Arda Güler has more goal contributions than Lamine Yamal this season in all competitions. 😳\n\nBut Yamal Hype 🔥 https://t.co/1R8jiar1tS",
+          "created_at": "2025-10-12T17:59:50.000Z",
+          "author": {
+            "id": "2223044636",
+            "username": "adrakwalichai1",
+            "name": "Mr7",
+            "verified": false,
+            "followers": 13170,
+            "profile_image": "https://pbs.twimg.com/profile_images/1957424401647108096/bL1de2R0_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 68
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/adrakwalichai1/status/1977434048839700912"
+        },
+        {
+          "id": "1977378829547999385",
+          "text": "Arda Güler producing 4 goals + 7 assists in 12 games this season is going way too unnoticed.✨ https://t.co/KcSNMdYI8Y",
+          "created_at": "2025-10-12T14:20:25.000Z",
+          "author": {
+            "id": "2223044636",
+            "username": "adrakwalichai1",
+            "name": "Mr7",
+            "verified": false,
+            "followers": 13170,
+            "profile_image": "https://pbs.twimg.com/profile_images/1957424401647108096/bL1de2R0_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 84
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/adrakwalichai1/status/1977378829547999385"
+        },
+        {
+          "id": "1977429892955324699",
+          "text": "AC Milan, Borussia Dortmund, Newcastle and RB Leipzig are all tracking Real Madrid midfielder Arda Güler, but the strongest interest comes from Arsenal and Tottenham, who are willing to do whatever it takes to sign the Türkiye international. \n\n(Source: Grada 3)",
+          "created_at": "2025-10-12T17:43:20.000Z",
+          "author": {
+            "id": "1540295199871606784",
+            "username": "elosim_soy",
+            "name": "Elochukwu",
+            "verified": false,
+            "followers": 3039,
+            "profile_image": "https://pbs.twimg.com/profile_images/1975833248161845248/kcgAm4Jz_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 78
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/elosim_soy/status/1977429892955324699"
+        },
+        {
+          "id": "1977349194714140680",
+          "text": "Arda Güler is highest rated player, has most G+A and assists and created most chances among Turkish players in World Cup Qualification. https://t.co/VqGNkokkYK",
+          "created_at": "2025-10-12T12:22:40.000Z",
+          "author": {
+            "id": "1919005914968805377",
+            "username": "MuseArda",
+            "name": "ArdaMuse",
+            "verified": false,
+            "followers": 2225,
+            "profile_image": "https://pbs.twimg.com/profile_images/1919006372101783552/j_LtXnkX_normal.jpg"
+          },
+          "metrics": {
+            "likes": 6,
+            "retweets": 0,
+            "replies": 1,
+            "quotes": 0,
+            "views": 197
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/MuseArda/status/1977349194714140680"
+        },
+        {
+          "id": "1977378302475042931",
+          "text": "Arda Güler producing 4 goals + 7 assists in 12 games this season is going way too unnoticed yes. \n\nTell me is your starboy doing better? ✨⚽🔥",
+          "created_at": "2025-10-12T14:18:19.000Z",
+          "author": {
+            "id": "1706475278824771584",
+            "username": "Nkzeemusic7",
+            "name": "Nkzee ☆★",
+            "verified": false,
+            "followers": 1947,
+            "profile_image": "https://pbs.twimg.com/profile_images/1795569732533342208/YojPVS9d_normal.jpg"
+          },
+          "metrics": {
+            "likes": 2,
+            "retweets": 2,
+            "replies": 1,
+            "quotes": 0,
+            "views": 88
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/Nkzeemusic7/status/1977378302475042931"
+        },
+        {
+          "id": "1977369166647595357",
+          "text": "#News - #Turkey thrash #Bulgaria with an #ArdaGüler exhibition in #WorldCupQualifiers. Türkiye thrashed Bulgaria 6-1 in Sofia with a great performance by Arda Güler and a double by #KenanYıldız. #Turks are now 3 points behind #Spain in Group E.\n\nhttps://t.co/FvHYYVt6k8",
+          "created_at": "2025-10-12T13:42:01.000Z",
+          "author": {
+            "id": "1233621860945989632",
+            "username": "hispanatoliaEN",
+            "name": "🇹🇷 🇬🇧 Turkey Türkiye",
+            "verified": false,
+            "followers": 1283,
+            "profile_image": "https://pbs.twimg.com/profile_images/1620088606374199296/3bRxb0k3_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 170
+          },
+          "sentiment": {
+            "label": "positive",
+            "score": 0.25,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#News",
+            "#Turkey",
+            "#Bulgaria",
+            "#ArdaGüler",
+            "#WorldCupQualifiers",
+            "#KenanYıldız",
+            "#Turks",
+            "#Spain"
+          ],
+          "url": "https://twitter.com/hispanatoliaEN/status/1977369166647595357"
+        },
+        {
+          "id": "1977412886583767547",
+          "text": "Arda Güler has more goal contributions than Lamine Yamal this season in all competitions. 😳\n\nMy Star boy 💫 is coming for y’all favourites https://t.co/QJRpibm3mX",
+          "created_at": "2025-10-12T16:35:45.000Z",
+          "author": {
+            "id": "1823414477951524868",
+            "username": "jidejr_",
+            "name": "Jide",
+            "verified": false,
+            "followers": 1132,
+            "profile_image": "https://pbs.twimg.com/profile_images/1932517870358999040/2nsNVLwU_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 108
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/jidejr_/status/1977412886583767547"
+        },
+        {
+          "id": "1977379230796128684",
+          "text": "Arda Güler producing 4 goals + 7 assists in 12 games and we’re still in October. It’s really going to be interesting to see who nails down the starting berth between him and Bellingham in Xabi’s midfield ✨ https://t.co/BwaJeLSvqt",
+          "created_at": "2025-10-12T14:22:01.000Z",
+          "author": {
+            "id": "1823414477951524868",
+            "username": "jidejr_",
+            "name": "Jide",
+            "verified": false,
+            "followers": 1132,
+            "profile_image": "https://pbs.twimg.com/profile_images/1932517870358999040/2nsNVLwU_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 122
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/jidejr_/status/1977379230796128684"
+        },
+        {
+          "id": "1977383270963724609",
+          "text": "Arda Güler producing 4 goals + 7 assists in 12 games this season is going way too unnoticed.\nIs your starboy doing better? 💫",
+          "created_at": "2025-10-12T14:38:04.000Z",
+          "author": {
+            "id": "1571225864553091078",
+            "username": "Lanz_Dee5",
+            "name": "Jiggy yo",
+            "verified": false,
+            "followers": 983,
+            "profile_image": "https://pbs.twimg.com/profile_images/1626655322105384986/umQBh6qr_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 75
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/Lanz_Dee5/status/1977383270963724609"
+        },
+        {
+          "id": "1977334578206712040",
+          "text": "🚨 13 games, 7 assists, 4 goals. \n\nArda Güler has been on a different level this season. 💫 https://t.co/UQeA6L0qMx",
+          "created_at": "2025-10-12T11:24:35.000Z",
+          "author": {
+            "id": "1819095858761039872",
+            "username": "RMadridNews_1",
+            "name": "Real Madrid News",
+            "verified": false,
+            "followers": 308,
+            "profile_image": "https://pbs.twimg.com/profile_images/1961758277869473792/zRk5ncz8_normal.jpg"
+          },
+          "metrics": {
+            "likes": 4,
+            "retweets": 2,
+            "replies": 0,
+            "quotes": 0,
+            "views": 95
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/RMadridNews_1/status/1977334578206712040"
+        },
+        {
+          "id": "1977331274324099163",
+          "text": "Doing it for club and country this season.\n\nArda Güler is here 🌟 https://t.co/pmUqNTbOKB",
+          "created_at": "2025-10-12T11:11:27.000Z",
+          "author": {
+            "id": "1624652116194197504",
+            "username": "thewhi8s",
+            "name": "the whites.",
+            "verified": false,
+            "followers": 99,
+            "profile_image": "https://pbs.twimg.com/profile_images/1947221624798814208/NtoDKxR3_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 67
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/thewhi8s/status/1977331274324099163"
+        },
+        {
+          "id": "1977370575820517580",
+          "text": "❤️🇹🇷 11 G/A this season for club and country delivered by Arda Güler.\n\nTwo assists, one goal for Turkey tonight. https://t.co/CCkqPauHO5",
+          "created_at": "2025-10-12T13:47:37.000Z",
+          "author": {
+            "id": "1836092159692541955",
+            "username": "MalangBaba89",
+            "name": "Watson Star",
+            "verified": false,
+            "followers": 96,
+            "profile_image": "https://pbs.twimg.com/profile_images/1973186443804811264/kKH0x96M_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 8
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/MalangBaba89/status/1977370575820517580"
+        },
+        {
+          "id": "1977395568499437571",
+          "text": "Vini Jr, Rodrygo, Mbappe &amp; Arda Güler with thier national team! 🥶🤯\n\nMAGICAL PLAY MAKERS🪄 https://t.co/aPv2U4xpLq",
+          "created_at": "2025-10-12T15:26:56.000Z",
+          "author": {
+            "id": "1948948790389485568",
+            "username": "TheMadridNews1",
+            "name": "The Madrid News",
+            "verified": false,
+            "followers": 84,
+            "profile_image": "https://pbs.twimg.com/profile_images/1948952748348559360/ZvRjOstR_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 92
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/TheMadridNews1/status/1977395568499437571"
+        },
+        {
+          "id": "1977379753557377523",
+          "text": "Doing it for club and country this season.\n\nArda Güler is here 🌟 https://t.co/Kb4ynZGoWE",
+          "created_at": "2025-10-12T14:24:05.000Z",
+          "author": {
+            "id": "1839847167873417216",
+            "username": "itsanamhadi",
+            "name": "its anam hadi",
+            "verified": false,
+            "followers": 41,
+            "profile_image": "https://pbs.twimg.com/profile_images/1960940293135400960/tA5QFpCa_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 69
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/itsanamhadi/status/1977379753557377523"
+        },
+        {
+          "id": "1977325999768666310",
+          "text": "Arda Güler showcased his skills with impressive stats this season, proving his worth on the field https://t.co/YluXfD1FoM",
+          "created_at": "2025-10-12T10:50:29.000Z",
+          "author": {
+            "id": "1957654405467299840",
+            "username": "BettyFranc45837",
+            "name": "Betty Francis",
+            "verified": false,
+            "followers": 4,
+            "profile_image": "https://pbs.twimg.com/profile_images/1957654526183501826/xV2tHoCj_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 145
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/BettyFranc45837/status/1977325999768666310"
+        },
+        {
+          "id": "1977419143382196674",
+          "text": "The Arda Güler Show -\n\n⚽ 1 Goal | 🅰️ 2 Assists | 🎯 90% Pass Accuracy | 🎨 4 Chances Created | 💥 Most Fouled in the match(3x)\n\nOnly 11 games this season and he’s already pure magic. 💎\n The future is here. 🤍 https://t.co/sFbWxwHjE3",
+          "created_at": "2025-10-12T17:00:37.000Z",
+          "author": {
+            "id": "1974119486803283968",
+            "username": "RejzRev",
+            "name": "RejzRev",
+            "verified": false,
+            "followers": 1,
+            "profile_image": "https://pbs.twimg.com/profile_images/1974127716128477184/W5gXIIif_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 2
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/RejzRev/status/1977419143382196674"
+        },
+        {
+          "id": "1977392217959403740",
+          "text": "Arda Güler had an impressive performance tonight, showcasing his skills with a goal, two assists, and creating four chances https://t.co/U6nGPEgg8v",
+          "created_at": "2025-10-12T15:13:37.000Z",
+          "author": {
+            "id": "1956687770728243200",
+            "username": "TomPhil19355155",
+            "name": "Tom Phillips",
+            "verified": false,
+            "followers": 1,
+            "profile_image": "https://pbs.twimg.com/profile_images/1956687901351444480/vXqB4Yt__normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 10
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/TomPhil19355155/status/1977392217959403740"
+        },
+        {
+          "id": "1977395045067075594",
+          "text": "🇹🇷 Arda Güler tonight:\n\n• 70 minutes\n• 1 goal\n• 2 assists\n• 4 chances created\n• 90% passing accuracy \n• 3 times fouled\n\nWHAT A PLAYER. 🔥",
+          "created_at": "2025-10-12T15:24:51.000Z",
+          "author": {
+            "id": "1975998386865307650",
+            "username": "ayy_zGhT",
+            "name": "ZcAyy",
+            "verified": false,
+            "followers": 0,
+            "profile_image": "https://pbs.twimg.com/profile_images/1975998592776273921/S9L5dj1Y_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/ayy_zGhT/status/1977395045067075594"
+        },
+        {
+          "id": "1977358460044865974",
+          "text": "Arda Güler vs Bulgaria:\n\n1 Goal\n2 Assists\n4 Chances Created\n90% Pass Accuracy (36/40)\n7 Passes Into Final Third\n9.0 Player Rating\n\nARDA GULAG 🔥🔥🇹🇷 https://t.co/Tz7nbra8k2",
+          "created_at": "2025-10-12T12:59:29.000Z",
+          "author": {
+            "id": "1977350269039202304",
+            "username": "LoverCentral223",
+            "name": "Lover Central",
+            "verified": false,
+            "followers": 0,
+            "profile_image": "https://pbs.twimg.com/profile_images/1977356728699322368/FCcvuZRv_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/LoverCentral223/status/1977358460044865974"
+        },
+        {
+          "id": "1977327906104971699",
+          "text": "Arda Güler has been on fire this season, contributing 11 goals/assists for both club and country https://t.co/mjVydZsvnw",
+          "created_at": "2025-10-12T10:58:04.000Z",
+          "author": {
+            "id": "1955365853593210881",
+            "username": "randall_fr78795",
+            "name": "Randall Freeman",
+            "verified": false,
+            "followers": 0,
+            "profile_image": "https://pbs.twimg.com/profile_images/1974051728732663810/AxWMo19d_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 23
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/randall_fr78795/status/1977327906104971699"
+        }
+      ],
+      "error": null
+    }
+  ]
+}

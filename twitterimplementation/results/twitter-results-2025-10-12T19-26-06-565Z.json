@@ -1,0 +1,759 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-12T19:26:06.565Z",
+    "totalResults": 1,
+    "testType": "custom-keyword"
+  },
+  "results": [
+    {
+      "keyword": "arda güler",
+      "success": true,
+      "totalTweets": 10,
+      "responseTime": 1348,
+      "analytics": {
+        "total_tweets": 10,
+        "avg_sentiment": 0,
+        "sentiment_distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 10
+        },
+        "top_hashtags": [],
+        "engagement_stats": {
+          "avg_likes": 5,
+          "avg_retweets": 0,
+          "total_engagement": 59
+        },
+        "top_influencers": [
+          {
+            "username": "grok",
+            "name": "Grok",
+            "followers": 6433265,
+            "verified": true
+          },
+          {
+            "username": "adrakwalichai1",
+            "name": "Mr7",
+            "followers": 13171,
+            "verified": false
+          },
+          {
+            "username": "May_10th_",
+            "name": "PARKER😜🌟",
+            "followers": 8120,
+            "verified": false
+          },
+          {
+            "username": "elosim_soy",
+            "name": "Elochukwu",
+            "followers": 3039,
+            "verified": false
+          },
+          {
+            "username": "Luisioalberto1",
+            "name": "footballreport98🎖️",
+            "followers": 939,
+            "verified": false
+          }
+        ],
+        "reply_analytics": {
+          "total_replies": 17,
+          "avg_reply_sentiment": 0,
+          "reply_sentiment_distribution": {
+            "positive": 0,
+            "negative": 0,
+            "neutral": 17
+          },
+          "avg_reply_engagement": 1,
+          "top_reply_authors": [
+            {
+              "username": "ruchikokcha",
+              "name": "ruchi kokcha",
+              "engagement": 4
+            },
+            {
+              "username": "lil_kelly21",
+              "name": "Kèlly",
+              "engagement": 3
+            },
+            {
+              "username": "AdultHitlerson",
+              "name": "Adult Hitler",
+              "engagement": 3
+            },
+            {
+              "username": "MaulanaMishra",
+              "name": "Maulana Mishra",
+              "engagement": 2
+            },
+            {
+              "username": "juicewrldfan969",
+              "name": "Uncle Ruckus",
+              "engagement": 1
+            }
+          ]
+        }
+      },
+      "tweets": [
+        {
+          "id": "1977426803959689571",
+          "text": "@kahie_f1 @raphael91882461 @1stkinguc @_Paris_10 @the_marcoliboy Checking diverse sources like Transfermarkt, FBref, and FotMob as of Oct 12, 2025:\n\n- Mbappé: 14 goals, 2 assists (16 G/A) across club comps.\n- Vinícius Jr: 5 goals, 4 assists (9 G/A).\n- Arda Güler: 3 goals, 3 assists (6 G/A).\n\nTotal ~31 G/A. Sources vary slightly on exact",
+          "created_at": "2025-10-12T17:31:03.000Z",
+          "author": {
+            "id": "1720665183188922368",
+            "username": "grok",
+            "name": "Grok",
+            "verified": true,
+            "followers": 6433265,
+            "profile_image": "https://pbs.twimg.com/profile_images/1893219113717342208/Vgg2hEPa_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 89
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/grok/status/1977426803959689571",
+          "replies": []
+        },
+        {
+          "id": "1977434048839700912",
+          "text": "Arda Güler has more goal contributions than Lamine Yamal this season in all competitions. 😳\n\nBut Yamal Hype 🔥 https://t.co/1R8jiar1tS",
+          "created_at": "2025-10-12T17:59:50.000Z",
+          "author": {
+            "id": "2223044636",
+            "username": "adrakwalichai1",
+            "name": "Mr7",
+            "verified": false,
+            "followers": 13171,
+            "profile_image": "https://pbs.twimg.com/profile_images/1957424401647108096/bL1de2R0_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 124
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/adrakwalichai1/status/1977434048839700912",
+          "replies": [
+            {
+              "id": "1977411294061060397",
+              "text": "@adrakwalichai1 Waah",
+              "created_at": "2025-10-12T16:29:25.000Z",
+              "conversation_id": "1951692972220641581",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "ruchikokcha",
+                "name": "ruchi kokcha"
+              },
+              "metrics": {
+                "likes": 4,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 4,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977405061962875330",
+              "text": "@adrakwalichai1 @CutieTanuja @ErlingHaaland Which stronger teams do you mean??🫴😂😂",
+              "created_at": "2025-10-12T16:04:39.000Z",
+              "conversation_id": "1977389231895969875",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "lil_kelly21",
+                "name": "Kèlly"
+              },
+              "metrics": {
+                "likes": 3,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 3,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977398297472971033",
+              "text": "@adrakwalichai1 @ErlingHaaland Haaland. But Mbape is a better footballer though.",
+              "created_at": "2025-10-12T15:37:47.000Z",
+              "conversation_id": "1977389231895969875",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "AdultHitlerson",
+                "name": "Adult Hitler"
+              },
+              "metrics": {
+                "likes": 3,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 3,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977434717982191670",
+              "text": "@adrakwalichai1 @pinkythename @mufflrman 😭🤣 https://t.co/GWjtR8lL7v",
+              "created_at": "2025-10-12T18:02:30.000Z",
+              "conversation_id": "1977347125433241924",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "MaulanaMishra",
+                "name": "Maulana Mishra"
+              },
+              "metrics": {
+                "likes": 2,
+                "retweets": 0,
+                "replies": 2
+              },
+              "engagement": 2,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977448924727173205",
+              "text": "@adrakwalichai1 @LFC @OnsOranje Wow looks like we've got ourselves a comedian",
+              "created_at": "2025-10-12T18:58:57.000Z",
+              "conversation_id": "1977439261524885995",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "juicewrldfan969",
+                "name": "Uncle Ruckus"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977435236414943597",
+              "text": "@adrakwalichai1 😂😂🤣",
+              "created_at": "2025-10-12T18:04:33.000Z",
+              "conversation_id": "1977429448300646796",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "VishSpark03",
+                "name": "Vish"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977409478262964312",
+              "text": "@adrakwalichai1 Aapki parkhi nazar\n..",
+              "created_at": "2025-10-12T16:22:12.000Z",
+              "conversation_id": "1977392128993997285",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "LyfisVariable",
+                "name": "Ivaan ❤️"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977403780909125805",
+              "text": "@adrakwalichai1 @ErlingHaaland Haaland obviously but mbappe better in big games",
+              "created_at": "2025-10-12T15:59:34.000Z",
+              "conversation_id": "1977389231895969875",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "KostoDom",
+                "name": "Dom Kosto"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977400675844944088",
+              "text": "@adrakwalichai1 It's better to walk away, then facing the toxicity 💯",
+              "created_at": "2025-10-12T15:47:14.000Z",
+              "conversation_id": "1977400419266736504",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "TheGemsofX",
+                "name": "Pookie Blunders"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977397607342170255",
+              "text": "@adrakwalichai1 👍😊",
+              "created_at": "2025-10-12T15:35:02.000Z",
+              "conversation_id": "1977355091880329570",
+              "in_reply_to_user_id": "2223044636",
+              "author": {
+                "username": "TrivediMim20081",
+                "name": "Mimansha Trivedi"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            }
+          ]
+        },
+        {
+          "id": "1977431003603091892",
+          "text": "@ESPNFC Doing it for club and country this season.\n\nArda Güler is here 🌟",
+          "created_at": "2025-10-12T17:47:44.000Z",
+          "author": {
+            "id": "1673330251445698560",
+            "username": "May_10th_",
+            "name": "PARKER😜🌟",
+            "verified": false,
+            "followers": 8120,
+            "profile_image": "https://pbs.twimg.com/profile_images/1973666748990685184/Qe1jDUN7_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 5
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/May_10th_/status/1977431003603091892",
+          "replies": []
+        },
+        {
+          "id": "1977429892955324699",
+          "text": "AC Milan, Borussia Dortmund, Newcastle and RB Leipzig are all tracking Real Madrid midfielder Arda Güler, but the strongest interest comes from Arsenal and Tottenham, who are willing to do whatever it takes to sign the Türkiye international. \n\n(Source: Grada 3)",
+          "created_at": "2025-10-12T17:43:20.000Z",
+          "author": {
+            "id": "1540295199871606784",
+            "username": "elosim_soy",
+            "name": "Elochukwu",
+            "verified": false,
+            "followers": 3039,
+            "profile_image": "https://pbs.twimg.com/profile_images/1975833248161845248/kcgAm4Jz_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 116
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/elosim_soy/status/1977429892955324699",
+          "replies": []
+        },
+        {
+          "id": "1977442865971183626",
+          "text": "@OneFootball 🚨 REPORT: Kylian Mbappé continues to lead the way this season with 21 goal contributions for club and country, while Vinícius Júnior and Arda Güler both impress with 11 G/A each.\nWhat a trio! 🤯⚽ https://t.co/lgcPuAiCMX",
+          "created_at": "2025-10-12T18:34:53.000Z",
+          "author": {
+            "id": "1595237124885839873",
+            "username": "Luisioalberto1",
+            "name": "footballreport98🎖️",
+            "verified": false,
+            "followers": 939,
+            "profile_image": "https://pbs.twimg.com/profile_images/1924968744314441728/Tnfp1vPE_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 3
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/Luisioalberto1/status/1977442865971183626",
+          "replies": []
+        },
+        {
+          "id": "1977421783776039155",
+          "text": "@liamdahgoat Tell me you never watched Arda Güler without telling me you never watched Arda",
+          "created_at": "2025-10-12T17:11:06.000Z",
+          "author": {
+            "id": "1874355748043370496",
+            "username": "rodrygozone",
+            "name": "¹¹✩",
+            "verified": false,
+            "followers": 444,
+            "profile_image": "https://pbs.twimg.com/profile_images/1973330665287340032/0hwvVgMi_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 17
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/rodrygozone/status/1977421783776039155",
+          "replies": []
+        },
+        {
+          "id": "1977420109116530812",
+          "text": "@TouchlineX 🏥 Lamine is injured and all football fans know that.\n\n📊Here are some stats:\n\nArda Güler🇹🇷\n⏱️955 min\n🏟️13 games\n🎯~86.8 min ➡️ 1 g+a\n\nLamine Yamal 🇪🇸\n⏱️542 min\n🏟️7 games\n🎯~77.4 min ➡️ 1 g+a",
+          "created_at": "2025-10-12T17:04:27.000Z",
+          "author": {
+            "id": "1933197374983397376",
+            "username": "ywa_football",
+            "name": "YWA",
+            "verified": false,
+            "followers": 246,
+            "profile_image": "https://pbs.twimg.com/profile_images/1946918967794073600/UTs3_vww_normal.jpg"
+          },
+          "metrics": {
+            "likes": 58,
+            "retweets": 0,
+            "replies": 1,
+            "quotes": 0,
+            "views": 5203
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/ywa_football/status/1977420109116530812",
+          "replies": []
+        },
+        {
+          "id": "1977452293386813768",
+          "text": "STAR BOY ARDA GÜLER. WE KNEW SINCE DAY ONE THE STAR U WERE MEANT TO BE https://t.co/L4u8C1W4Zd",
+          "created_at": "2025-10-12T19:12:20.000Z",
+          "author": {
+            "id": "1779935857715408896",
+            "username": "cunhaz10",
+            "name": "۟",
+            "verified": false,
+            "followers": 207,
+            "profile_image": "https://pbs.twimg.com/profile_images/1973763534799675392/tBTtuaIh_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 71
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/cunhaz10/status/1977452293386813768",
+          "replies": [
+            {
+              "id": "1977057630796628421",
+              "text": "wish i could hear wtf was going on bc it kept going ijbol https://t.co/aIpAwuOewB",
+              "created_at": "2025-10-11T17:04:05.000Z",
+              "conversation_id": "1977057460080013525",
+              "in_reply_to_user_id": "1779935857715408896",
+              "author": {
+                "username": "cunhaz10",
+                "name": "۟"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1976605281577844747",
+              "text": "@cunhaz10 😭😭😭😭😭😭😭 he’s hilarious",
+              "created_at": "2025-10-10T11:06:37.000Z",
+              "conversation_id": "1976586880272777635",
+              "in_reply_to_user_id": "1779935857715408896",
+              "author": {
+                "username": "cocoswrld147",
+                "name": "كوكو 💞"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1975993779598332278",
+              "text": "@cunhaz10 😭😭😭😭😭",
+              "created_at": "2025-10-08T18:36:43.000Z",
+              "conversation_id": "1975992539569324244",
+              "in_reply_to_user_id": "1779935857715408896",
+              "author": {
+                "username": "sveltekind",
+                "name": "we***or*🇵🇸"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            }
+          ]
+        },
+        {
+          "id": "1977440671637405900",
+          "text": "If no be injury who be Arda Güler wey una dey use compare Lamine 😏 https://t.co/GJ0HcvahI5",
+          "created_at": "2025-10-12T18:26:09.000Z",
+          "author": {
+            "id": "1592240244732166144",
+            "username": "Honest_Boi001",
+            "name": "Rich Honest🐬",
+            "verified": false,
+            "followers": 67,
+            "profile_image": "https://pbs.twimg.com/profile_images/1916940499425869824/8uC7AA8H_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 154
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/Honest_Boi001/status/1977440671637405900",
+          "replies": [
+            {
+              "id": "1977452460521193563",
+              "text": "@Honest_Boi001 rain dey fall gan\ni say make i hurry go church o, i for just dey house. \nthey fall from my pocket or person pocket pick me",
+              "created_at": "2025-10-12T19:13:00.000Z",
+              "conversation_id": "1977442918706081838",
+              "in_reply_to_user_id": "1592240244732166144",
+              "author": {
+                "username": "Germaine4TF",
+                "name": "JUST WHELMED 🫧"
+              },
+              "metrics": {
+                "likes": 1,
+                "retweets": 0,
+                "replies": 1
+              },
+              "engagement": 1,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977455479086264330",
+              "text": "@Honest_Boi001 @Varticoo Fb",
+              "created_at": "2025-10-12T19:25:00.000Z",
+              "conversation_id": "1977448675086659787",
+              "in_reply_to_user_id": "1592240244732166144",
+              "author": {
+                "username": "Flianm",
+                "name": "Liam"
+              },
+              "metrics": {
+                "likes": 0,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 0,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1977394462906061123",
+              "text": "@Honest_Boi001 @kvsh70 @echoboss2 @grok E no go run keh",
+              "created_at": "2025-10-12T15:22:32.000Z",
+              "conversation_id": "1977036981365620766",
+              "in_reply_to_user_id": "1592240244732166144",
+              "author": {
+                "username": "CuleForChrist",
+                "name": "Barça Reformed"
+              },
+              "metrics": {
+                "likes": 0,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 0,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            },
+            {
+              "id": "1976460751251570786",
+              "text": "@Honest_Boi001 @DavidoPolice Upgrade to iOS 26",
+              "created_at": "2025-10-10T01:32:18.000Z",
+              "conversation_id": "1976423472244068422",
+              "in_reply_to_user_id": "1592240244732166144",
+              "author": {
+                "username": "OnGod520",
+                "name": "On_God 🖤📊"
+              },
+              "metrics": {
+                "likes": 0,
+                "retweets": 0,
+                "replies": 0
+              },
+              "engagement": 0,
+              "sentiment": {
+                "label": "neutral",
+                "score": 0,
+                "confidence": 0.3
+              }
+            }
+          ]
+        },
+        {
+          "id": "1977441295418138995",
+          "text": "11 G/A this season for club and country delivered by Arda Güler.\n\nTwo assists, one goal for Turkey tonight. https://t.co/d5lt1ZNaZB",
+          "created_at": "2025-10-12T18:28:38.000Z",
+          "author": {
+            "id": "1977089799350525953",
+            "username": "romano_not2377",
+            "name": "NotFabRomano",
+            "verified": false,
+            "followers": 2,
+            "profile_image": "https://pbs.twimg.com/profile_images/1977091293869166592/XAn8D9mn_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "url": "https://twitter.com/romano_not2377/status/1977441295418138995",
+          "replies": []
+        }
+      ],
+      "error": null
+    }
+  ]
+}

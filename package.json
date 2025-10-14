@@ -17,6 +17,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@supabase/supabase-js": "^2.58.0",
+    "@virtuals-protocol/game-twitter-node": "^0.1.4",
     "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

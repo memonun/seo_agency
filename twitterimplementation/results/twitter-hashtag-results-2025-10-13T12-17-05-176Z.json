@@ -1,0 +1,724 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-13T12:17:05.176Z",
+    "totalResults": 1,
+    "testType": "hashtag",
+    "testMode": "hashtag-autofill",
+    "totalTweets": 15,
+    "discoveryData": {
+      "keyword": "AI",
+      "totalHashtagsFound": 27,
+      "discoveredHashtags": [
+        "#AI",
+        "#Web3",
+        "#Blockchain",
+        "#BELEAF",
+        "#YOMIRGO"
+      ]
+    }
+  },
+  "results": [
+    {
+      "success": true,
+      "totalTweets": 15,
+      "responseTime": 718,
+      "analytics": {
+        "total_tweets": 15,
+        "avg_sentiment": 0.03,
+        "sentiment_distribution": {
+          "positive": 1,
+          "negative": 0,
+          "neutral": 14
+        },
+        "hashtag_performance": {
+          "#AI": {
+            "tweet_count": 7,
+            "avg_likes": 0,
+            "avg_retweets": 49,
+            "avg_sentiment": 0,
+            "engagement_rate": 24
+          },
+          "#Web3": {
+            "tweet_count": 4,
+            "avg_likes": 0,
+            "avg_retweets": 0,
+            "avg_sentiment": 0,
+            "engagement_rate": 0
+          },
+          "#Blockchain": {
+            "tweet_count": 3,
+            "avg_likes": 0,
+            "avg_retweets": 0,
+            "avg_sentiment": 0,
+            "engagement_rate": 0
+          },
+          "#BELEAF": {
+            "tweet_count": 1,
+            "avg_likes": 0,
+            "avg_retweets": 0,
+            "avg_sentiment": 0,
+            "engagement_rate": 0
+          },
+          "#YOMIRGO": {
+            "tweet_count": 1,
+            "avg_likes": 0,
+            "avg_retweets": 0,
+            "avg_sentiment": 0,
+            "engagement_rate": 0
+          }
+        },
+        "top_hashtags": [
+          "#AI",
+          "#Blockchain",
+          "#Web3",
+          "#AIart",
+          "#Crypto",
+          "#VibeCoding",
+          "#aizWallenstein",
+          "#danmachi",
+          "#rule34",
+          "#hentai",
+          "#nsfw",
+          "#AIArtCommuity",
+          "#AIイラスト",
+          "#GM",
+          "#web3"
+        ],
+        "engagement_stats": {
+          "avg_likes": 0,
+          "avg_retweets": 29,
+          "total_engagement": 441
+        },
+        "top_influencers": [
+          {
+            "username": "Konok758",
+            "name": "Btc Hmd758",
+            "followers": 5643,
+            "verified": false
+          },
+          {
+            "username": "BeleafAi",
+            "name": "BELEAF | Smart RWA Ecosystem",
+            "followers": 4249,
+            "verified": false
+          },
+          {
+            "username": "zitennsya12",
+            "name": "かず",
+            "followers": 2910,
+            "verified": false
+          },
+          {
+            "username": "ethandozemanGR",
+            "name": "Ethan Dozeman",
+            "followers": 1727,
+            "verified": false
+          },
+          {
+            "username": "r_felice",
+            "name": "Ron Felice",
+            "followers": 711,
+            "verified": false
+          }
+        ]
+      },
+      "tweets": [
+        {
+          "id": "1977710032465633530",
+          "text": "$ETAN #Etarn #Revolutionizing #Blockchain https://t.co/CcLfpVidRP",
+          "created_at": "2025-10-13T12:16:30.000Z",
+          "author": {
+            "id": "925322033113608192",
+            "username": "Konok758",
+            "name": "Btc Hmd758",
+            "verified": false,
+            "followers": 5643,
+            "profile_image": "https://pbs.twimg.com/profile_images/1048255702769184768/uJ1-RB5s_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#Etarn",
+            "#Revolutionizing",
+            "#Blockchain"
+          ],
+          "matchingHashtags": [
+            "#Blockchain"
+          ],
+          "url": "https://twitter.com/Konok758/status/1977710032465633530",
+          "replies": []
+        },
+        {
+          "id": "1977710091265614324",
+          "text": "Official Strategic Partnership Announcement\n\nBELEAF 🤝 YOMIRGO — where RWA innovation meets AI intelligence.\nTogether, we’re building a smarter, more sustainable blockchain future. 🌿\n\n#BELEAF #YOMIRGO #RWA #AI #Blockchain #Web3 #Innovation #Partnership https://t.co/Knoev00SGX",
+          "created_at": "2025-10-13T12:16:44.000Z",
+          "author": {
+            "id": "1814202819559538688",
+            "username": "BeleafAi",
+            "name": "BELEAF | Smart RWA Ecosystem",
+            "verified": false,
+            "followers": 4249,
+            "profile_image": "https://pbs.twimg.com/profile_images/1858061846064025600/BEc_EmTp_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#BELEAF",
+            "#YOMIRGO",
+            "#RWA",
+            "#AI",
+            "#Blockchain",
+            "#Web3",
+            "#Innovation",
+            "#Partnership"
+          ],
+          "matchingHashtags": [
+            "#AI",
+            "#Web3",
+            "#Blockchain",
+            "#BELEAF",
+            "#YOMIRGO"
+          ],
+          "url": "https://twitter.com/BeleafAi/status/1977710091265614324",
+          "replies": []
+        },
+        {
+          "id": "1977710034990538792",
+          "text": "RT @hanakohana40355: オオルリシジミの幼虫の食草は、クララらしい！？\n\n・・・先生、怪しいです！！\n\n#udemy #AI https://t.co/YgDCpg5Ok5",
+          "created_at": "2025-10-13T12:16:31.000Z",
+          "author": {
+            "id": "1181782749742432256",
+            "username": "zitennsya12",
+            "name": "かず",
+            "verified": false,
+            "followers": 2910,
+            "profile_image": "https://pbs.twimg.com/profile_images/1609712878113943553/7l3cM1Fk_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#udemy",
+            "#AI"
+          ],
+          "matchingHashtags": [
+            "#AI"
+          ],
+          "url": "https://twitter.com/zitennsya12/status/1977710034990538792",
+          "replies": []
+        },
+        {
+          "id": "1977710116062232840",
+          "text": "RT @Rezor_LayerZero: 🚨 Big things need big, solid infrastructure\n\n🚀 We are implementing the best and most professional process\n\n🛡️ We are g…",
+          "created_at": "2025-10-13T12:16:50.000Z",
+          "author": {
+            "id": "241988598",
+            "username": "ethandozemanGR",
+            "name": "Ethan Dozeman",
+            "verified": false,
+            "followers": 1727,
+            "profile_image": "https://pbs.twimg.com/profile_images/1931494146881073152/YAuvcsuq_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 8,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "positive",
+            "score": 0.43478260869565216,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "matchingHashtags": [],
+          "url": "https://twitter.com/ethandozemanGR/status/1977710116062232840",
+          "replies": []
+        },
+        {
+          "id": "1977710066955686139",
+          "text": "#DevSecOps #AI https://t.co/B4YNXpLDl0 https://t.co/8awNJwaaWW",
+          "created_at": "2025-10-13T12:16:38.000Z",
+          "author": {
+            "id": "62493927",
+            "username": "r_felice",
+            "name": "Ron Felice",
+            "verified": false,
+            "followers": 711,
+            "profile_image": "https://pbs.twimg.com/profile_images/454100368129933312/-Eiykj9C_normal.jpeg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#DevSecOps",
+            "#AI"
+          ],
+          "matchingHashtags": [
+            "#AI"
+          ],
+          "url": "https://twitter.com/r_felice/status/1977710066955686139",
+          "replies": []
+        },
+        {
+          "id": "1977710071002927222",
+          "text": "RT @Blizz997: @narly The wait is over! First @LAAIAGENT Agent demo drops!\n\nEarn with $LAAI. Beta registration opens tomorrow. Be ready\n\n👉 P…",
+          "created_at": "2025-10-13T12:16:39.000Z",
+          "author": {
+            "id": "1580479440982888448",
+            "username": "__Noobie___",
+            "name": "Ňøøbïě",
+            "verified": false,
+            "followers": 442,
+            "profile_image": "https://pbs.twimg.com/profile_images/1822219559555719168/23PDo1Cf_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 6,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "matchingHashtags": [],
+          "url": "https://twitter.com/__Noobie___/status/1977710071002927222",
+          "replies": []
+        },
+        {
+          "id": "1977710106662801667",
+          "text": "Lest connect if you follow @idOS_network #GM #web3",
+          "created_at": "2025-10-13T12:16:48.000Z",
+          "author": {
+            "id": "1772682493164163072",
+            "username": "JaminWay7",
+            "name": "stargazing crypto (❖,❖)",
+            "verified": false,
+            "followers": 315,
+            "profile_image": "https://pbs.twimg.com/profile_images/1958560298283008000/EHZ6jPOY_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 1
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#GM",
+            "#web3"
+          ],
+          "matchingHashtags": [
+            "#Web3"
+          ],
+          "url": "https://twitter.com/JaminWay7/status/1977710106662801667",
+          "replies": []
+        },
+        {
+          "id": "1977710089554329909",
+          "text": "RT @DamiDefi: #AI coins are massively oversold\n\nAre you buying or are you done with them? https://t.co/dYoSc0dz9h",
+          "created_at": "2025-10-13T12:16:44.000Z",
+          "author": {
+            "id": "1930378397701578752",
+            "username": "vissionnel",
+            "name": "NELLUMINATED. SUDOKUKNIGHT🟥",
+            "verified": false,
+            "followers": 143,
+            "profile_image": "https://pbs.twimg.com/profile_images/1976950576672874496/HSrRZISV_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 14,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#AI"
+          ],
+          "matchingHashtags": [
+            "#AI"
+          ],
+          "url": "https://twitter.com/vissionnel/status/1977710089554329909",
+          "replies": []
+        },
+        {
+          "id": "1977710100794999005",
+          "text": "RT @PEdRo_LM1: @AITECHio keeps raising the bar!\n\n “Where Data Meets Design” — Excel to Chart Gen AI by AIREV turns plain data into stunning…",
+          "created_at": "2025-10-13T12:16:46.000Z",
+          "author": {
+            "id": "1792578367222423553",
+            "username": "Christieanah24",
+            "name": "Ade",
+            "verified": false,
+            "followers": 103,
+            "profile_image": "https://pbs.twimg.com/profile_images/1849763737768529920/nJeuvvCI_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 73,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "matchingHashtags": [],
+          "url": "https://twitter.com/Christieanah24/status/1977710100794999005",
+          "replies": []
+        },
+        {
+          "id": "1977710107103236483",
+          "text": "RT @youlikethis_1: Wataa ❤ \n\n#aizWallenstein #danmachi #rule34 #hentai #nsfw #AIArtCommuity #AIart #AI #AIイラスト #AIart https://t.co/PnUEAdLn…",
+          "created_at": "2025-10-13T12:16:48.000Z",
+          "author": {
+            "id": "1678915790727159813",
+            "username": "mini_chisato",
+            "name": "Mini Chisato",
+            "verified": false,
+            "followers": 61,
+            "profile_image": "https://pbs.twimg.com/profile_images/1678915995803549696/uXT0Intc_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 330,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#aizWallenstein",
+            "#danmachi",
+            "#rule34",
+            "#hentai",
+            "#nsfw",
+            "#AIArtCommuity",
+            "#AIart",
+            "#AI",
+            "#AIイラスト",
+            "#AIart"
+          ],
+          "matchingHashtags": [
+            "#AI"
+          ],
+          "url": "https://twitter.com/mini_chisato/status/1977710107103236483",
+          "replies": []
+        },
+        {
+          "id": "1977710121280037125",
+          "text": "10 Practical Moves for #VibeCoding Responsibly\n\nFor non-developers learning to build with #AI the right way.\n\nHere’s Move 2:",
+          "created_at": "2025-10-13T12:16:51.000Z",
+          "author": {
+            "id": "1898307806618664961",
+            "username": "vibingwithai",
+            "name": "Vibe Coding",
+            "verified": false,
+            "followers": 38,
+            "profile_image": "https://pbs.twimg.com/profile_images/1905711581323014144/aO2q7LMY_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 1,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#VibeCoding",
+            "#AI"
+          ],
+          "matchingHashtags": [
+            "#AI"
+          ],
+          "url": "https://twitter.com/vibingwithai/status/1977710121280037125",
+          "replies": []
+        },
+        {
+          "id": "1977710046621426130",
+          "text": "🤖 Where Artificial Intelligence Meets Decentralized Finance\n\n💠 Nexium unites AI innovation with DeFi freedom — enabling smarter, faster, and autonomous blockchain operations.\n\n🔗 Join the future: https://t.co/DFeeye45d9\n\n#Nexium #AI #Crypto #DeFi #Blockchain #Web3 https://t.co/vS7kwloTw5",
+          "created_at": "2025-10-13T12:16:33.000Z",
+          "author": {
+            "id": "1974322566396518400",
+            "username": "NexiumI",
+            "name": "Nexium",
+            "verified": false,
+            "followers": 17,
+            "profile_image": "https://pbs.twimg.com/profile_images/1977338160427479042/qUqcrzXS_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#Nexium",
+            "#AI",
+            "#Crypto",
+            "#DeFi",
+            "#Blockchain",
+            "#Web3"
+          ],
+          "matchingHashtags": [
+            "#AI",
+            "#Web3",
+            "#Blockchain"
+          ],
+          "url": "https://twitter.com/NexiumI/status/1977710046621426130",
+          "replies": []
+        },
+        {
+          "id": "1977710052757688322",
+          "text": "Centralization vs. Fair Access: How Excessive Listing Fees by Major Centralized Exchanges Restrict Innovation, Create Unequal Opportunities, and Consolidate Power\n#Bitcoin\n#BTC\n#Crypto\n#DigitalAssets\n#Web3\n#CryptoTrading\n#HODL\n#PhoenixOne\n#PHB\nhttps://t.co/a3IPQ2uyzq",
+          "created_at": "2025-10-13T12:16:35.000Z",
+          "author": {
+            "id": "1578150320416374787",
+            "username": "amaljokhanl",
+            "name": "Amal Joko",
+            "verified": false,
+            "followers": 10,
+            "profile_image": "https://pbs.twimg.com/profile_images/1578150432358236160/4bdpuvCv_normal.png"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 5
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#Bitcoin",
+            "#BTC",
+            "#Crypto",
+            "#DigitalAssets",
+            "#Web3",
+            "#CryptoTrading",
+            "#HODL",
+            "#PhoenixOne",
+            "#PHB"
+          ],
+          "matchingHashtags": [
+            "#Web3"
+          ],
+          "url": "https://twitter.com/amaljokhanl/status/1977710052757688322",
+          "replies": []
+        },
+        {
+          "id": "1977710104691482942",
+          "text": "RT @okeysip19: 🔥 Builders wanted! Season 2 of QuackAI Builder Program is live!\n💰 Reward Pool: 3,300 USDT + $Q\n📅 Oct 1 – Dec 31, 2025\nLevel…",
+          "created_at": "2025-10-13T12:16:47.000Z",
+          "author": {
+            "id": "1958022890110218244",
+            "username": "sipyayaya10",
+            "name": "deni",
+            "verified": false,
+            "followers": 5,
+            "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 4,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "matchingHashtags": [],
+          "url": "https://twitter.com/sipyayaya10/status/1977710104691482942",
+          "replies": []
+        },
+        {
+          "id": "1977710036055965777",
+          "text": "RT @okeysip19: 🔥 Builders wanted! Season 2 of QuackAI Builder Program is live!\n💰 Reward Pool: 3,300 USDT + $Q\n📅 Oct 1 – Dec 31, 2025\nLevel…",
+          "created_at": "2025-10-13T12:16:31.000Z",
+          "author": {
+            "id": "1958021459789639682",
+            "username": "rio007002",
+            "name": "rio",
+            "verified": false,
+            "followers": 1,
+            "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 4,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [],
+          "matchingHashtags": [],
+          "url": "https://twitter.com/rio007002/status/1977710036055965777",
+          "replies": []
+        }
+      ],
+      "timestamp": "2025-10-13T12:17:05.171Z",
+      "error": null,
+      "searchHashtags": [
+        "#AI",
+        "#Web3",
+        "#Blockchain",
+        "#BELEAF",
+        "#YOMIRGO"
+      ],
+      "includeMentions": false,
+      "limit": 15,
+      "discoveryData": {
+        "keyword": "AI",
+        "totalTweetsAnalyzed": 100,
+        "totalHashtagsFound": 27,
+        "discoveryTime": 4697,
+        "detailedMetrics": [
+          {
+            "hashtag": "#AI",
+            "frequency": 4,
+            "avgEngagement": 0,
+            "avgReach": 1078,
+            "engagementScore": 12,
+            "topTweet": {
+              "id": "1977710031802905076",
+              "engagement": 1,
+              "reach": 10
+            }
+          },
+          {
+            "hashtag": "#Web3",
+            "frequency": 3,
+            "avgEngagement": 0,
+            "avgReach": 1425,
+            "engagementScore": 9,
+            "topTweet": {
+              "id": "1977710031802905076",
+              "engagement": 1,
+              "reach": 10
+            }
+          },
+          {
+            "hashtag": "#Blockchain",
+            "frequency": 2,
+            "avgEngagement": 0,
+            "avgReach": 2133,
+            "engagementScore": 6,
+            "topTweet": {
+              "id": "1977710091265614324",
+              "engagement": 0,
+              "reach": 4249
+            }
+          },
+          {
+            "hashtag": "#BELEAF",
+            "frequency": 1,
+            "avgEngagement": 0,
+            "avgReach": 4249,
+            "engagementScore": 4,
+            "topTweet": {
+              "id": "1977710091265614324",
+              "engagement": 0,
+              "reach": 4249
+            }
+          },
+          {
+            "hashtag": "#YOMIRGO",
+            "frequency": 1,
+            "avgEngagement": 0,
+            "avgReach": 4249,
+            "engagementScore": 4,
+            "topTweet": {
+              "id": "1977710091265614324",
+              "engagement": 0,
+              "reach": 4249
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

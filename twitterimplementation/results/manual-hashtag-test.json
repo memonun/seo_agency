@@ -1,0 +1,699 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-13T12:23:09.918Z",
+    "totalResults": 1,
+    "testType": "hashtag",
+    "testMode": "hashtag-manual",
+    "totalTweets": 15
+  },
+  "results": [
+    {
+      "success": true,
+      "totalTweets": 15,
+      "responseTime": 4343,
+      "analytics": {
+        "total_tweets": 15,
+        "avg_sentiment": 0,
+        "sentiment_distribution": {
+          "positive": 1,
+          "negative": 1,
+          "neutral": 13
+        },
+        "hashtag_performance": {
+          "#javascript": {
+            "tweet_count": 15,
+            "avg_likes": 0,
+            "avg_retweets": 0,
+            "avg_sentiment": 0,
+            "engagement_rate": 0
+          }
+        },
+        "top_hashtags": [
+          "#JavaScript",
+          "#javascript",
+          "#Python",
+          "#programming",
+          "#frontend",
+          "#AI",
+          "#DataScience",
+          "#Coding",
+          "#Linux",
+          "#reactjs",
+          "#webdev",
+          "#dormosheio",
+          "#frontenddev",
+          "#MachineLearning",
+          "#POTD"
+        ],
+        "engagement_stats": {
+          "avg_likes": 0,
+          "avg_retweets": 0,
+          "total_engagement": 10
+        },
+        "top_influencers": [
+          {
+            "username": "ReactJSTrends",
+            "name": "React Trends",
+            "followers": 5220,
+            "verified": false
+          },
+          {
+            "username": "echojobs__io",
+            "name": "EchoJobs | Best Software Engineer Jobs",
+            "followers": 2307,
+            "verified": false
+          },
+          {
+            "username": "TSTrendss",
+            "name": "TypescriptTrends",
+            "followers": 1314,
+            "verified": false
+          },
+          {
+            "username": "dreamwisedomain",
+            "name": "Wisdom_Udo",
+            "followers": 697,
+            "verified": false
+          },
+          {
+            "username": "Pratikshak19332",
+            "name": "Pratiksha kumbhar",
+            "followers": 541,
+            "verified": false
+          }
+        ]
+      },
+      "tweets": [
+        {
+          "id": "1977710912610914718",
+          "text": "Stop Using useEffect for Data Fetching #reactjs #javascript #frontend #webdev #dormosheio #react #frontenddev https://t.co/Dpk2iItyoq",
+          "created_at": "2025-10-13T12:20:00.000Z",
+          "author": {
+            "id": "1289985041372676097",
+            "username": "ReactJSTrends",
+            "name": "React Trends",
+            "verified": false,
+            "followers": 5220,
+            "profile_image": "https://pbs.twimg.com/profile_images/1289995813129682950/A1bWmeaE_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 2
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#reactjs",
+            "#javascript",
+            "#frontend",
+            "#webdev",
+            "#dormosheio",
+            "#react",
+            "#frontenddev"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/ReactJSTrends/status/1977710912610914718",
+          "replies": []
+        },
+        {
+          "id": "1977705886031241419",
+          "text": "🦄 Plancraft is hiring AI Automation Engineer  \n\n🛖 #remote #wfh \n💪 #AI #javascript #python #api #sql \n\n#tech #softwareengineer #jobs \nhttps://t.co/aacuGh4qZ8",
+          "created_at": "2025-10-13T12:00:01.000Z",
+          "author": {
+            "id": "1195818915030540290",
+            "username": "echojobs__io",
+            "name": "EchoJobs | Best Software Engineer Jobs",
+            "verified": false,
+            "followers": 2307,
+            "profile_image": "https://pbs.twimg.com/profile_images/1697356565454503936/P2Y6-Qw4_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 17
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#remote",
+            "#wfh",
+            "#AI",
+            "#javascript",
+            "#python",
+            "#api",
+            "#sql",
+            "#tech",
+            "#softwareengineer",
+            "#jobs"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/echojobs__io/status/1977705886031241419",
+          "replies": []
+        },
+        {
+          "id": "1977708899424665904",
+          "text": "Building a Modern Image Cropper in React with CropperJS 2.x #typescript #frontend #webdev #dormosheio #javascript #reactjs #tutorial #frontenddev https://t.co/Vo4loMPpqo",
+          "created_at": "2025-10-13T12:12:00.000Z",
+          "author": {
+            "id": "1295722196640452620",
+            "username": "TSTrendss",
+            "name": "TypescriptTrends",
+            "verified": false,
+            "followers": 1314,
+            "profile_image": "https://pbs.twimg.com/profile_images/1295722287019237385/AdPielQL_normal.png"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 5
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#typescript",
+            "#frontend",
+            "#webdev",
+            "#dormosheio",
+            "#javascript",
+            "#reactjs",
+            "#tutorial",
+            "#frontenddev"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/TSTrendss/status/1977708899424665904",
+          "replies": []
+        },
+        {
+          "id": "1977701238562082969",
+          "text": "Day 48 of My 60-Day JavaScript Technical Writing Challenge.\n\nQuote of the day: \"Time and chances happen to all\"\n\nTopic: Understanding Async/Await in JavaScript: A Complete Guide to Asynchronous Programming 👇 \n\n#JavaScript  #TechnicalWriting https://t.co/5ZcPQ2UIvl",
+          "created_at": "2025-10-13T11:41:33.000Z",
+          "author": {
+            "id": "929186235641401344",
+            "username": "dreamwisedomain",
+            "name": "Wisdom_Udo",
+            "verified": false,
+            "followers": 697,
+            "profile_image": "https://pbs.twimg.com/profile_images/1899898617806061568/8MZKDL5d_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 3,
+            "quotes": 0,
+            "views": 11
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#JavaScript",
+            "#TechnicalWriting"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/dreamwisedomain/status/1977701238562082969",
+          "replies": []
+        },
+        {
+          "id": "1977705155710652576",
+          "text": "🎉 Day 397 of @geeksforgeeks #POTD!\nMaximum sum of non-adjacent nodes in a binary tree.\nApproach: Use recursion to calculate two values for each node — include node (sum with grandchildren) and exclude node (sum with children). Return the max of the two at root.\n #JavaScript https://t.co/W8I1m7qYrJ",
+          "created_at": "2025-10-13T11:57:07.000Z",
+          "author": {
+            "id": "1783541638293237760",
+            "username": "Pratikshak19332",
+            "name": "Pratiksha kumbhar",
+            "verified": false,
+            "followers": 541,
+            "profile_image": "https://pbs.twimg.com/profile_images/1937057075315490816/KEK0KAog_normal.jpg"
+          },
+          "metrics": {
+            "likes": 2,
+            "retweets": 0,
+            "replies": 1,
+            "quotes": 0,
+            "views": 14
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#POTD",
+            "#JavaScript"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/Pratikshak19332/status/1977705155710652576",
+          "replies": []
+        },
+        {
+          "id": "1977704300915634491",
+          "text": "💻 Day 372 @LeetCode #POTD ✅\n\nProblem: Remove consecutive anagrams.\nApproach: Compare each word with the previous; check anagram via frequency map or sorted strings; keep only non-anagram consecutive words.\n\n#LeetCode #JavaScript https://t.co/ONdrjL5Y9e",
+          "created_at": "2025-10-13T11:53:43.000Z",
+          "author": {
+            "id": "1783541638293237760",
+            "username": "Pratikshak19332",
+            "name": "Pratiksha kumbhar",
+            "verified": false,
+            "followers": 541,
+            "profile_image": "https://pbs.twimg.com/profile_images/1937057075315490816/KEK0KAog_normal.jpg"
+          },
+          "metrics": {
+            "likes": 1,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 16
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#POTD",
+            "#LeetCode",
+            "#JavaScript"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/Pratikshak19332/status/1977704300915634491",
+          "replies": []
+        },
+        {
+          "id": "1977704787194872153",
+          "text": "Struggling with slow, feature-poor browser viewers for large documents? Dynamsoft #DocumentViewer provides a high-performance, customizable experience with rich #annotation tools right inside your web app.\nLearn more: https://t.co/ZzXoUZt4LG\n#WebApp #JavaScript #DeveloperTools https://t.co/Nznrv9ygmf",
+          "created_at": "2025-10-13T11:55:39.000Z",
+          "author": {
+            "id": "322537773",
+            "username": "dynamsoft",
+            "name": "Dynamsoft",
+            "verified": false,
+            "followers": 379,
+            "profile_image": "https://pbs.twimg.com/profile_images/662149666260123649/rbzKfupJ_normal.png"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 3
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#DocumentViewer",
+            "#annotation",
+            "#WebApp",
+            "#JavaScript",
+            "#DeveloperTools"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/dynamsoft/status/1977704787194872153",
+          "replies": []
+        },
+        {
+          "id": "1977699435657171334",
+          "text": "Have Your account been #Hacked Dm now for help\n#ArtificialIntelligence #DataScience #DataScientists #innovation #deeplearning #CyberSecurity #nocode #Python #Coding  #javascript #rstats #100DaysOfCode #programming #Linux  #IoT #IIoT #Trending  #Python #Bitcoin    #Blockchain https://t.co/Jwhu7yEdxs",
+          "created_at": "2025-10-13T11:34:23.000Z",
+          "author": {
+            "id": "1490426757069127681",
+            "username": "dwighthack01",
+            "name": "Dwight hack",
+            "verified": false,
+            "followers": 91,
+            "profile_image": "https://pbs.twimg.com/profile_images/1976559782879166464/vHjcjrsX_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 1
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#Hacked",
+            "#ArtificialIntelligence",
+            "#DataScience",
+            "#DataScientists",
+            "#innovation",
+            "#deeplearning",
+            "#CyberSecurity",
+            "#nocode",
+            "#Python",
+            "#Coding",
+            "#javascript",
+            "#rstats",
+            "#100DaysOfCode",
+            "#programming",
+            "#Linux",
+            "#IoT",
+            "#IIoT",
+            "#Trending",
+            "#Python",
+            "#Bitcoin",
+            "#Blockchain"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/dwighthack01/status/1977699435657171334",
+          "replies": []
+        },
+        {
+          "id": "1977698264641106166",
+          "text": "If you’re having any password recovery problems Dm your favorite hacker now!\n\n#ArtificialIntelligence #AI #ML #DataScience #DataScientists #CodeNewbies #Tech #deeplearning #CyberSecurity #Python #Coding  #javascript #rstats #100DaysOfCode #programming #Linux #IoT #IIoT #BigData https://t.co/uv0Lol8Bnu",
+          "created_at": "2025-10-13T11:29:44.000Z",
+          "author": {
+            "id": "1490426757069127681",
+            "username": "dwighthack01",
+            "name": "Dwight hack",
+            "verified": false,
+            "followers": 91,
+            "profile_image": "https://pbs.twimg.com/profile_images/1976559782879166464/vHjcjrsX_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#ArtificialIntelligence",
+            "#AI",
+            "#ML",
+            "#DataScience",
+            "#DataScientists",
+            "#CodeNewbies",
+            "#Tech",
+            "#deeplearning",
+            "#CyberSecurity",
+            "#Python",
+            "#Coding",
+            "#javascript",
+            "#rstats",
+            "#100DaysOfCode",
+            "#programming",
+            "#Linux",
+            "#IoT",
+            "#IIoT",
+            "#BigData"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/dwighthack01/status/1977698264641106166",
+          "replies": []
+        },
+        {
+          "id": "1977698191404339679",
+          "text": "For Hacking, Recovery, Tracking, missing phone or finding someone’s location Dm now!\n\n#MachineLearning #Jupyter #SQL #DataScience  #Cybersecurity #BigData #Analytics #Python  #TensorFlow #JavaScript #MISPL #DataScientist #Linux #Programming #Coding #100DaysofCode #Data #Flutter https://t.co/OdwcGK2nWM",
+          "created_at": "2025-10-13T11:29:27.000Z",
+          "author": {
+            "id": "1490426757069127681",
+            "username": "dwighthack01",
+            "name": "Dwight hack",
+            "verified": false,
+            "followers": 91,
+            "profile_image": "https://pbs.twimg.com/profile_images/1976559782879166464/vHjcjrsX_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 1
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#MachineLearning",
+            "#Jupyter",
+            "#SQL",
+            "#DataScience",
+            "#Cybersecurity",
+            "#BigData",
+            "#Analytics",
+            "#Python",
+            "#TensorFlow",
+            "#JavaScript",
+            "#MISPL",
+            "#DataScientist",
+            "#Linux",
+            "#Programming",
+            "#Coding",
+            "#100DaysofCode",
+            "#Data",
+            "#Flutter"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/dwighthack01/status/1977698191404339679",
+          "replies": []
+        },
+        {
+          "id": "1977709629686587725",
+          "text": "And with this lab i wrap up #JavaScript accessibility on #freecodecamp \nThis is a theme switcher built with aria states https://t.co/d5D62uE8bM",
+          "created_at": "2025-10-13T12:14:54.000Z",
+          "author": {
+            "id": "1705398183474393088",
+            "username": "Ujahgrace17",
+            "name": "Ujah Grace",
+            "verified": false,
+            "followers": 66,
+            "profile_image": "https://pbs.twimg.com/profile_images/1930908853731827712/ZLF1Br-u_normal.jpg"
+          },
+          "metrics": {
+            "likes": 2,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 10
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#JavaScript",
+            "#freecodecamp"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/Ujahgrace17/status/1977709629686587725",
+          "replies": []
+        },
+        {
+          "id": "1977710551204499516",
+          "text": "Worst questions in the world \n\n\"In which language should I do DSA?\" \n\nChoose a language and learn its basics \n\nThen master DSA \nPopular Language options for DSA\nC\nC++\nPYTHON\nJAVA\nJAVASCRIPT \n what is your opinion 👇🏻\n#CONNECT #java #JAVASCRIPT #GROW",
+          "created_at": "2025-10-13T12:18:34.000Z",
+          "author": {
+            "id": "1892161335007592448",
+            "username": "HarshitSin92197",
+            "name": "Harshit Singh",
+            "verified": false,
+            "followers": 40,
+            "profile_image": "https://pbs.twimg.com/profile_images/1974234517616394240/Kq_VZnqs_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 3
+          },
+          "sentiment": {
+            "label": "negative",
+            "score": -0.24390243902439024,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#CONNECT",
+            "#java",
+            "#JAVASCRIPT",
+            "#GROW"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/HarshitSin92197/status/1977710551204499516",
+          "replies": []
+        },
+        {
+          "id": "1977711333916168697",
+          "text": "Want a High-Paying Job? Try These 4 Best Free Coding Courses for (HTML, CSS, JavaScript)\nLearn from here:\nhttps://t.co/TnKVJpI9b9\n-\n-\n-\n#coding #programming #webdevelopment #webdeveloper #javascript #html #css #learncoding #frontend #techjobs",
+          "created_at": "2025-10-13T12:21:40.000Z",
+          "author": {
+            "id": "1543127482324467712",
+            "username": "RomanDa52216057",
+            "name": "Roman Davis",
+            "verified": false,
+            "followers": 3,
+            "profile_image": "https://pbs.twimg.com/profile_images/1543127572019646464/Gw37P-EA_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 1
+          },
+          "sentiment": {
+            "label": "positive",
+            "score": 0.3125,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#coding",
+            "#programming",
+            "#webdevelopment",
+            "#webdeveloper",
+            "#javascript",
+            "#html",
+            "#css",
+            "#learncoding",
+            "#frontend",
+            "#techjobs"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/RomanDa52216057/status/1977711333916168697",
+          "replies": []
+        },
+        {
+          "id": "1977705482698551305",
+          "text": "🚀 Just built “Talk to AI” — an AI-powered chat application using Angular, TypeScript, and the GPT API! 💬\n\n✨ Features:\n\nReal-time user–AI conversation 🤖\n\nSmooth, responsive UI ⚡\n\n#AI #Angular #GPT #WebDevelopment #MachineLearning #JavaScript https://t.co/tYOECG1Kw3",
+          "created_at": "2025-10-13T11:58:25.000Z",
+          "author": {
+            "id": "1977429363525296128",
+            "username": "vrajprajapati_6",
+            "name": "Vraj Prajapati",
+            "verified": false,
+            "followers": 3,
+            "profile_image": "https://pbs.twimg.com/profile_images/1977429902874812417/GV0pDCCJ_normal.jpg"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#AI",
+            "#Angular",
+            "#GPT",
+            "#WebDevelopment",
+            "#MachineLearning",
+            "#JavaScript"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/vrajprajapati_6/status/1977705482698551305",
+          "replies": []
+        },
+        {
+          "id": "1977699858178834750",
+          "text": "⚛️ Just built a full-stack web app with the MERN stack!\n\n🔐 JWT Auth + bcrypt for secure logins\n⚙️ RESTful APIs with Node.js &amp; Express\n🗂️ MongoDB for data storage\nSimple but taught me a lot about managing state and user sessions 🚀\n#MERN #WebDev #JavaScript #ReactJS #NodeJS",
+          "created_at": "2025-10-13T11:36:04.000Z",
+          "author": {
+            "id": "1910960560797343748",
+            "username": "aryanvashisht_",
+            "name": "Aryan Vashisht 🧑🏻‍💻",
+            "verified": false,
+            "followers": 0,
+            "profile_image": "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+          },
+          "metrics": {
+            "likes": 0,
+            "retweets": 0,
+            "replies": 0,
+            "quotes": 0,
+            "views": 0
+          },
+          "sentiment": {
+            "label": "neutral",
+            "score": 0,
+            "confidence": 0.3
+          },
+          "hashtags": [
+            "#MERN",
+            "#WebDev",
+            "#JavaScript",
+            "#ReactJS",
+            "#NodeJS"
+          ],
+          "matchingHashtags": [
+            "#javascript"
+          ],
+          "url": "https://twitter.com/aryanvashisht_/status/1977699858178834750",
+          "replies": []
+        }
+      ],
+      "timestamp": "2025-10-13T12:23:09.915Z",
+      "error": null,
+      "searchHashtags": [
+        "#javascript"
+      ],
+      "includeMentions": false,
+      "limit": 15
+    }
+  ]
+}

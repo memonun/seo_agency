@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-12T18:37:35.940Z",
+    "totalResults": 1,
+    "testType": "custom-keyword"
+  },
+  "results": [
+    {
+      "keyword": "arda güler",
+      "success": false,
+      "error": "Request failed with code 400 - Invalid Request: One or more parameters to your request was invalid. (see https://api.twitter.com/2/problems/invalid-request)"
+    }
+  ]
+}

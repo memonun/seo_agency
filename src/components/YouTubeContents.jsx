@@ -11,6 +11,116 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
   const [expandedCards, setExpandedCards] = useState(new Set())
   const [analysisData, setAnalysisData] = useState({}) // Cache for analysis results
 
+  // Helper function to parse markdown-style bold text
+  const parseTextWithFormatting = (text) => {
+    if (!text) return text
+    
+    // Split by bold markers (**text**)
+    const parts = text.split(/(\*\*[^*]+\*\*)/g)
+    
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        // Remove the ** markers and wrap in strong tag
+        const boldText = part.slice(2, -2)
+        return <strong key={i}>{boldText}</strong>
+      }
+      return part
+    })
+  }
+
+  // Function to render formatted summary with bullet points
+  const renderFormattedSummary = (summaryText) => {
+    if (!summaryText) return <p>No summary available</p>
+    
+    // Check for error messages
+    if (summaryText.startsWith('⚠️')) {
+      return <p className="error-text">{summaryText}</p>
+    }
+
+    // Split the summary into sections
+    const sections = summaryText.split(/\n\n/)
+    const elements = []
+    
+    sections.forEach((section, index) => {
+      if (section.startsWith('Summary:')) {
+        // Render summary paragraph
+        const summaryContent = section.replace('Summary:', '').trim()
+        elements.push(
+          <div key={`summary-${index}`} className="summary-section">
+            <h5>Summary:</h5>
+            <p>{parseTextWithFormatting(summaryContent)}</p>
+          </div>
+        )
+      } else if (section.startsWith('Key Takeaways:')) {
+        // Parse and render bullet points with header
+        const lines = section.split('\n')
+        const bulletPoints = []
+        
+        lines.forEach((line) => {
+          if (line.startsWith('* ')) {
+            bulletPoints.push(line.substring(2).trim())
+          }
+        })
+        
+        if (bulletPoints.length > 0) {
+          elements.push(
+            <div key={`takeaways-${index}`} className="takeaways-section">
+              <h5>Key Takeaways:</h5>
+              <ul className="takeaways-list">
+                {bulletPoints.map((point, pointIndex) => (
+                  <li key={pointIndex}>{parseTextWithFormatting(point)}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      } else if (section.trim()) {
+        // Check if this section contains bullet points without a header
+        const lines = section.split('\n')
+        const hasBulletPoints = lines.some(line => line.trim().startsWith('* '))
+        
+        if (hasBulletPoints) {
+          // This section contains bullet points
+          const bulletPoints = []
+          const nonBulletText = []
+          
+          lines.forEach((line) => {
+            if (line.trim().startsWith('* ')) {
+              bulletPoints.push(line.trim().substring(2).trim())
+            } else if (line.trim()) {
+              nonBulletText.push(line.trim())
+            }
+          })
+          
+          // Add any non-bullet text first
+          if (nonBulletText.length > 0) {
+            elements.push(
+              <p key={`text-${index}`}>{parseTextWithFormatting(nonBulletText.join(' '))}</p>
+            )
+          }
+          
+          // Add bullet points
+          if (bulletPoints.length > 0) {
+            elements.push(
+              <ul key={`bullets-${index}`} className="takeaways-list">
+                {bulletPoints.map((point, pointIndex) => (
+                  <li key={pointIndex}>{parseTextWithFormatting(point)}</li>
+                ))}
+              </ul>
+            )
+          }
+        } else {
+          // Regular paragraph without bullet points
+          elements.push(
+            <p key={`section-${index}`}>{parseTextWithFormatting(section)}</p>
+          )
+        }
+      }
+    })
+    
+    return <div className="formatted-summary">{elements}</div>
+  }
+
   const fetchYoutubeContent = async () => {
     try {
       setLoading(true)
@@ -289,9 +399,7 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
                         <>
                           <div className="analytics-section">
                             <h4>AI Summary</h4>
-                            <p className={analysisData[index].error ? 'error-text' : ''}>
-                              {analysisData[index].summary}
-                            </p>
+                            {renderFormattedSummary(analysisData[index].summary)}
                           </div>
 
                           {video.channelThumbnail && !analysisData[index].error && (

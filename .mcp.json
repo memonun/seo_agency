@@ -1,32 +1,36 @@
 {
   "mcpServers": {
-     "n8n-mcp": {
-        "command": "npx",
-        "args": ["n8n-mcp"],
-        "env": {
-          "MCP_MODE": "stdio",
-          "LOG_LEVEL": "error",
-          "DISABLE_CONSOLE_OUTPUT": "true",
-          "N8N_API_URL": "https://kuzeyunlu.app.n8n.cloud",
-          "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MDMwYTY2OC0yNWU4LTQxMTMtOTZiYy1jOTA4Yzg3OTIxN2MiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzU4ODIzNjYwLCJleHAiOjE3NjY1MjM2MDB9.NZ-6OxEctPlR3vOs-mE4gCXiacXBUvkTOAbhItXRM3k"
-    }
+    "n8n-mcp": {
+      "command": "npx",
+      "args": [
+        "n8n-mcp"
+      ],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "https://kuzeyunlu.app.n8n.cloud",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MDMwYTY2OC0yNWU4LTQxMTMtOTZiYy1jOTA4Yzg3OTIxN2MiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzU4ODIzNjYwLCJleHAiOjE3NjY1MjM2MDB9.NZ-6OxEctPlR3vOs-mE4gCXiacXBUvkTOAbhItXRM3k"
+      }
     },
-      
-  
-    "supabase": {
-      "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=jkoqttcselznnnuljfxf"
-    }
-  ,
-      "sequential-thinking": {
+    "sequential-thinking": {
       "command": "npx",
       "args": [
         "-y",
         "@modelcontextprotocol/server-sequential-thinking"
       ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=wpydilkmtmgbunectxpx"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imprb3F0dGNzZWx6bm5udWxqZnhmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTUyOTcyNCwiZXhwIjoyMDc1MTA1NzI0fQ.2zT4PFfZ3O4PiT2BOi4iS5aelVfeWZa00SRlm2Z7YpU"
+      }
     }
-
   }
 }
-
 
