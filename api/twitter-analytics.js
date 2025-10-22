@@ -138,13 +138,13 @@ export default async function handler(req, res) {
   }
   
   try {
-    const { action, type, query, hashtags, includeMentions, limit = 50, user_id } = req.body;
+    const { action, type, query, hashtags, accountUsername, includeMentions, limit = 50, user_id } = req.body;
     
     // Validate required fields
     if (!action) {
       return res.status(400).json({
         error: 'Missing required field',
-        message: 'Action is required (search, hashtag, sentiment)'
+        message: 'Action is required (search, hashtag, combined-search, account-analysis, discover-hashtags, sentiment)'
       });
     }
     
@@ -211,6 +211,30 @@ export default async function handler(req, res) {
           mockData = generateMockTweets(combinedQuery, limit);
           break;
           
+        case 'account-analysis':
+          const { accountUsername: mockAccount, keyword: mockAccKeyword = '', hashtags: mockAccHashtags = [] } = req.body;
+          
+          if (!mockAccount) {
+            return res.status(400).json({
+              error: 'Missing account username',
+              message: 'Account username is required for account analysis'
+            });
+          }
+          
+          const accountQuery = `@${mockAccount.replace('@', '')} ${mockAccKeyword} ${mockAccHashtags.join(' ')}`.trim();
+          mockData = generateMockTweets(accountQuery, limit);
+          
+          // Add mock account-specific metrics
+          const mockAccountMetrics = {
+            account: `@${mockAccount.replace('@', '')}`,
+            total_analyzed: limit,
+            posting_frequency: (Math.random() * 5 + 1).toFixed(1), // 1-6 tweets per day
+            avg_engagement_rate: (Math.random() * 0.1).toFixed(3), // 0-10% engagement
+            top_posting_hours: [9, 12, 17, 20], // Mock peak hours
+            most_used_hashtags: ['#tech', '#innovation', '#ai', '#startup', '#business'].slice(0, 3)
+          };
+          break;
+          
         case 'hashtag':
           if (!hashtags || !Array.isArray(hashtags)) {
             return res.status(400).json({
@@ -226,7 +250,7 @@ export default async function handler(req, res) {
         default:
           return res.status(400).json({
             error: 'Invalid action',
-            message: 'Supported actions: search, hashtag, combined-search, discover-hashtags, sentiment'
+            message: 'Supported actions: search, hashtag, combined-search, account-analysis, discover-hashtags, sentiment'
           });
       }
       
@@ -246,6 +270,11 @@ export default async function handler(req, res) {
           total_engagement: mockData.reduce((sum, t) => sum + t.metrics.likes + t.metrics.retweets + t.metrics.replies, 0)
         }
       };
+      
+      // Add account metrics if this is an account analysis
+      if (action === 'account-analysis' && typeof mockAccountMetrics !== 'undefined') {
+        analytics.account_metrics = mockAccountMetrics;
+      }
       
       return res.status(200).json({
         success: true,
@@ -277,6 +306,8 @@ export default async function handler(req, res) {
         return await handleHashtagAnalysis(twitterClient, req, res);
       case 'combined-search':
         return await handleCombinedSearch(twitterClient, req, res);
+      case 'account-analysis':
+        return await handleAccountAnalysis(twitterClient, req, res);
       case 'discover-hashtags':
         return await handleHashtagDiscovery(twitterClient, req, res);
       case 'sentiment':
@@ -284,7 +315,7 @@ export default async function handler(req, res) {
       default:
         return res.status(400).json({
           error: 'Invalid action',
-          message: 'Supported actions: search, hashtag, combined-search, discover-hashtags, sentiment'
+          message: 'Supported actions: search, hashtag, combined-search, account-analysis, discover-hashtags, sentiment'
         });
     }
     
@@ -979,6 +1010,429 @@ async function handleCombinedSearch(client, req, res) {
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
+}
+
+// Account analysis handler
+async function handleAccountAnalysis(client, req, res) {
+  const { 
+    accountUsername,
+    keyword = '',
+    hashtags = [],
+    language,
+    sortOrder = 'recent',
+    includeMentions = false,
+    limit = 50,
+    global = false
+  } = req.body;
+  
+  if (!accountUsername) {
+    return res.status(400).json({
+      error: 'Missing account username',
+      message: 'Account username is required for account analysis'
+    });
+  }
+  
+  // Clean username (remove @ if present)
+  const cleanUsername = accountUsername.replace(/^@/, '');
+  
+  try {
+    console.log(`👤 Account analysis for @${cleanUsername}`);
+    
+    // CRITICAL: Account fetching is INDEPENDENT - start with just the account
+    let baseQuery = `from:${cleanUsername}`;
+    
+    // Always exclude retweets for original content
+    baseQuery += ' -is:retweet';
+    
+    // Optionally exclude replies
+    if (!includeMentions) {
+      baseQuery += ' -is:reply';
+    }
+    
+    console.log(`🔍 Base account query: "${baseQuery}"`);
+    
+    // Build API parameters
+    const apiParams = {
+      max_results: Math.max(10, Math.min(limit, 100)),
+      'tweet.fields': [
+        'created_at',
+        'public_metrics',
+        'context_annotations',
+        'entities',
+        'referenced_tweets',
+        'author_id'
+      ].join(','),
+      'user.fields': [
+        'username',
+        'name',
+        'verified',
+        'public_metrics',
+        'profile_image_url',
+        'description',
+        'created_at'
+      ].join(','),
+      expansions: 'author_id,referenced_tweets.id'
+    };
+    
+    // Add sort parameter
+    if (sortOrder === 'recent') {
+      apiParams.sort_order = 'recency';
+    } else if (sortOrder === 'popular') {
+      apiParams.sort_order = 'relevancy';
+    }
+    
+    let searchResults;
+    let tweets = [];
+    let users = [];
+    let filtersApplied = false;
+    
+    // CRITICAL: Account analysis is COMPLETELY INDEPENDENT - NO FILTERS APPLIED
+    // The user explicitly requested account fetching to be 100% independent
+    // We MUST ignore keyword, hashtags, and language filters for account analysis
+    console.log('📌 Account analysis mode: Ignoring ALL filters - fetching pure account tweets');
+    
+    // Log what filters were ignored for debugging
+    if (keyword || (hashtags && hashtags.length > 0) || language) {
+      console.log('⚠️ Filters received but IGNORED for account analysis:', {
+        keyword: keyword || 'none',
+        hashtags: hashtags?.length ? `${hashtags.length} hashtags` : 'none',
+        language: language || 'none'
+      });
+    }
+    
+    // Use ONLY the base query - no filters whatsoever
+    searchResults = await client.v2.search(baseQuery, apiParams);
+    tweets = searchResults.data?.data || [];
+    users = searchResults.data?.includes?.users || [];
+    
+    if (tweets.length === 0) {
+      // Try to determine why no tweets were found
+      let accountExists = false;
+      let accountInfo = null;
+      let verificationFailed = false;
+      
+      try {
+        // CRITICAL: Use ONLY the username for verification - completely independent check
+        const simpleTestQuery = `from:${cleanUsername}`;
+        console.log(`🔍 Verifying account existence with simple query: "${simpleTestQuery}"`);
+        
+        const testResults = await client.v2.search(simpleTestQuery, {
+          max_results: 1,
+          'user.fields': 'username,name,public_metrics,profile_image_url,verified'
+        });
+        
+        if (testResults.data?.meta?.result_count > 0) {
+          accountExists = true;
+          const testUsers = testResults.data?.includes?.users || [];
+          accountInfo = testUsers.find(u => u.username.toLowerCase() === cleanUsername.toLowerCase());
+          console.log(`✅ Account @${cleanUsername} exists`);
+        } else {
+          // Only if verification succeeded with 0 results do we know account doesn't exist
+          console.log(`❌ Account @${cleanUsername} not found`);
+        }
+      } catch (testError) {
+        console.log('⚠️ Account verification failed:', testError.message);
+        // CRITICAL: Verification failed - DO NOT assume account doesn't exist!
+        // Accounts with underscores or special characters often fail verification
+        verificationFailed = true;
+        // When verification fails, assume account EXISTS (better safe than sorry)
+        accountExists = true;
+      }
+      
+      // Provide specific error messages
+      if (!accountExists && !verificationFailed) {
+        // Only claim account doesn't exist if verification succeeded with 0 results
+        return res.status(404).json({
+          error: 'Account not found',
+          message: `The account @${cleanUsername} does not exist or is not accessible`,
+          suggestion: 'Please verify the username and try again',
+          possibleReasons: [
+            'The username may be incorrect',
+            'The account may be suspended or deleted',
+            'The account may be private'
+          ]
+        });
+      } else if (!filtersApplied && (keyword || (hashtags && hashtags.length > 0))) {
+        // Filters were attempted but failed - query was too complex
+        return res.status(200).json({
+          success: true,
+          data: [],
+          analytics: {
+            total_tweets: 0,
+            message: 'Query too complex - filters could not be applied',
+            suggestion: 'Try using fewer hashtags or simpler keywords'
+          },
+          account: `@${cleanUsername}`,
+          filters: {
+            keyword: keyword || null,
+            hashtags: hashtags || [],
+            note: 'Filters were too complex to apply. Try searching with fewer parameters.'
+          },
+          accountInfo,
+          total: 0,
+          timestamp: new Date().toISOString()
+        });
+      } else if (keyword || (hashtags && hashtags.length > 0)) {
+        return res.status(404).json({
+          error: 'No matching tweets',
+          message: verificationFailed
+            ? `No tweets found for account @${cleanUsername} with the specified filters (verification had issues)`
+            : `Account @${cleanUsername} exists but has no tweets matching your filters`,
+          suggestion: 'Try removing filters or using different keywords',
+          filters: {
+            keyword: keyword || null,
+            hashtags: hashtags || []
+          },
+          account: accountInfo,
+          ...(verificationFailed && { verificationNote: 'Account verification had issues but the account likely exists' })
+        });
+      } else {
+        return res.status(404).json({
+          error: 'No recent activity',
+          message: verificationFailed
+            ? `No recent tweets found for @${cleanUsername} (verification had issues)`
+            : `Account @${cleanUsername} exists but has no recent original tweets`,
+          suggestion: includeMentions ? 'This account may be inactive' : 'Try enabling "Include mentions and replies" to see more activity',
+          account: accountInfo,
+          ...(verificationFailed && { verificationNote: 'Account verification had issues but the account likely exists' })
+        });
+      }
+    }
+    
+    // Create user lookup map
+    const userMap = new Map();
+    users.forEach(user => userMap.set(user.id, user));
+    
+    // Format tweets
+    const formattedTweets = formatTweets(tweets, users);
+    
+    // If mentions enabled, fetch replies for top tweets
+    if (includeMentions) {
+      console.log('📱 Fetching replies for account tweets...');
+      const tweetsToFetchReplies = formattedTweets.slice(0, 3);
+      
+      for (const tweet of tweetsToFetchReplies) {
+        const replies = await fetchTweetReplies(client, tweet.id, 5, cleanUsername);
+        tweet.replies = replies;
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    // Generate account-specific analytics
+    const analytics = generateAccountAnalytics(formattedTweets, cleanUsername, keyword, hashtags);
+    
+    // Add AI insights if available
+    try {
+      const aiInsights = await analyzeAccountWithAI(formattedTweets, cleanUsername);
+      if (aiInsights) {
+        analytics.ai_insights = aiInsights;
+        console.log('✨ AI insights added to account analysis');
+      }
+    } catch (error) {
+      console.log('AI analysis skipped:', error.message);
+      // Continue without AI - not critical
+    }
+    
+    return res.status(200).json({
+      success: true,
+      data: formattedTweets,
+      analytics,
+      account: `@${cleanUsername}`,
+      filters: {
+        keyword: keyword || null,
+        hashtags: hashtags || []
+      },
+      total: tweets.length,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Account analysis error:', error);
+    
+    // Check for invalid username (Twitter API returns 400)
+    if (error.code === 400 && error.errors?.[0]?.message?.includes('Invalid username')) {
+      return res.status(404).json({
+        error: 'Invalid username',
+        message: `The username @${cleanUsername} is not valid`,
+        suggestion: 'Twitter usernames can only contain letters, numbers, and underscores, and must be 15 characters or less',
+        possibleReasons: [
+          'Username is too long (max 15 characters)',
+          'Username contains invalid characters',
+          'Username format is incorrect'
+        ]
+      });
+    }
+    
+    if (error.code === 429) {
+      return res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Twitter API rate limit reached. Please try again later.'
+      });
+    }
+    
+    return res.status(500).json({
+      error: 'Account analysis failed',
+      message: 'Failed to analyze account. Please check the username and try again.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
+
+// AI-powered account analysis using OpenRouter
+async function analyzeAccountWithAI(tweets, accountUsername) {
+  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
+  
+  if (!OPENROUTER_API_KEY) {
+    return null // AI is optional - gracefully degrades
+  }
+  
+  try {
+    const tweetsForAnalysis = tweets.slice(0, 10).map(t => ({
+      text: t.text,
+      likes: t.metrics?.likes || 0,
+      retweets: t.metrics?.retweets || 0,
+      replies: t.metrics?.replies || 0,
+      created_at: t.created_at
+    }))
+    
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.0-flash-001',
+        messages: [{
+          role: 'user',
+          content: `Analyze Twitter account @${accountUsername} based on these recent tweets:
+          ${JSON.stringify(tweetsForAnalysis, null, 2)}
+          
+          Provide detailed insights on:
+          1. Content strategy and main themes
+          2. Engagement patterns (what drives likes/retweets)
+          3. Writing style and tone
+          4. Posting consistency
+          5. Audience interaction style
+          
+          Return ONLY valid JSON with these fields:
+          {
+            "content_themes": ["theme1", "theme2", "theme3"],
+            "writing_style": "description of writing style",
+            "engagement_insights": "what type of content gets most engagement",
+            "audience_sentiment": "overall sentiment towards the account",
+            "posting_patterns": "analysis of posting frequency and timing",
+            "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
+          }`
+        }]
+      })
+    })
+    
+    if (!response.ok) {
+      console.error('AI analysis failed:', response.statusText)
+      return null
+    }
+    
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+    
+    if (content) {
+      try {
+        // Handle markdown-wrapped JSON responses
+        let cleanContent = content.trim()
+        if (cleanContent.startsWith('```json') || cleanContent.startsWith('```')) {
+          // Remove markdown code blocks
+          cleanContent = cleanContent.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
+        }
+        return JSON.parse(cleanContent)
+      } catch (e) {
+        console.error('Failed to parse AI response:', e)
+        return null
+      }
+    }
+    
+    return null
+  } catch (error) {
+    console.error('AI analysis error:', error)
+    return null // Graceful degradation
+  }
+}
+
+// Generate analytics specific to account analysis
+function generateAccountAnalytics(tweets, username, keyword, hashtags) {
+  if (tweets.length === 0) {
+    return {
+      total_tweets: 0,
+      account_metrics: {
+        account: `@${username}`,
+        total_analyzed: 0,
+        posting_frequency: 0,
+        avg_engagement_rate: 0
+      }
+    };
+  }
+  
+  // Get basic analytics
+  const baseAnalytics = generateAnalytics(tweets, keyword || `@${username}`);
+  
+  // Calculate account-specific metrics
+  const sortedTweets = tweets.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  const oldestTweet = new Date(sortedTweets[0].created_at);
+  const newestTweet = new Date(sortedTweets[sortedTweets.length - 1].created_at);
+  const daysDiff = Math.max(1, (newestTweet - oldestTweet) / (1000 * 60 * 60 * 24));
+  
+  // Posting frequency (tweets per day)
+  const postingFrequency = tweets.length / daysDiff;
+  
+  // Average engagement rate (engagement / followers * 100)
+  const avgFollowers = tweets[0]?.author?.followers || 1;
+  const totalEngagement = tweets.reduce((sum, tweet) => 
+    sum + tweet.metrics.likes + tweet.metrics.retweets + tweet.metrics.replies, 0
+  );
+  const avgEngagementRate = (totalEngagement / (tweets.length * avgFollowers)) * 100;
+  
+  // Find top performing tweets
+  const topTweets = tweets
+    .sort((a, b) => {
+      const aEngagement = a.metrics.likes + a.metrics.retweets;
+      const bEngagement = b.metrics.likes + b.metrics.retweets;
+      return bEngagement - aEngagement;
+    })
+    .slice(0, 3)
+    .map(tweet => ({
+      text: tweet.text.substring(0, 100) + (tweet.text.length > 100 ? '...' : ''),
+      likes: tweet.metrics.likes,
+      retweets: tweet.metrics.retweets,
+      url: tweet.url
+    }));
+  
+  // Posting time analysis
+  const hourCounts = {};
+  tweets.forEach(tweet => {
+    const hour = new Date(tweet.created_at).getHours();
+    hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+  });
+  
+  const topPostingHours = Object.entries(hourCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 4)
+    .map(([hour]) => parseInt(hour));
+  
+  // Add account metrics to base analytics
+  baseAnalytics.account_metrics = {
+    account: `@${username}`,
+    total_analyzed: tweets.length,
+    posting_frequency: Number(postingFrequency.toFixed(2)),
+    avg_engagement_rate: Number(avgEngagementRate.toFixed(3)),
+    top_tweets: topTweets,
+    top_posting_hours: topPostingHours,
+    date_range: {
+      from: oldestTweet.toISOString(),
+      to: newestTweet.toISOString()
+    }
+  };
+  
+  return baseAnalytics;
 }
 
 async function handleHashtagAnalysis(client, req, res) {

@@ -1,0 +1,340 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-20T16:02:28.397Z",
+    "total_tweets": 10,
+    "model": "google/gemini-2.0-flash-001",
+    "version": "1.0.0"
+  },
+  "results": [
+    {
+      "tweet_id": "1979949367881556106",
+      "tweet_text": "Señor Trump, jamás Colombia ha sido grosera con EEUU, al contrario, ha querido mucho su cultura.\n\nPero usted es grosero e ignorante con Colombia. Léase, como si lo hizo, su encargado de negocios en Colombia, Cien Años de Soledad, y le aseguró que algo aprenderá de la soledad.\n\nYo",
+      "tweet_author": "petrogustavo",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.7,
+        "confidence": 0.9,
+        "reasoning": "The tweet expresses strong disapproval of Trump's behavior towards Colombia, using words like \"grosero\" (rude) and \"ignorante\" (ignorant). While there's a mention of Colombia's appreciation for US culture, the overall tone is critical and negative due to the direct accusations against Trump."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.70)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:01:54.714Z"
+    },
+    {
+      "tweet_id": "1979949362022101318",
+      "tweet_text": "ABD Başkanı Donald Trump, Hamas'ın silahsızlanması konusunda kesin bir takvim olmadığını kaydederek, \"Zaman çizelgesi ve kesin bir sınır yok, ancak her şeyin nasıl sonuçlanacağını göreceğiz.\" dedi https://t.co/AjSjZBejPG",
+      "tweet_author": "Haberturk",
+      "tweet_sentiment": {
+        "label": "neutral",
+        "score": 0,
+        "confidence": 0.9,
+        "reasoning": "The tweet reports a statement by Donald Trump regarding Hamas' disarmament. It's a factual report without any explicit positive or negative sentiment expressed by the news source."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": false,
+        "severity": "none",
+        "description": "Tweet and replies sentiment align"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: neutral (0.00)",
+        "contradiction_detected": false,
+        "key_insight": "Tweet and replies sentiment align",
+        "recommendation": "Monitor engagement trends"
+      },
+      "timestamp": "2025-10-20T16:01:57.914Z"
+    },
+    {
+      "tweet_id": "1979949364681556434",
+      "tweet_text": "Slowly but surely, I'm getting priced out of everything I love. Thanks to Trump's tarrifs and general inflation, my spending habits have been severely curbed. Coffee, groceries, restaurants, toys, movies/entertainment... damn near every \"nice to have\" has become a longing I've",
+      "tweet_author": "ChrisPirillo",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.8,
+        "confidence": 0.9,
+        "reasoning": "The tweet expresses frustration and disappointment about rising costs and reduced spending ability, attributing it to Trump's tariffs and inflation. The phrases 'priced out', 'severely curbed', and 'longing' indicate a negative sentiment."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.80)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:02.549Z"
+    },
+    {
+      "tweet_id": "1979949363242598557",
+      "tweet_text": "Experts warn there are dangerous loopholes in Trump's new threat https://t.co/JNpJE4V3oB",
+      "tweet_author": "BarbraBuick",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.7,
+        "confidence": 0.9,
+        "reasoning": "The tweet uses the terms 'dangerous loopholes' and references Trump's 'new threat,' indicating a negative sentiment towards the subject matter."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.70)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:05.800Z"
+    },
+    {
+      "tweet_id": "1979949367197843500",
+      "tweet_text": "🇨🇳 China says it has \"irrefutable evidence\" the US government conducted cyber attacks against them. \n\nSource : BricsNews 🐈\n\n#china #Trump #chinaVsUsa #america #tradewar #xijingpin #asia #northamerica #war #usa https://t.co/izsoLLt9sX",
+      "tweet_author": "BwanikaRonald_",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.6,
+        "confidence": 0.8,
+        "reasoning": "The tweet reports a serious accusation of cyber attacks between China and the US, indicating conflict and potential harm. The hashtags like #tradewar and #war further contribute to the negative sentiment."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": false,
+        "severity": "none",
+        "description": "Tweet and replies sentiment align"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.60)",
+        "contradiction_detected": false,
+        "key_insight": "Tweet and replies sentiment align",
+        "recommendation": "Monitor engagement trends"
+      },
+      "timestamp": "2025-10-20T16:02:10.002Z"
+    },
+    {
+      "tweet_id": "1979949365088465125",
+      "tweet_text": "Son fanáticos de la industrialización de Trump pero odian la nacional. El gobierno más mogólico de la historia. https://t.co/zZgWzDR7M9",
+      "tweet_author": "LuigiAlmaraz26_",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.9,
+        "confidence": 0.95,
+        "reasoning": "The tweet expresses strong disapproval of the government, calling it \"mogólico\" (a derogatory term) and criticizing the hypocrisy of supporting Trump's industrialization while opposing national industrialization. This indicates a highly negative sentiment."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.90)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:13.455Z"
+    },
+    {
+      "tweet_id": "1979949363158716891",
+      "tweet_text": "🇺🇸 Military Demonstration in California: A military event near Interstate 5 led to a temporary highway closure. Trump officials said it was a routine demonstration, while Governor Newsom raised concerns about timing and political messaging.\n\n#Trump #Military #California #USNews",
+      "tweet_author": "Jenniferreymon",
+      "tweet_sentiment": {
+        "label": "neutral",
+        "score": 0,
+        "confidence": 0.9,
+        "reasoning": "The tweet reports on a military demonstration and differing opinions about it. It presents facts without expressing a clear positive or negative sentiment."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": false,
+        "severity": "none",
+        "description": "Tweet and replies sentiment align"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: neutral (0.00)",
+        "contradiction_detected": false,
+        "key_insight": "Tweet and replies sentiment align",
+        "recommendation": "Monitor engagement trends"
+      },
+      "timestamp": "2025-10-20T16:02:17.854Z"
+    },
+    {
+      "tweet_id": "1979949368204738605",
+      "tweet_text": "🚨 FREE GOLD (XAUUSD) TRADING SIGNALS! \n👇👇👇👇👇\nhttps://t.co/dLVItK2sBj\n\n 96% Accuracy Rate  \n 2–7 Profitable Signals Every Day  \n\n$CRO $VVS $BTC $ETH $SOL $XRP $DOGE $SHIB $PEPE $PI $SUI $ADA $TRUMP  $HBAR $tfxx",
+      "tweet_author": "Atsumori_anshin",
+      "tweet_sentiment": {
+        "label": "positive",
+        "score": 0.7,
+        "confidence": 0.8,
+        "reasoning": "The tweet promotes \"FREE GOLD TRADING SIGNALS\" with a high accuracy rate and promises profitable signals, which is generally perceived as positive. The use of emojis and the claim of high accuracy contribute to the positive sentiment."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: positive (0.70)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:21.547Z"
+    },
+    {
+      "tweet_id": "1979949365067481331",
+      "tweet_text": "Petro a Trump: «La codicia petrolera es la que está detrás de la estrategia que está tirando misiles sobre pescadores» (+Video)\n\nhttps://t.co/5XkkL2YSF7 https://t.co/JrgeRd5xHt",
+      "tweet_author": "jacselrafael",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.7,
+        "confidence": 0.8,
+        "reasoning": "The tweet expresses a negative sentiment by accusing 'oil greed' of being behind missile attacks on fishermen. The use of the phrase 'tirando misiles sobre pescadores' (throwing missiles at fishermen) is highly negative."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.70)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:25.230Z"
+    },
+    {
+      "tweet_id": "1979949360558260468",
+      "tweet_text": "Trump acusa a Petro de traficar droga, anuncia fin de ayuda a Colombia y advierte posible intervención https://t.co/Sviz7BpruK",
+      "tweet_author": "Bra77193672Raul",
+      "tweet_sentiment": {
+        "label": "negative",
+        "score": -0.8,
+        "confidence": 0.9,
+        "reasoning": "The tweet reports accusations of drug trafficking, the end of aid, and a possible intervention, all of which are negative events and create a negative sentiment towards the situation."
+      },
+      "mentions_sentiment": {
+        "score": 0,
+        "confidence": 0,
+        "distribution": {
+          "positive": 0,
+          "negative": 0,
+          "neutral": 0
+        },
+        "summary": "No replies to analyze"
+      },
+      "contradiction": {
+        "detected": true,
+        "severity": "medium",
+        "description": "Sentiment gap detected - tweet sentiment differs significantly from replies"
+      },
+      "overall_summary": {
+        "analysis": "Tweet sentiment: negative (-0.80)",
+        "contradiction_detected": true,
+        "key_insight": "Sentiment gap detected - tweet sentiment differs significantly from replies",
+        "recommendation": "Review replies for potential concerns"
+      },
+      "timestamp": "2025-10-20T16:02:28.397Z"
+    }
+  ]
+}

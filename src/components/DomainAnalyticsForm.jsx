@@ -1,7 +1,21 @@
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '../lib/supabase'
-import { getDomainAnalytics, formatDomainResults } from '../utils/dataForSEO'
+import { 
+  getDomainAnalytics, 
+  formatDomainResults,
+  getBulkTrafficEstimation,
+  getCompetitorsDomain,
+  getRelevantPages,
+  getBacklinksSummary,
+  getKeywordsForSite,
+  formatBulkTrafficResults,
+  formatCompetitorsResults,
+  formatRelevantPagesResults,
+  formatBacklinksResults,
+  formatKeywordsForSiteResults,
+  sanitizeDomainForBulkTraffic
+} from '../utils/dataForSEO'
 import { sendDomainAnalyticsEmail } from '../utils/emailService'
 import DomainAnalyticsResults from './DomainAnalyticsResults'
 
@@ -31,6 +45,7 @@ export default function DomainAnalyticsForm({ user }) {
     setShowResults(false)
     setResults(null)
 
+
     try {
       // Generate session_id on client side
       const sessionId = uuidv4()
@@ -48,35 +63,107 @@ export default function DomainAnalyticsForm({ user }) {
 
       if (sessionError) throw sessionError
 
-      // Call DataForSEO API directly
-      const apiResponse = await getDomainAnalytics({
+      // PRIMARY: Call original domain analytics API to preserve backward compatibility
+      const primaryResponse = await getDomainAnalytics({
         domainPattern: formData.domainPattern,
         limit: parseInt(formData.limit),
         filterType: formData.filterType
       })
 
-      // Format results
-      const formattedResults = formatDomainResults(apiResponse)
-
-      // Store results in state
-      setResults(formattedResults)
+      // Format primary results (original working format)
+      const primaryResults = formatDomainResults(primaryResponse)
+      
+      // Store primary results for immediate display
+      setResults(primaryResults)
       setShowResults(true)
+
+      // ENHANCED: Call additional APIs in background for comprehensive analysis (non-blocking)
+      const domain = formData.domainPattern
+      
+      // Sanitize domain for bulk traffic API (removes wildcards, protocols, etc.)
+      const cleanDomain = sanitizeDomainForBulkTraffic(domain)
+      
+      const [
+        bulkTrafficResponse,
+        competitorsResponse,
+        relevantPagesResponse,
+        backlinksResponse,
+        domainMetricsResponse
+      ] = await Promise.allSettled([
+        // Use sanitized domain for bulk traffic API (skip if invalid)
+        cleanDomain.length > 0 ? getBulkTrafficEstimation({
+          targets: [cleanDomain]
+        }) : Promise.reject(new Error('Invalid domain after sanitization')),
+        getCompetitorsDomain({
+          target: domain
+        }),
+        getRelevantPages({
+          target: domain
+        }),
+        getBacklinksSummary({
+          target: domain
+        }),
+        getKeywordsForSite({
+          target: domain
+        })
+      ])
+
+      
+      // Build enhanced data object for supplementary analysis
+      const enhancedData = {
+        domain: domain,
+        trafficEstimation: bulkTrafficResponse.status === 'fulfilled' ? formatBulkTrafficResults(bulkTrafficResponse.value) : [],
+        competitors: competitorsResponse.status === 'fulfilled' ? formatCompetitorsResults(competitorsResponse.value) : [],
+        relevantPages: relevantPagesResponse.status === 'fulfilled' ? formatRelevantPagesResults(relevantPagesResponse.value) : [],
+        backlinks: backlinksResponse.status === 'fulfilled' ? formatBacklinksResults(backlinksResponse.value) : {},
+        domainMetrics: domainMetricsResponse.status === 'fulfilled' ? formatKeywordsForSiteResults(domainMetricsResponse.value) : [],
+        endpointStatus: {
+          bulkTraffic: bulkTrafficResponse.status,
+          competitors: competitorsResponse.status,
+          relevantPages: relevantPagesResponse.status,
+          backlinks: backlinksResponse.status,
+          domainMetrics: domainMetricsResponse.status
+        },
+        errors: {
+          bulkTraffic: bulkTrafficResponse.status === 'rejected' ? bulkTrafficResponse.reason?.message : null,
+          competitors: competitorsResponse.status === 'rejected' ? competitorsResponse.reason?.message : null,
+          relevantPages: relevantPagesResponse.status === 'rejected' ? relevantPagesResponse.reason?.message : null,
+          backlinks: backlinksResponse.status === 'rejected' ? backlinksResponse.reason?.message : null,
+          domainMetrics: domainMetricsResponse.status === 'rejected' ? domainMetricsResponse.reason?.message : null
+        }
+      }
+
+      // Update results with enhanced data
+      setResults({ primary: primaryResults, enhanced: enhancedData })
+
+      // Count successful endpoints and total data points
+      const successfulEndpoints = 1 + Object.values(enhancedData.endpointStatus).filter(status => status === 'fulfilled').length
+      const totalDataPoints = (
+        primaryResults.length +
+        enhancedData.trafficEstimation.length +
+        enhancedData.competitors.length +
+        enhancedData.relevantPages.length +
+        (Object.keys(enhancedData.backlinks).length > 0 ? 1 : 0) +
+        enhancedData.domainMetrics.length
+      )
 
       // Update session in Supabase
       await supabase
         .from('domain_analytics_sessions')
         .update({
-          results_count: formattedResults.length,
-          completed_at: new Date().toISOString()
+          results_count: totalDataPoints,
+          completed_at: new Date().toISOString(),
+          endpoints_called: 5,
+          endpoints_successful: successfulEndpoints
         })
         .eq('id', sessionId)
 
-      // Send email with results
+      // Send email with both primary and enhanced results
       const recipientEmail = formData.email || user.email
       const emailResult = await sendDomainAnalyticsEmail({
         toEmail: recipientEmail,
-        fromName: 'Domain Analytics Report',
-        results: formattedResults,
+        fromName: 'Comprehensive Domain Analytics Report',
+        results: { primary: primaryResults, enhanced: enhancedData },
         searchParams: {
           domainPattern: formData.domainPattern,
           filterType: formData.filterType,
@@ -84,15 +171,16 @@ export default function DomainAnalyticsForm({ user }) {
         }
       })
 
-      // Show success message with email status
+      // Show success message with comprehensive status
+      const endpointSummary = `${successfulEndpoints}/5 endpoints successful`
       if (emailResult.success) {
         setMessage({
-          text: `Successfully retrieved ${formattedResults.length} domain(s). Results sent to ${recipientEmail}`,
+          text: `Domain analysis complete! ${endpointSummary}. Report sent to ${recipientEmail}`,
           type: 'success'
         })
       } else {
         setMessage({
-          text: `Successfully retrieved ${formattedResults.length} domain(s). Warning: ${emailResult.message}`,
+          text: `Domain analysis complete! ${endpointSummary}. Warning: ${emailResult.message}`,
           type: 'success'
         })
       }
@@ -217,7 +305,11 @@ export default function DomainAnalyticsForm({ user }) {
       {/* Results display */}
       {showResults && results && (
         <div className="results-wrapper">
-          <DomainAnalyticsResults results={results} onClose={handleCloseResults} />
+          <DomainAnalyticsResults 
+            results={Array.isArray(results) ? results : results.primary} 
+            onClose={handleCloseResults}
+            enhancedData={results.enhanced || null}
+          />
         </div>
       )}
     </>

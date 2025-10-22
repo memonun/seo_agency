@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import TwitterSearch from '../components/TwitterSearch';
 import TwitterResults from '../components/TwitterResults';
 import TwitterDashboard from '../components/TwitterDashboard';
+import TwitterSearchHistory from '../components/TwitterSearchHistory';
 import { callTwitterApi, isDev } from '../utils/apiConfig';
-import { loadTwitterSearchParams, saveTwitterSearchParams, clearTwitterSearchParams } from '../utils/searchCache';
+import { loadTwitterSearchParams, saveTwitterSearchParams, clearTwitterSearchParams, saveTwitterResults, loadTwitterResults, clearTwitterResults } from '../utils/searchCache';
+import { supabase } from '../lib/supabase';
 
 export default function TwitterAnalyticsModule({ user }) {
   const [results, setResults] = useState(null);
@@ -12,6 +14,102 @@ export default function TwitterAnalyticsModule({ user }) {
   const [searchHistory, setSearchHistory] = useState([]);
   const [cachedParams, setCachedParams] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const [rateLimitInfo, setRateLimitInfo] = useState(null);
+  const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
+
+  // Client-side database saving function (like SEO module)
+  const saveTwitterSearchToDatabase = async (searchData, responseData) => {
+    try {
+      // Generate user-friendly search description
+      const searchDescription = generateSearchDescription(searchData);
+      
+      // Save to database using client-side Supabase
+      const { data, error } = await supabase
+        .from('twitter_analytics_sessions')
+        .insert([
+          {
+            user_id: user?.id,
+            keyword: searchData.keyword || null,
+            hashtags: searchData.hashtags || [],
+            account_username: searchData.accountUsername || null, // Added account username
+            search_description: searchDescription,
+            action: searchData.action || 'combined-search',
+            language: searchData.language || null,
+            sort_order: searchData.sortOrder || 'recent',
+            include_mentions: searchData.includeMentions || false,
+            global_search: searchData.global || false,
+            search_limit: searchData.limit || 25,
+            hashtag_mode: searchData.hashtagMode || 'manual',
+            discovered_hashtags: searchData.discoveredHashtags || null,
+            raw_response: responseData,
+            is_mock_data: responseData?.mock || false,
+            completed: true
+          }
+        ])
+        .select();
+
+      if (error) {
+        console.error('❌ Database save error:', error);
+        return null;
+      }
+
+      console.log('✅ Twitter search saved to database:', data[0]?.id);
+      return data[0];
+    } catch (error) {
+      console.error('❌ Failed to save Twitter search:', error);
+      return null;
+    }
+  };
+
+  // Helper function to generate search descriptions
+  const generateSearchDescription = (searchData) => {
+    if (!searchData) return 'Unknown search';
+    
+    const { keyword, hashtags, accountUsername, language, sortOrder, includeMentions, global, limit, hashtagMode } = searchData;
+    
+    let description = [];
+    
+    // Add account if present (for account analysis)
+    if (accountUsername) {
+      description.push(`@${accountUsername.replace(/^@/, '')}`);
+      if (keyword || hashtags?.length > 0) {
+        description.push('with');
+      }
+    }
+    
+    // Add search type - ensure we have something to display
+    if (keyword && hashtags?.length > 0) {
+      description.push(`"${keyword}" + ${hashtags.join(', ')}`);
+    } else if (keyword) {
+      description.push(`"${keyword}"`);
+    } else if (hashtags?.length > 0) {
+      description.push(`${hashtags.join(', ')}`);
+    } else if (!accountUsername) {
+      // Fallback if no keyword, hashtags, or account
+      description.push('Twitter search');
+    }
+    
+    // Add language info if specified
+    if (language && !global && language !== '') {
+      description.push(`in ${language.toUpperCase()}`);
+    } else if (global) {
+      description.push('globally');
+    }
+    
+    // Add sort order info
+    if (sortOrder === 'popular') {
+      description.push('(popular)');
+    } else {
+      description.push('(recent)');
+    }
+    
+    // Add mentions info
+    if (includeMentions) {
+      description.push('with replies');
+    }
+    
+    return description.join(' ');
+  };
 
   // Load cached search params and search history on component mount
   useEffect(() => {
@@ -20,6 +118,12 @@ export default function TwitterAnalyticsModule({ user }) {
     if (cached) {
       setCachedParams(cached);
       setShowResults(true);
+      
+      // Also load cached results if they exist
+      const cachedResults = loadTwitterResults(user?.id || 'anonymous');
+      if (cachedResults) {
+        setResults(cachedResults);
+      }
     }
 
     // Load search history
@@ -60,8 +164,9 @@ export default function TwitterAnalyticsModule({ user }) {
       }
       
       const requestData = {
-        action: searchData.type,
+        action: searchData.action,  // Fixed: use 'action' not 'type'
         keyword: searchData.keyword || '',
+        accountUsername: searchData.accountUsername || '',  // Added for account analysis
         hashtags: searchData.hashtags || [],
         language: searchData.language || null,
         sortOrder: searchData.sortOrder || 'recent',
@@ -76,9 +181,21 @@ export default function TwitterAnalyticsModule({ user }) {
       setResults(data);
       saveToHistory(searchData);
       
-      // Save search params for persistence
+      // Save search params and results for persistence
       saveTwitterSearchParams(user?.id || 'anonymous', searchData);
+      saveTwitterResults(user?.id || 'anonymous', data);
       setCachedParams(searchData);
+      
+      // Save to database (client-side)
+      if (user?.id) {
+        try {
+          await saveTwitterSearchToDatabase(searchData, data);
+          // Trigger search history refresh
+          setHistoryRefreshTrigger(prev => prev + 1);
+        } catch (dbError) {
+          console.warn('Database save failed (non-critical):', dbError);
+        }
+      }
       
       if (isDev()) {
         console.log('✅ Search completed:', data);
@@ -87,13 +204,52 @@ export default function TwitterAnalyticsModule({ user }) {
     } catch (err) {
       console.error('❌ Search error:', err);
       
-      // User-friendly error messages
+      // Try to parse JSON error response
+      let errorData = null;
+      try {
+        // If it's a fetch response, try to get JSON
+        if (err.response) {
+          errorData = await err.response.json();
+        }
+      } catch (parseError) {
+        // Fallback to message parsing
+      }
+      
+      // Check for rate limit error
+      const isRateLimit = err.message.includes('429') || 
+                         err.message.includes('rate limit') || 
+                         err.message.includes('Too Many Requests') ||
+                         errorData?.code === 429;
+      
+      if (isRateLimit) {
+        // Extract retry-after time from structured response or message
+        let retryAfterSeconds = 60; // Default
+        
+        if (errorData?.retryAfter) {
+          retryAfterSeconds = errorData.retryAfter;
+        } else {
+          const retryAfterMatch = err.message.match(/(?:retry.after|wait)[:\s]+(\d+)/i);
+          if (retryAfterMatch) {
+            retryAfterSeconds = parseInt(retryAfterMatch[1]);
+          }
+        }
+        
+        const resetTime = Date.now() + (retryAfterSeconds * 1000);
+        setRateLimitInfo({
+          resetTime,
+          timeLeft: retryAfterSeconds * 1000,
+          retryAfterSeconds
+        });
+        
+        setError(`Rate limit exceeded. Please wait ${retryAfterSeconds} seconds before searching again.`);
+        return;
+      }
+      
+      // Other error messages
       let errorMessage = 'Search failed. Please try again.';
       
       if (err.message.includes('fetch')) {
         errorMessage = 'Unable to connect to server. Please check your connection.';
-      } else if (err.message.includes('rate limit')) {
-        errorMessage = 'Rate limit exceeded. Please wait a moment before searching again.';
       } else if (err.message.includes('Invalid')) {
         errorMessage = err.message; // Show validation errors directly
       }
@@ -104,13 +260,32 @@ export default function TwitterAnalyticsModule({ user }) {
     }
   };
 
+  // Rate limit countdown effect
+  useEffect(() => {
+    if (rateLimitInfo && rateLimitInfo.resetTime > Date.now()) {
+      const interval = setInterval(() => {
+        const timeLeft = rateLimitInfo.resetTime - Date.now();
+        if (timeLeft <= 0) {
+          setRateLimitInfo(null);
+          clearInterval(interval);
+        } else {
+          setRateLimitInfo(prev => ({ ...prev, timeLeft }));
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [rateLimitInfo]);
+
   // Clear results and start new search
   const handleNewSearch = () => {
     setResults(null);
     setError(null);
     setShowResults(false);
     setCachedParams(null);
+    setRateLimitInfo(null);
     clearTwitterSearchParams(user?.id || 'anonymous');
+    clearTwitterResults(user?.id || 'anonymous');
   };
 
   // Clear results only
@@ -119,9 +294,22 @@ export default function TwitterAnalyticsModule({ user }) {
     setError(null);
   };
 
-  // Load from history
-  const loadFromHistory = (historyItem) => {
-    // Note: We don't automatically trigger search, just populate the form
+  // Load from history and populate form
+  const loadFromHistory = (searchData) => {
+    // Clear current results and populate form with historical search data
+    setResults(null);
+    setError(null);
+    setShowResults(false);
+    setRateLimitInfo(null);
+    
+    // Save search params for form auto-fill
+    setCachedParams(searchData);
+    
+    // Save to local storage for persistence
+    saveTwitterSearchParams(user?.id || 'anonymous', searchData);
+    
+    // Automatically trigger the search
+    handleSearch(searchData);
   };
 
   return (
@@ -165,8 +353,32 @@ export default function TwitterAnalyticsModule({ user }) {
           onNewSearch={handleNewSearch}
         />
 
-        {/* Message display */}
-        {error && (
+        {/* Rate limit notification */}
+        {rateLimitInfo && rateLimitInfo.timeLeft > 0 && (
+          <div className="message warning" style={{
+            background: '#fff3cd',
+            border: '1px solid #ffeaa7',
+            color: '#856404',
+            padding: '16px',
+            borderRadius: '8px',
+            margin: '16px 0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <div>
+              <strong>Rate limit reached</strong>
+              <br />
+              Please wait {Math.ceil(rateLimitInfo.timeLeft / 1000)} seconds before making another search.
+            </div>
+          </div>
+        )}
+
+        {/* Error message display */}
+        {error && !rateLimitInfo && (
           <div className="message error">
             {error}
           </div>
@@ -180,6 +392,17 @@ export default function TwitterAnalyticsModule({ user }) {
           </div>
         )}
       </div>
+
+      {/* Twitter Search History Component - Outside container for 750px width */}
+      {user && (
+        <div className="history-container">
+          <TwitterSearchHistory 
+            user={user}
+            refreshTrigger={historyRefreshTrigger}
+            onLoadHistory={loadFromHistory}
+          />
+        </div>
+      )}
 
       {/* Results Display */}
       {results && !loading && (

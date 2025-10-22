@@ -25,10 +25,10 @@
       "args": [
         "-y",
         "@supabase/mcp-server-supabase@latest",
-        "--project-ref=wpydilkmtmgbunectxpx"
+        "--project-ref=jkoqttcselznnnuljfxf"
       ],
       "env": {
-        "SUPABASE_ACCESS_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imprb3F0dGNzZWx6bm5udWxqZnhmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTUyOTcyNCwiZXhwIjoyMDc1MTA1NzI0fQ.2zT4PFfZ3O4PiT2BOi4iS5aelVfeWZa00SRlm2Z7YpU"
+        "SUPABASE_ACCESS_TOKEN": "sbp_d543c87261bde60556d48c5184c1bc213d750c6a"
       }
     }
   }

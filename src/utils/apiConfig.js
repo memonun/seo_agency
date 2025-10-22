@@ -7,8 +7,8 @@ export const getApiConfig = () => {
   // Base URLs for different environments
   const config = {
     development: {
-      baseUrl: 'http://localhost:3001',
-      useProxy: false
+      baseUrl: '', // Use relative URLs in development (Vite proxy handles routing)
+      useProxy: true
     },
     production: {
       baseUrl: '', // Use relative URLs in production (Vercel handles routing)
@@ -60,12 +60,23 @@ export const apiRequest = async (url, options = {}) => {
         url,
         error: error.message,
         environment: 'development',
-        config
+        config,
+        suggestion: error.message.includes('Failed to fetch') 
+          ? 'Backend server might not be running. Try: npm run dev:backend'
+          : 'Check network connection and API endpoint'
       });
     }
     
+    // User-friendly error messages
+    let userMessage = error.message;
+    if (error.message.includes('Failed to fetch')) {
+      userMessage = isDev() 
+        ? 'Backend server not responding. Make sure to run "npm run dev" to start both frontend and backend.'
+        : 'Unable to connect to server. Please try again later.';
+    }
+    
     // Re-throw with context
-    const enhancedError = new Error(error.message);
+    const enhancedError = new Error(userMessage);
     enhancedError.originalError = error;
     enhancedError.url = url;
     enhancedError.environment = isDev() ? 'development' : 'production';

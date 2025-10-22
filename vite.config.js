@@ -8,7 +8,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        configure: (proxy, options) => {
+          proxy.on('error', (err, req, res) => {
+            console.log('🚨 Proxy error:', err.message);
+            console.log('💡 Make sure backend server is running on port 3001');
+          });
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('🔄 Proxying:', req.method, req.url, '→', options.target + req.url);
+          });
+        }
       }
     }
   }

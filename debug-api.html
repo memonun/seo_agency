@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug DataForSEO APIs</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 DataForSEO API Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h3>Test Domain Sanitization</h3>
+        <input type="text" id="testDomain" placeholder="Enter domain to test" value="miraclechain.net">
+        <button onclick="testSanitization()">Test Sanitization</button>
+        <div id="sanitizationLog" class="log"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Test Bulk Traffic API</h3>
+        <input type="text" id="trafficDomain" placeholder="Enter domain for traffic API" value="google.com">
+        <button onclick="testBulkTrafficAPI()">Test API Call</button>
+        <div id="trafficLog" class="log"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Test with Current Environment</h3>
+        <button onclick="testEnvironment()">Check API Credentials</button>
+        <div id="envLog" class="log"></div>
+    </div>
+
+    <script type="module">
+        // Import functions from our utilities
+        import { 
+            sanitizeDomainForBulkTraffic, 
+            getBulkTrafficEstimation,
+            formatBulkTrafficResults 
+        } from './src/utils/dataForSEO.js';
+
+        window.sanitizeDomainForBulkTraffic = sanitizeDomainForBulkTraffic;
+        window.getBulkTrafficEstimation = getBulkTrafficEstimation;
+        window.formatBulkTrafficResults = formatBulkTrafficResults;
+
+        window.testSanitization = function() {
+            const domain = document.getElementById('testDomain').value;
+            const cleaned = sanitizeDomainForBulkTraffic(domain);
+            
+            document.getElementById('sanitizationLog').innerHTML = `
+                <strong>Input:</strong> ${domain}<br>
+                <strong>Sanitized:</strong> ${cleaned}<br>
+                <strong>Valid:</strong> ${cleaned.length > 0 ? 'Yes' : 'No'}
+            `;
+        }
+
+        window.testBulkTrafficAPI = async function() {
+            const domain = document.getElementById('trafficDomain').value;
+            const logDiv = document.getElementById('trafficLog');
+            
+            logDiv.innerHTML = '🔄 Testing API call...';
+            
+            try {
+                const response = await getBulkTrafficEstimation({
+                    targets: [domain]
+                });
+                
+                const formatted = formatBulkTrafficResults(response);
+                
+                logDiv.innerHTML = `
+                    <strong>✅ API Success!</strong><br>
+                    <strong>Raw Response:</strong> <pre>${JSON.stringify(response, null, 2)}</pre><br>
+                    <strong>Formatted:</strong> <pre>${JSON.stringify(formatted, null, 2)}</pre>
+                `;
+            } catch (error) {
+                logDiv.innerHTML = `
+                    <strong>❌ API Error:</strong><br>
+                    <strong>Message:</strong> ${error.message}<br>
+                    <strong>Stack:</strong> <pre>${error.stack}</pre>
+                `;
+            }
+        }
+
+        window.testEnvironment = function() {
+            const login = import.meta.env.VITE_DATAFORSEO_LOGIN;
+            const password = import.meta.env.VITE_DATAFORSEO_PASSWORD;
+            
+            document.getElementById('envLog').innerHTML = `
+                <strong>DataForSEO Login:</strong> ${login ? '✅ Set' : '❌ Missing'}<br>
+                <strong>DataForSEO Password:</strong> ${password ? '✅ Set' : '❌ Missing'}<br>
+                <strong>Login Value:</strong> ${login || 'undefined'}<br>
+                <strong>Password Length:</strong> ${password ? password.length + ' chars' : 'undefined'}
+            `;
+        }
+    </script>
+</body>
+</html>

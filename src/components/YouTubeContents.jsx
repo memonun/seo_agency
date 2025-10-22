@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import { saveYouTubeResults, loadYouTubeResults } from '../utils/searchCache'
 
 // New backend endpoint
@@ -10,6 +11,7 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
   const [error, setError] = useState('')
   const [expandedCards, setExpandedCards] = useState(new Set())
   const [analysisData, setAnalysisData] = useState({}) // Cache for analysis results
+  const [overallSummary, setOverallSummary] = useState('') // Overall summary across all videos
 
   // Helper function to parse markdown-style bold text
   const parseTextWithFormatting = (text) => {
@@ -128,6 +130,9 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
 
       console.log('Calling backend API for YouTube search + summarization')
 
+      // Generate search_id if not provided (for standalone YouTube searches)
+      const effectiveSearchId = searchId || uuidv4()
+
       // Call new backend endpoint that handles everything
       const response = await fetch(YOUTUBE_SEARCH_API, {
         method: 'POST',
@@ -137,7 +142,7 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
         body: JSON.stringify({
           keyword,
           user_id: user.id,
-          search_id: searchId,
+          search_id: effectiveSearchId,
           email: email
         })
       })
@@ -157,9 +162,11 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
 
       // Extract videos and summaries from response
       const videoResults = data.videos
+      const overallSummaryData = data.overallSummary || ''
 
       // Display videos with summaries
       setYoutubeVideos(videoResults)
+      setOverallSummary(overallSummaryData)
 
       // Populate analysis data from summaries
       const analysisDataFromBackend = {}
@@ -179,7 +186,8 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
         searchId,
         email,
         videos: videoResults,
-        analysisData: analysisDataFromBackend
+        analysisData: analysisDataFromBackend,
+        overallSummary: overallSummaryData
       })
     } catch (err) {
       console.error('Error fetching YouTube content:', err)
@@ -210,6 +218,7 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
       // Load from cache instead of fetching
       setYoutubeVideos(cachedData.videos || [])
       setAnalysisData(cachedData.analysisData || {})
+      setOverallSummary(cachedData.overallSummary || '')
       setLoading(false)
     } else {
       // No cache or different keyword - fetch fresh data
@@ -293,8 +302,21 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
           <p>No YouTube videos found for this search.</p>
         </div>
       ) : (
-        <div className="youtube-videos-list">
-          {youtubeVideos.map((video, index) => {
+        <>
+          {/* Overall Summary Section */}
+          {overallSummary && (
+            <div className="overall-summary-section">
+              <div className="overall-summary-card">
+                <h3>📊 Trend Analysis for "{keyword}"</h3>
+                <div className="overall-summary-content">
+                  {overallSummary}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="youtube-videos-list">
+            {youtubeVideos.map((video, index) => {
             const isExpanded = expandedCards.has(index)
 
             return (
@@ -402,6 +424,63 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
                             {renderFormattedSummary(analysisData[index].summary)}
                           </div>
 
+                          {/* Comments Section */}
+                          {video.comments && (
+                            <div className="analytics-section">
+                              <h4>Top Comments ({video.comments.totalCount || 0})</h4>
+                              {video.comments.error ? (
+                                <p className="error-text">{video.comments.error}</p>
+                              ) : video.comments.items && video.comments.items.length > 0 ? (
+                                <div className="comments-list">
+                                  {video.comments.items.slice(0, 5).map((comment, commentIndex) => (
+                                    <div key={comment.id || commentIndex} className="comment-item">
+                                      <div className="comment-header">
+                                        <div className="comment-author">
+                                          {comment.authorProfileImageUrl && (
+                                            <img 
+                                              src={comment.authorProfileImageUrl} 
+                                              alt={comment.authorDisplayName}
+                                              className="author-avatar"
+                                            />
+                                          )}
+                                          <span className="author-name">
+                                            {comment.authorDisplayName}
+                                            {comment.isChannelOwner && (
+                                              <span className="channel-owner-badge">Channel Owner</span>
+                                            )}
+                                          </span>
+                                        </div>
+                                        <div className="comment-meta">
+                                          {comment.likeCount > 0 && (
+                                            <span className="comment-likes">👍 {comment.likeCount}</span>
+                                          )}
+                                          {comment.replies > 0 && (
+                                            <span className="comment-replies">💬 {comment.replies}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="comment-text">
+                                        {comment.textDisplay}
+                                      </div>
+                                      {comment.publishedAt && (
+                                        <div className="comment-date">
+                                          {new Date(comment.publishedAt).toLocaleDateString()}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                  {video.comments.items.length > 5 && (
+                                    <div className="comments-footer">
+                                      <small>Showing top 5 of {video.comments.totalCount} comments</small>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <p>No comments available for this video</p>
+                              )}
+                            </div>
+                          )}
+
                           {video.channelThumbnail && !analysisData[index].error && (
                             <div className="analytics-section">
                               <h4>Channel Information</h4>
@@ -423,7 +502,8 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
               </div>
             )
           })}
-        </div>
+          </div>
+        </>
       )}
     </div>
   )

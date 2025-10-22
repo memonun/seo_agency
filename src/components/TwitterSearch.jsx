@@ -12,6 +12,7 @@ export default function TwitterSearch({
 }) {
   // Main form state - use initial values if available
   const [keyword, setKeyword] = useState(initialValues?.keyword || '');
+  const [accountUsername, setAccountUsername] = useState(initialValues?.accountUsername || '');
   
   // Hashtag state - simplified approach
   const [isAutoMode, setIsAutoMode] = useState(false);
@@ -69,6 +70,50 @@ export default function TwitterSearch({
   
   // UI state
   const [errors, setErrors] = useState({});
+  
+  // Update form when initialValues change (for history auto-fill)
+  useEffect(() => {
+    if (initialValues) {
+      setKeyword(initialValues.keyword || '');
+      setAccountUsername(initialValues.accountUsername || '');
+      setLanguage(initialValues.language || '');
+      
+      // Update language input display
+      if (initialValues.language) {
+        const lang = languageData.find(l => l.code === initialValues.language);
+        setLanguageInput(lang?.name || initialValues.language);
+      } else {
+        setLanguageInput('');
+      }
+      
+      setSortOrder(initialValues.sortOrder || 'recent');
+      setLimit(initialValues.limit || 25);
+      setIncludeMentions(initialValues.includeMentions || false);
+      setGlobal(initialValues.global || false);
+      
+      // Handle hashtags
+      if (initialValues.hashtags && initialValues.hashtags.length > 0) {
+        const cleanHashtags = initialValues.hashtags.map(h => h.replace(/^#/, ''));
+        setManualHashtags([...cleanHashtags, '']); // Add empty input for new hashtag
+        
+        // If this was from auto-discovery, set up auto mode
+        if (initialValues.hashtagMode === 'auto' && initialValues.discoveredHashtags) {
+          setIsAutoMode(true);
+          setDiscoveredHashtags(initialValues.discoveredHashtags);
+          setSelectedHashtags(initialValues.discoveredHashtags);
+          setDiscoveryComplete(true);
+        } else {
+          setIsAutoMode(false);
+        }
+      } else {
+        setManualHashtags(['']);
+        setIsAutoMode(false);
+      }
+      
+      // Clear any previous errors
+      setErrors({});
+    }
+  }, [initialValues]);
   
   // Hashtag discovery API call
   const discoverHashtags = async (searchKeyword) => {
@@ -134,11 +179,12 @@ export default function TwitterSearch({
   // Check if form can be submitted
   const canSubmitSearch = () => {
     const hasKeyword = keyword.trim().length > 0;
+    const hasAccount = accountUsername.trim().length > 0;
     const hasHashtags = !isAutoMode 
       ? manualHashtags.some(h => h.trim())
       : selectedHashtags.length > 0;
     
-    const hasInput = hasKeyword || hasHashtags;
+    const hasInput = hasKeyword || hasAccount || hasHashtags;
     
     // For auto mode, must wait for discovery to complete
     const discoveryReady = !isAutoMode || (!isDiscovering && (discoveredHashtags.length > 0 || discoveryError));
@@ -157,6 +203,7 @@ export default function TwitterSearch({
     
     // Determine what type of search to perform
     const hasKeyword = keyword.trim().length > 0;
+    const hasAccount = accountUsername.trim().length > 0;
     const finalHashtags = !isAutoMode 
       ? manualHashtags.filter(h => h.trim()).map(h => {
           const cleanTag = h.trim().replace(/^#/, '');
@@ -166,10 +213,17 @@ export default function TwitterSearch({
     
     const hasHashtags = finalHashtags.length > 0;
     
+    // Determine search type based on inputs
+    let searchType = 'combined-search';
+    if (hasAccount) {
+      searchType = 'account-analysis';
+    }
+    
     // Build search data
     const searchData = {
-      type: 'combined-search',
+      action: searchType,  // Changed from 'type' to 'action' for consistency
       keyword: hasKeyword ? keyword.trim() : '',
+      accountUsername: hasAccount ? accountUsername.trim().replace(/^@/, '') : '',
       hashtags: hasHashtags ? finalHashtags : [],
       language: language.trim() || null,
       sortOrder,
@@ -344,6 +398,43 @@ export default function TwitterSearch({
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Step 0: Account Username (Optional) */}
+      <div className="form-group">
+        <label htmlFor="accountUsername" style={{
+          display: 'block',
+          marginBottom: '8px',
+          fontSize: '14px',
+          fontWeight: '600',
+          color: '#2c3e50',
+          paddingLeft: '4px',
+          borderLeft: '3px solid #1DA1F2'
+        }}>0. Analyze Specific Account (Optional)</label>
+        <input
+          type="text"
+          id="accountUsername"
+          value={accountUsername}
+          onChange={(e) => {
+            const value = e.target.value;
+            // Basic validation: only allow alphanumeric, underscore, and @ at the start
+            if (value === '' || /^@?[a-zA-Z0-9_]*$/.test(value)) {
+              setAccountUsername(value);
+              // Clear error if valid
+              if (errors.accountUsername) {
+                setErrors(prev => ({ ...prev, accountUsername: null }));
+              }
+            }
+          }}
+          placeholder="Enter Twitter username (e.g., @elonmusk or elonmusk)"
+          disabled={loading || isDiscovering}
+        />
+        <small style={{ color: '#666', fontSize: '12px' }}>
+          Analyze tweets from a specific account. Can be combined with keywords/hashtags for filtered analysis.
+        </small>
+        {errors.accountUsername && (
+          <small style={{ color: '#f00' }}>{errors.accountUsername}</small>
+        )}
+      </div>
+
       {/* Step 1: Keyword Input */}
       <div className="form-group">
         <label htmlFor="keyword" style={{

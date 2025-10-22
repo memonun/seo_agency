@@ -199,3 +199,63 @@ export const clearTwitterSearchParams = (userId) => {
     return false
   }
 }
+
+// Twitter Results Cache
+const TWITTER_RESULTS_PREFIX = 'twitter_results_'
+
+const getTwitterResultsCacheKey = (userId) => {
+  return `${TWITTER_RESULTS_PREFIX}${userId}`
+}
+
+/**
+ * Save Twitter search results to localStorage
+ */
+export const saveTwitterResults = (userId, data) => {
+  try {
+    const cacheData = {
+      ...data,
+      timestamp: Date.now()
+    }
+    localStorage.setItem(getTwitterResultsCacheKey(userId), JSON.stringify(cacheData))
+    return true
+  } catch (error) {
+    console.error('Error saving Twitter results:', error)
+    return false
+  }
+}
+
+/**
+ * Load Twitter search results from localStorage
+ */
+export const loadTwitterResults = (userId) => {
+  try {
+    const cached = localStorage.getItem(getTwitterResultsCacheKey(userId))
+    if (!cached) return null
+
+    const parsedCache = JSON.parse(cached)
+
+    // Check if cache is still valid (24 hours)
+    if (!isCacheValid(parsedCache)) {
+      clearTwitterResults(userId)
+      return null
+    }
+
+    return parsedCache
+  } catch (error) {
+    console.error('Error loading Twitter results:', error)
+    return null
+  }
+}
+
+/**
+ * Clear Twitter search results from localStorage
+ */
+export const clearTwitterResults = (userId) => {
+  try {
+    localStorage.removeItem(getTwitterResultsCacheKey(userId))
+    return true
+  } catch (error) {
+    console.error('Error clearing Twitter results:', error)
+    return false
+  }
+}
