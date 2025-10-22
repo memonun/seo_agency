@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "Miraclechain",
+    "scraped_at": "2025-10-21T14:26:46.107498"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 62.14
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

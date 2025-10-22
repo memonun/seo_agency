@@ -1,0 +1,69 @@
+{
+  "keyword": "clash royale",
+  "timestamp": "20251010_190721",
+  "total_analyzed": 3,
+  "successful_analyses": 3,
+  "overall_summary": "Based on the three articles about Clash Royale, several common themes and perspectives emerge. All articles highlight the game's strategic gameplay, character diversity, and competitive elements, emphasizing its appeal to both casual and hardcore gamers. They also underscore the game's continuous updates and community engagement, which contribute to its longevity in the mobile gaming market.\n\nThe overall tone across the coverage is positive, showcasing Clash Royale as an innovative and engaging title that maintains a strong player base. The articles collectively celebrate the game's achievements and its role in the mobile gaming landscape.\n\nKey differences in approach include the first article's focus on the game's features and mechanics, the second article's emphasis on user reviews and ratings from the Google Play Store, and the third article's promotion of in-game purchases and merchandise. Each article serves distinct purposes: one informs about gameplay, another assesses user experience, and the last markets the game’s products.\n\nThere is no evident crisis framing in the coverage, as all articles present Clash Royale in a favorable light, reflecting its success and ongoing relevance in the gaming industry. Overall, the articles collectively reinforce the game's positive reputation while highlighting different aspects of its appeal and community engagement.",
+  "individual_analyses": [
+    {
+      "url": "https://supercell.com/en/games/clashroyale/",
+      "title": "Clash Royale",
+      "keyword": "clash royale",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional and informative overview of Clash Royale's gameplay and updates.",
+        "tone": "Enthusiastic and engaging.",
+        "key_points": [
+          "Clash Royale is a real-time multiplayer game featuring characters from Clash of Clans.",
+          "Players can collect and upgrade cards, including troops, spells, and defenses.",
+          "The objective is to defeat opponents by knocking down their towers.",
+          "Recent updates include balance changes and a new season titled 'Rock & Rule'.",
+          "Encouragement to follow social media for updates and community engagement."
+        ],
+        "target_audience": "Current and potential players of Clash Royale, as well as fans of the Clash franchise.",
+        "crisis_framing": "None applicable; the article focuses on game promotion and updates rather than addressing any crisis."
+      },
+      "tokens_used": 528
+    },
+    {
+      "url": "https://play.google.com/store/apps/details?id=com.supercell.clashroyale&hl=en_US",
+      "title": "Clash Royale - Apps on Google Play",
+      "keyword": "clash royale",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Clash Royale as a dynamic and engaging multiplayer strategy game that has evolved over time, emphasizing its features, gameplay mechanics, and community aspects.",
+        "tone": "Neutral and promotional, with a focus on the game's positive aspects while acknowledging some player concerns.",
+        "key_points": [
+          "Real-time multiplayer card battle gameplay with strategic elements.",
+          "Over 100 collectible and upgradeable cards featuring familiar characters.",
+          "Seasonal events and clan participation enhance community engagement.",
+          "In-app purchases are available, with a note on the necessity of parental controls for younger players.",
+          "Recent updates introduce new game modes and content, addressing player feedback."
+        ],
+        "target_audience": "Mobile gamers, particularly fans of strategy and card games, as well as existing Clash Royale players looking for updates and improvements.",
+        "crisis_framing": "There are hints of dissatisfaction among free-to-play players regarding monetization changes and game balance, but no immediate crisis is presented."
+      },
+      "tokens_used": 1648
+    },
+    {
+      "url": "https://store.supercell.com/clashroyale",
+      "title": "Clash Royale",
+      "keyword": "clash royale",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional and informational perspective on in-game purchases and rewards in Clash Royale.",
+        "tone": "Neutral and promotional.",
+        "key_points": [
+          "Users are encouraged to log in to view special offers.",
+          "Earning points and bonuses through purchases in the Clash Royale Store.",
+          "Introduction of the Diamond Pass Stamp Card for rewards.",
+          "Highlighting high-value offers available in the store.",
+          "Availability of premium support for customer inquiries."
+        ],
+        "target_audience": "Clash Royale players and potential customers interested in in-game purchases and rewards.",
+        "crisis_framing": "No crisis framing is applicable as the content focuses on promotions and customer support."
+      },
+      "tokens_used": 367
+    }
+  ]
+}

@@ -1,0 +1,785 @@
+{
+  "input": {
+    "type": "query",
+    "value": "cat",
+    "scraped_at": "2025-10-22T01:39:44.790780"
+  },
+  "metadata": {
+    "max_videos": 20,
+    "scrape_comments": false,
+    "max_comment_pages": 5,
+    "total_videos": 20,
+    "scrape_duration_seconds": 15.54
+  },
+  "videos": [
+    {
+      "video_id": "7561762873593056525",
+      "desc": "The identity crisis of cats #funny #cat #funnycat #cutecat #tiktok #catsoftiktok #foryou ",
+      "create_time": 1760610133,
+      "search_query": "cat",
+      "author": {
+        "id": "7454117478582240302",
+        "unique_id": "chriswayne.linkin",
+        "nickname": "Cats lover 001",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 5100000,
+        "digg_count": 1200000,
+        "comment_count": 3309,
+        "share_count": 156000,
+        "engagement_rate": 26.65
+      },
+      "video": {
+        "duration": 61,
+        "ratio": "480p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/oQ6h5gA4eAIbEv32BGjRgqCcjIHkLIYPVYDQef~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=s1z2g5n%2BJ%2BzCC77PWVfROK7vZPo%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7561762867146541837",
+        "title": "original sound",
+        "author": "Cats lover 001"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7562260601741806878",
+      "desc": "Angry Cats.#cat #cats #catsoftiktok #catlover #funny #foryou #funnyvideos #viral #fypシ #funnytiktok #usa🇺🇸 ",
+      "create_time": 1760726011,
+      "search_query": "cat",
+      "author": {
+        "id": "7343555689092826158",
+        "unique_id": "lovepets_001",
+        "nickname": "lovepets_001",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 1500000,
+        "digg_count": 82100,
+        "comment_count": 579,
+        "share_count": 8282,
+        "engagement_rate": 6.06
+      },
+      "video": {
+        "duration": 71,
+        "ratio": "720p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/oEolRo6ZoQVjESEoFB8FYHuEQuDDZ6ATdAfUfP~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=6GrUMEoG5kklaWHirCXJXo0r%2FCc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562260517457267487",
+        "title": "original sound",
+        "author": "lovepets_001"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7562041596527529237",
+      "desc": "#funnyvideos #funny #cutecat #catsoftiktok #cat ",
+      "create_time": 1760675019,
+      "search_query": "cat",
+      "author": {
+        "id": "6922678834215781378",
+        "unique_id": "oifans",
+        "nickname": "Catutu",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 200300,
+        "digg_count": 10400,
+        "comment_count": 140,
+        "share_count": 2038,
+        "engagement_rate": 6.28
+      },
+      "video": {
+        "duration": 13,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oUfHAbYHcorVIgEeiZAFmEoDC3A08QRjTqUAAB~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=ARWY1eEJfmnZ%2FPVbG3Uq%2F1vOuoE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7268735501090539521",
+        "title": "The Winner Is... - DeVotchKa Version",
+        "author": "DeVotchKa"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7548031538609327415",
+      "desc": "Cute kitten best video #funny #cat #funnycat #cutecat #tiktok #catsoftiktok #foryou ",
+      "create_time": 1757413146,
+      "search_query": "cat",
+      "author": {
+        "id": "7454117478582240302",
+        "unique_id": "chriswayne.linkin",
+        "nickname": "Cats lover 001",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 15400000,
+        "digg_count": 3500000,
+        "comment_count": 11100,
+        "share_count": 665900,
+        "engagement_rate": 27.12
+      },
+      "video": {
+        "duration": 62,
+        "ratio": "540p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/oIdocd8MQQecNEFiNf7ELfZffKxA3QsyXFE9gA~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=AkfM0okF4AvzMyVzBXGZN05nPtE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7548031860450872077",
+        "title": "original sound",
+        "author": "Cats lover 001"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7562854496741772545",
+      "desc": "#cat #kitten #aicat #aivideo #funny #catlover",
+      "create_time": 1760868300,
+      "search_query": "cat",
+      "author": {
+        "id": "7456689284688593925",
+        "unique_id": "catsmeets",
+        "nickname": "catsmeet",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 23100,
+        "digg_count": 299,
+        "comment_count": 24,
+        "share_count": 7,
+        "engagement_rate": 1.43
+      },
+      "video": {
+        "duration": 66,
+        "ratio": "720p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/o0DeQEtIBaiQlCqxgifFAsAAqiu8AoBCU4QV10~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=kLfcz3eGQyQin7Fl6FBmrqyJ84o%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562854897939417857",
+        "title": "オリジナル楽曲 - catsmeet",
+        "author": "catsmeet"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7557094317395922190",
+      "desc": "had to hit this @marmar #highschooldxd #akenocosplay #xenovia #sturdydance #cosplaydance ",
+      "create_time": 1759523172,
+      "search_query": "cat",
+      "author": {
+        "id": "6990935276717802501",
+        "unique_id": "strifecos",
+        "nickname": "cat",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 617500,
+        "digg_count": 109300,
+        "comment_count": 810,
+        "share_count": 9729,
+        "engagement_rate": 19.41
+      },
+      "video": {
+        "duration": 8,
+        "ratio": "540p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/okTwkIFIGVvHGCM7AIeWAXEiGLeeaRHI0S2j6g~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=oLOiDMUOoOPPSbVmXx6FITsUlj4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7280312875074292522",
+        "title": "original sound",
+        "author": "starz"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7560358299552681218",
+      "desc": "Fiesty kittens 🧡🖤 #cat #kitty #cutecat #catlover #kittensoftiktok ",
+      "create_time": 1760283093,
+      "search_query": "cat",
+      "author": {
+        "id": "7391577557852292128",
+        "unique_id": "wish_ai",
+        "nickname": "Wish Ai",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 62500,
+        "digg_count": 1384,
+        "comment_count": 88,
+        "share_count": 258,
+        "engagement_rate": 2.77
+      },
+      "video": {
+        "duration": 10,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/ooIrQCLejyN1ASGRFLjleunocNeIdImAIn5dDL~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=x5KNLouZCLNN16QlHQ2uUbzkb%2Bs%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6817143279088306177",
+        "title": "[Animals and dishes] Cute BGM",
+        "author": "Sound Owl"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7560104026159795463",
+      "desc": "Cat Dad to the Rescue! | Little Cat’s Street Mishap❤️🐱💎!#shorts #funny #cat #cute #animals ",
+      "create_time": 1760223897,
+      "search_query": "cat",
+      "author": {
+        "id": "7387010222224081937",
+        "unique_id": "pipi20255",
+        "nickname": "Pi Pi",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 404800,
+        "digg_count": 3112,
+        "comment_count": 90,
+        "share_count": 146,
+        "engagement_rate": 0.83
+      },
+      "video": {
+        "duration": 35,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oYIwripivHibQqADTlAEEqBRB4AmYAjltAiOa~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=o4AWpURRWJPHkXjtrvAIgHiygAM%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7560104077024234256",
+        "title": "original sound - Pi Pi",
+        "author": "Pi Pi"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7553319468299046158",
+      "desc": "rasputin mentioned #burnicecosplay #zenlesszonezero #justdance #rasputin #cosplaydance ",
+      "create_time": 1758644280,
+      "search_query": "cat",
+      "author": {
+        "id": "6990935276717802501",
+        "unique_id": "strifecos",
+        "nickname": "cat",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 255100,
+        "digg_count": 42200,
+        "comment_count": 181,
+        "share_count": 1931,
+        "engagement_rate": 17.37
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "540p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/ok7EkLo6IIEMRP4LB4aiBSBUDoiYgKNi6DyAH~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=pEb%2FHxj4XJPL9DM89ysE9lrh6ok%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6896709682052762374",
+        "title": "rasputin",
+        "author": "swamp.son"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7561114529535511821",
+      "desc": "GRWM: How to mix and match different prints for work. Rate my outfit on 1-10. - Shop all outfits link in bio LTK #fashiontiktok #skirt ",
+      "create_time": 1760459221,
+      "search_query": "cat",
+      "author": {
+        "id": "7117727911080068138",
+        "unique_id": "agendiatangu1",
+        "nickname": "CAT",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 99500,
+        "digg_count": 2861,
+        "comment_count": 37,
+        "share_count": 41,
+        "engagement_rate": 2.95
+      },
+      "video": {
+        "duration": 55,
+        "ratio": "720p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/o08QgEnORlpQoAefcB073ndwMDEDEBFdSdaD9Y~tplv-tiktokx-dmt-logom:tos-useast5-i-0068-tx/o8oASgc9TCBInAFRsDDQUdNAA7E4ggfHpneDEo.image?dr=14573&x-expires=1761256800&x-signature=ro%2FaEsx%2FQ9k5xVYs7I0UTMABoU0%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7528249655151790081",
+        "title": "Hot Body",
+        "author": "Ayra Starr"
+      },
+      "hashtags": [
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7563001677691817237",
+      "desc": "#cat #funnyvideos #ia ",
+      "create_time": 1760898557,
+      "search_query": "cat",
+      "author": {
+        "id": "7081409927285064709",
+        "unique_id": "ogatonildo",
+        "nickname": "O Gatonildo 🐈",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 2794,
+        "digg_count": 50,
+        "comment_count": 3,
+        "share_count": 4,
+        "engagement_rate": 2.04
+      },
+      "video": {
+        "duration": 29,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/ogP3QcEDZqfBK9BEXoSqEmYQBEF0LRA9ZkB3eg~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=GIMBsXzddC5vqx%2FssQqRLGNIyCg%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7563001761816972048",
+        "title": "som original",
+        "author": "O Gatonildo 🐈"
+      },
+      "hashtags": [
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7563542400543624470",
+      "desc": "beautiful cat nd cat cute baby 😻🫠 #animal #cutebaby #animalsoftiktok #cutecat #foryou ",
+      "create_time": 1761024460,
+      "search_query": "cat",
+      "author": {
+        "id": "7504166330540180502",
+        "unique_id": "animals9408",
+        "nickname": "Animals nd cute baby 🦃👩‍👦👶",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 4156,
+        "digg_count": 57,
+        "comment_count": 1,
+        "share_count": 0,
+        "engagement_rate": 1.4
+      },
+      "video": {
+        "duration": 10,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/ocILX3IAIMALWIjGjtjye7eTeNGCLDUQ8CcRo3~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=0wGUp4aLMNzvEri4ihafbYMQCm8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7563542373456726806",
+        "title": "original sound",
+        "author": "Animals nd cute baby 🦃👩‍👦👶"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7452716745044905238",
+      "desc": "#catsoftiktok #kitten #viral #fyp #funny #fail ",
+      "create_time": 1735220842,
+      "search_query": "cat",
+      "author": {
+        "id": "7406724154768835617",
+        "unique_id": "icelandicfarm",
+        "nickname": "🤍Farm in Iceland🤍",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 8300000,
+        "digg_count": 1600000,
+        "comment_count": 1994,
+        "share_count": 274000,
+        "engagement_rate": 22.6
+      },
+      "video": {
+        "duration": 13,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oUAAWJEQIFgnpIbfKvFkauDxSN5CeEAlDCVRAw~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=%2BPTCbOw%2FFkWnN9qrRd3ovxbkWas%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6714159100260813573",
+        "title": "sad SpongeBob music",
+        "author": "michael"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7558309148429962518",
+      "desc": "cat video story cat funny video #creatorsearchinsights #cats  #catsoftiktok  #fyp   #cutecats ",
+      "create_time": 1759806023,
+      "search_query": "cat",
+      "author": {
+        "id": "7413443704264033312",
+        "unique_id": "fatima5556888",
+        "nickname": "Noor fatima",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 2400000,
+        "digg_count": 31800,
+        "comment_count": 6900,
+        "share_count": 2864,
+        "engagement_rate": 1.73
+      },
+      "video": {
+        "duration": 82,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oEEbeAGyegDLiLjHRapZRAIIAERkFfxIAAAQIk~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=Tjz%2BrFjMIpqLbffLFnnYNdTdFz4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7558309174757640982",
+        "title": "original sound",
+        "author": "Noor fatima"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7554655868453719308",
+      "desc": "#funnycatsoftiktok😂😂😍cute #kitty #cats #kittens #fyp               ",
+      "create_time": 1758955397,
+      "search_query": "cat",
+      "author": {
+        "id": "7180810412019205125",
+        "unique_id": "cat.sheri.kittens",
+        "nickname": "cat.sheri.kittens",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 26600000,
+        "digg_count": 881100,
+        "comment_count": 7178,
+        "share_count": 155700,
+        "engagement_rate": 3.92
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/owZXR4WVoQJeEAB8hB1FHPdEQGDFccAy0QfF4O~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=Osm1PdqWDWqe8GiSPVVOpg9eEyY%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7291190567906659073",
+        "title": "nhạc nền - RubyDoris🦋啊蝶🌼",
+        "author": "RubyDoris🦋啊蝶🦋"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7404463410076831006",
+      "desc": "#funnycat #kitty #foryoupage #cutecat #catsoftiktok ",
+      "create_time": 1723986023,
+      "search_query": "cat",
+      "author": {
+        "id": "7357970517974418478",
+        "unique_id": "cutecatvi",
+        "nickname": "SU YA",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 12700000,
+        "digg_count": 1600000,
+        "comment_count": 16100,
+        "share_count": 362900,
+        "engagement_rate": 15.58
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/oEbfIBfRAGIYSARiO8TFeLG6CQUoVQB9GeBJhB~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=adaEbUHOPFhQe1yWrUI84JHralg%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7192131474156423169",
+        "title": "Cats - Sped Up",
+        "author": "The Living Tombstone"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7531271758687505695",
+      "desc": "Cats understand!🤣 #pet #foryou #funny #funnypet #cat #cats #catsoftiktok #catlover #catvideo #funnyvideos #usa #petsoftiktok ",
+      "create_time": 1753510881,
+      "search_query": "cat",
+      "author": {
+        "id": "7520522671936717837",
+        "unique_id": "woisinthyssen",
+        "nickname": "TheCritterChronicle",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 9600000,
+        "digg_count": 923300,
+        "comment_count": 3543,
+        "share_count": 192200,
+        "engagement_rate": 11.66
+      },
+      "video": {
+        "duration": 150,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/os0EA5q7I1oIqICC1IfDfISjRfAFCEOACq9RQV~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=y%2BhU7TUGeiZu0mZR25lOAxzDG%2FE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7531276888405297951",
+        "title": "原聲",
+        "author": "TheCritterChronicle"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7551363565559581982",
+      "desc": "#cat #aicat #orangecat #funnycat #cutecat ",
+      "create_time": 1758188856,
+      "search_query": "cat",
+      "author": {
+        "id": "7273421287840908334",
+        "unique_id": "user9534870882261",
+        "nickname": "Happy cat",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 3800000,
+        "digg_count": 56100,
+        "comment_count": 556,
+        "share_count": 5632,
+        "engagement_rate": 1.64
+      },
+      "video": {
+        "duration": 73,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/okcu1oYffABdDKDqETlLTKQAVFRZ9y8UgVEIEc~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=rV2Uqbo4IpzWAo5BijG975kv1Ow%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7551368551660129055",
+        "title": "原聲",
+        "author": "Happy cat"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7424947993520000289",
+      "desc": "Cute and tiniest kitty in the world🤏❤️#cute #catsoftiktok #ai #fyp #fy #cats #kitten #kittensoftiktok #kittens #catlover #trendingvideo #tiktokviral #viraltiktok #adorable #pets #petsoftiktok #fypシ゚ #funny #funnyvideo ",
+      "create_time": 1728755428,
+      "search_query": "cat",
+      "author": {
+        "id": "7391577557852292128",
+        "unique_id": "wish_ai",
+        "nickname": "Wish Ai",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 5900000,
+        "digg_count": 299600,
+        "comment_count": 8705,
+        "share_count": 70800,
+        "engagement_rate": 6.43
+      },
+      "video": {
+        "duration": 10,
+        "ratio": "540p",
+        "cover": "https://p19-common-sign-useastred.tiktokcdn-eu.com/tos-useast2a-p-0037-euttp/oIcTIAFjuyPBf2sVDCDAQYC9RHnQbBYEIrEsfB~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=uEcGYJAfeALdPyirg3GFnRhhIes%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7072513628145977346",
+        "title": "Aesthetic",
+        "author": "Tollan Kim"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    },
+    {
+      "video_id": "7560869061307993362",
+      "desc": "#duck #CatTrend #cat #CatReels #catlover ",
+      "create_time": 1760402018,
+      "search_query": "cat",
+      "author": {
+        "id": "7052408666628342790",
+        "unique_id": "meowcatflix0",
+        "nickname": "Meow Catflix 🐾",
+        "verified": false
+      },
+      "stats": {
+        "play_count": 14100,
+        "digg_count": 114,
+        "comment_count": 17,
+        "share_count": 8,
+        "engagement_rate": 0.99
+      },
+      "video": {
+        "duration": 8,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oEFpLAZo7AwcBvdAEhxZHRNCUobfQe4AEwmgID~tplv-tiktokx-origin.image?dr=14575&x-expires=1761256800&x-signature=uqDnkMrfHyMa6ScLtGdq7vFQp54%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7481632284724300566",
+        "title": "original sound - Daily Life with Baby",
+        "author": "Daily Life with Baby"
+      },
+      "hashtags": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "is_ad": false
+    }
+  ],
+  "comments": {}
+}

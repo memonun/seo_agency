@@ -1,0 +1,136 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "travel",
+    "scraped_at": "2025-10-21T22:27:28.491845"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 10,
+    "total_posts": 10,
+    "scrape_duration_seconds": 61.23
+  },
+  "results": {
+    "hashtag_data": {
+      "hashtag_name": "#travel",
+      "hashtag_slug": "travel",
+      "posts_count": 10,
+      "url": "https://www.instagram.com/explore/tags/travel/",
+      "posts": [
+        {
+          "id": "travels",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travels"
+        },
+        {
+          "id": "travelholic",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travelholic"
+        },
+        {
+          "id": "traveller",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/traveller"
+        },
+        {
+          "id": "travelnow",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travelnow"
+        },
+        {
+          "id": "travelling",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travelling"
+        },
+        {
+          "id": "travelgram",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travelgram"
+        },
+        {
+          "id": "travel",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travel"
+        },
+        {
+          "id": "travelalberta",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/travelalberta"
+        },
+        {
+          "id": "traveling",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/traveling"
+        },
+        {
+          "id": "traveler",
+          "shortCode": "",
+          "caption": "",
+          "likesCount": 0,
+          "commentsCount": 0,
+          "timestamp": "",
+          "ownerUsername": "",
+          "type": "",
+          "url": "https://www.instagram.com/explore/tags/traveler"
+        }
+      ],
+      "total_engagement": 0,
+      "avg_engagement": 0.0,
+      "unique_users_count": 0
+    }
+  }
+}

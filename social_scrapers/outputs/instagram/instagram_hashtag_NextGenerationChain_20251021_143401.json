@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "NextGenerationChain",
+    "scraped_at": "2025-10-21T14:30:20.729186"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 221.1
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

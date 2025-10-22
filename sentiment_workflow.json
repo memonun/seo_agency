@@ -1,0 +1,324 @@
+{
+  "name": "Sentiment Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "2f2af863-e442-4574-95c4-d46ebd6c54c2",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get data from previous nodes\n// Code node'undan gelen flattened config\nconst flatConfig = $('Code').first().json;\n\n// SQL query sonucunu al\nconst brandDataResult = $input.all();\n\n// Brand validation - SQL'den gelen veriyi kontrol et\nif (!brandDataResult || brandDataResult.length === 0) {\n  throw new Error('Brand not found in database');\n}\n\nconst brandData = brandDataResult[0].json;\n\nif (!brandData || !brandData.name) {\n  throw new Error('Brand data is invalid');\n}\n\nconst brand = brandData.name;\nconst brandDisplayName = brandData.display_name;\nconst subBrands = brandData.sub_brands || {};\n\n// Config'den subbrand ve diğer ayarları al\nconst subbrand = flatConfig.subbrand || 'all';\nconst dateRange = flatConfig.dateRange || {\n  start: new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],\n  end: new Date().toISOString().split('T')[0]\n};\n\n// Sub-brand keywords ve hashtags'leri otomatik çek\nlet brandKeywords = [brand, `#${brand}`, `@${brand}`];\nlet campaignHashtags = [];\nlet instagramAccounts = [];\nlet tiktokAccounts = [];\n\n// Eğer specific bir subbrand seçildiyse\nif (subbrand !== 'all' && subBrands && subBrands[subbrand]) {\n  const subbrandData = subBrands[subbrand];\n  \n  // Hashtags ekle\n  if (subbrandData.hashtags && Array.isArray(subbrandData.hashtags)) {\n    campaignHashtags = [...campaignHashtags, ...subbrandData.hashtags];\n    brandKeywords = [...brandKeywords, ...subbrandData.hashtags];\n  }\n  \n  // Instagram account ekle\n  if (subbrandData.instagram && subbrandData.instagram.username) {\n    instagramAccounts.push(subbrandData.instagram.username);\n    brandKeywords.push(`@${subbrandData.instagram.username}`);\n  }\n  \n  // TikTok account ekle  \n  if (subbrandData.tiktok && subbrandData.tiktok.username) {\n    tiktokAccounts.push(subbrandData.tiktok.username);\n    brandKeywords.push(`@${subbrandData.tiktok.username}`);\n  }\n} else if (subbrand === 'all' && subBrands) {\n  // Tüm subbrand'lerin keyword'lerini topla\n  Object.values(subBrands).forEach(subbrandData => {\n    if (subbrandData && typeof subbrandData === 'object') {\n      if (subbrandData.hashtags && Array.isArray(subbrandData.hashtags)) {\n        campaignHashtags = [...campaignHashtags, ...subbrandData.hashtags];\n        brandKeywords = [...brandKeywords, ...subbrandData.hashtags];\n      }\n      if (subbrandData.instagram && subbrandData.instagram.username) {\n        instagramAccounts.push(subbrandData.instagram.username);\n        brandKeywords.push(`@${subbrandData.instagram.username}`);\n      }\n      if (subbrandData.tiktok && subbrandData.tiktok.username) {\n        tiktokAccounts.push(subbrandData.tiktok.username);\n        brandKeywords.push(`@${subbrandData.tiktok.username}`);\n      }\n    }\n  });\n}\n\n// Unique keywords only\nbrandKeywords = [...new Set(brandKeywords)];\ncampaignHashtags = [...new Set(campaignHashtags)];\ninstagramAccounts = [...new Set(instagramAccounts)];\ntiktokAccounts = [...new Set(tiktokAccounts)];\n\nreturn [{\n  json: {\n    brand: brand,\n    brandDisplayName: brandDisplayName,\n    subbrand: subbrand,\n    subBrandDetails: subbrand !== 'all' ? subBrands[subbrand] : null,\n    dateRange: dateRange,\n    brand_keywords: brandKeywords,\n    campaign_hashtags: campaignHashtags,\n    instagram_accounts: instagramAccounts,\n    tiktok_accounts: tiktokAccounts,\n    competitor_keywords: flatConfig.competitor_keywords || [],\n    filter_by_keywords: flatConfig.filter_by_keywords || (subbrand !== 'all'),\n    analysis_window_days: flatConfig.analysis_window_days || 30,\n    platforms: flatConfig.platforms || ['instagram', 'tiktok'],\n    limit: flatConfig.limit || 100,\n    requestId: flatConfig.requestId || `sentiment_${Date.now()}`,\n    metadata: {\n      brandInfo: brandData,\n      totalSubBrands: Object.keys(subBrands).length,\n      originalConfig: flatConfig\n    }\n  }\n}];"
+      },
+      "id": "5f01b57c-239d-4b17-b6b1-3573de298fb6",
+      "name": "Process Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- TikTok yorumlarını JSONB kolonundan çeken yeni query\nWITH tiktok_data AS (\n  -- tiktok_pages tablosundan yorumlar\n  SELECT \n    video_id::text,\n    'tiktok'::text as platform,\n    description as post_caption,\n    author_nickname as post_owner,\n    like_count::bigint as likes_count,\n    comment_count::bigint as comments_count,\n    comments,\n    create_time,  -- POST tarihi eklendi\n    'page' as source_table\n  FROM social_analytics.tiktok_pages\n  WHERE comments IS NOT NULL\n    AND jsonb_array_length(comments->'comments') > 0\n    AND create_time >= '{{ $json.dateRange.start }}'::date  -- POST tarihi filtreleme\n    AND create_time <= '{{ $json.dateRange.end }}'::date\n  \n  UNION ALL\n  \n  -- tiktok_queries tablosundan yorumlar\n  SELECT \n    video_id::text,\n    'tiktok'::text as platform,\n    description as post_caption,\n    author_nickname as post_owner,\n    like_count::bigint as likes_count,\n    comment_count::bigint as comments_count,\n    comments,\n    create_time,  -- POST tarihi eklendi\n    'query' as source_table\n  FROM social_analytics.tiktok_queries\n  WHERE comments IS NOT NULL\n    AND jsonb_array_length(comments->'comments') > 0\n    AND create_time >= '{{ $json.dateRange.start }}'::date  -- POST tarihi filtreleme\n    AND create_time <= '{{ $json.dateRange.end }}'::date\n)\nSELECT DISTINCT ON (comment_id)\n  platform,\n  video_id as post_id,\n  post_caption,\n  post_owner,\n  likes_count,\n  comments_count,\n  (comment_obj->>'created_at')::timestamp as post_timestamp,\n  (comment_obj->'user'->>'unique_id')::text as commenter_username,\n  (comment_obj->>'text')::text as comment_text,\n  (comment_obj->>'created_at')::timestamp as comment_date,\n  (comment_obj->>'like_count')::int as comment_likes,\n  (comment_obj->>'cid')::text as comment_id\nFROM tiktok_data,\n     jsonb_array_elements(comments->'comments') as comment_obj\nORDER BY comment_id, comment_date DESC\nLIMIT 50;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        912,
+        112
+      ],
+      "id": "1b2a2a50-1c63-4c3c-9e1f-b8a60622ad67",
+      "name": "Fetch TikTok Comments",
+      "credentials": {
+        "postgres": {
+          "id": "s407eDZqUbPatoCz",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare Comments for Analysis\nconst comments = $input.all();\nconst config = $('Process Config').first().json;\n\nconst prepared = comments.map(item => {\n  const data = item.json || {};\n  const platform = (data.platform || '').toLowerCase() || 'instagram';\n  const brand = data.brand || config.brand || 'unknown';\n  \n  let cleanText = (data.comment_text || '')\n    .replace(/&quot;/g, '\"')\n    .replace(/&apos;/g, \"'\")\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&amp;/g, '&');\n\n  const mentions = cleanText.match(/@[\\w.]+/g) || [];\n  const hashtags = cleanText.match(/#[\\w\\u0080-\\uFFFF]+/g) || [];\n  \n  const spamIndicators = [];\n  if (/(.)\\1{4,}/.test(cleanText)) spamIndicators.push('repeated_chars');\n  const upperRatio = (cleanText.match(/[A-Z]/g) || []).length / Math.max(cleanText.length, 1);\n  if (upperRatio > 0.6 && cleanText.length > 10) spamIndicators.push('excessive_caps');\n  if (/https?:\\/\\/|www\\./i.test(cleanText)) spamIndicators.push('contains_link');\n  \n  const uniqueTimestamp = Date.now();\n  const randomString = Math.random().toString(36).substring(7);\n  const finalCommentId = `${data.comment_id || 'no_id'}_${uniqueTimestamp}_${randomString}`;\n\n  return {\n    json: {\n      platform,\n      brand,\n      post_id: data.post_id,\n      comment_id: finalCommentId,\n      brand_keywords: config.brand_keywords,\n      competitor_keywords: config.competitor_keywords,\n      campaign_hashtags: config.campaign_hashtags,\n      commenter_username: data.commenter_username || 'unknown_user',\n      comment_text: cleanText,\n      comment_date: data.comment_date,\n      comment_likes: parseInt(data.comment_likes) || 0,\n      post_caption: data.post_caption || '',\n      post_owner: data.post_owner || '',\n      post_likes: Number(data.likes_count) || 0,\n      post_comments: Number(data.comments_count) || 0,\n      mentions,\n      hashtags,\n      text_length: cleanText.length,\n      word_count: cleanText.split(/\\s+/).filter(w => w.length > 0).length,\n      spam_indicators: spamIndicators,\n      potential_spam: spamIndicators.length > 1,\n    }\n  };\n}).filter(item => item.json.post_id);\n\nreturn prepared;"
+      },
+      "id": "7c45d833-7d92-4288-ac97-de6a0f83ce87",
+      "name": "Prepare Comments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Sen Türkiye'de yaşayan, Türk kültürünü ve sosyal medya dilini mükemmel bilen bir sosyal medya analiz uzmanısın.\n\nGÖREV\nInstagram ve Tiktok yorumlarını analiz edip, TÜM alanları dolduracaksın. Yorumları analiz ederken contexti anlamak için post_caption'u da oku. HİÇBİR ALANI BOŞ BIRAKMA! Yalnızca GEÇERLİ JSON döndür.\n\nTÜRKÇE SENTIMENT ANALİZİ\n\nÇok Pozitif (+0.8 ile +1.0)\n- \"efsane\", \"muhteşem\", \"mükemmel\", \"harika\", \"on numara\", \"10 numara\", \"süper\"\n- Emojiler: 😍🤩✨🔥💯❤️\n\nPozitif (+0.3 ile +0.7)\n- \"güzel\", \"iyi\", \"beğendim\", \"sevdim\", \"başarılı\"\n- Emojiler: 😊☺️👍💪\n\nNötr (-0.2 ile +0.2)\n- \"idare eder\", \"fena değil\", \"normal\", \"eh işte\"\n- Emojiler: 😐🤔🤷\n\nNegatif (-0.7 ile -0.3)\n- \"kötü\", \"beğenmedim\", \"vasat\", \"dandik\"\n- Emojiler: 😒👎😕\n\nÇok Negatif (-1.0 ile -0.8)\n- \"berbat\", \"rezalet\", \"iğrenç\", \"bok gibi\", \"leş\"\n- Emojiler: 😡🤮💔😭\n\nİRONİ TESPİTİ\ncontains_irony: true yap eğer:\n- \"...\" üç nokta varsa\n- \"Aynen\", \"Tabii\", \"Herhalde\" tek başına\n- Abartılı övgü + olumsuz context\n- actual_meaning: ironi varsa gerçek anlamını yaz\n\nMARKA ANALİZİ (dinamik)\n- BRAND_KEYWORDS dizisindeki herhangi bir ifade geçiyorsa mentions_brand = true\n- brand_sentiment: marka hakkındaki duygu (-1 ile 1 arası)\n- COMPETITOR_KEYWORDS dizisinden biri geçiyorsa mentions_competitor = true ve competitor_names içinde listele\n- CAMPAIGN_HASHTAGS içinden geçenleri kampanya teması olarak değerlendir\n\nKATEGORİ TESPİTİ\ncomment_category dizisine ekle:\n- \"taste\" → tat, lezzet, içim\n- \"price\" → fiyat, pahalı, ucuz\n- \"availability\" → nerede, nereden alabilirim\n- \"quality\" → kalite, bayat, taze\n- \"experience\" → deneyim, mekan\n- \"campaign\" → kampanya / kampanya hashtagleri\n\nSORU/ÖNERİ/ŞİKAYET\nis_question: true → \"?\" varsa veya soru kalıbı\nis_suggestion: true → öneri içeriyorsa\nis_complaint: true → şikayet varsa\nrequires_response: true eğer soru var, şikayet var veya sentiment_score < -0.5\nresponse_priority:\n- \"high\" → sentiment < -0.7 veya acil soru\n- \"medium\" → -0.7 ≤ sentiment ≤ -0.3\n- \"low\" → diğer durumlar\n\nSATIN ALMA NİYETİ\npurchase_intent:\n- \"high\" → \"alacağım\", \"deneyeceğim\", \"nerede bulabilirim\"\n- \"medium\" → \"merak ettim\", \"ilgimi çekti\"\n- \"low\" → \"belki\", \"düşünürüm\"\n- \"none\" → niyet yok\nrecommendation_likelihood:\n- \"definitely\" (>0.8), \"likely\" (0.3–0.8), \"maybe\" (-0.2–0.3), \"unlikely\" (<-0.2)\n\nSLANG TESPİTİ\ncontains_slang: true yap eğer \"kanka\", \"moruk\", \"abi\", \"knk\", \"bro\", \"panpa\" vb. varsa\nslang_words: [\"kanka\", \"abi\"] örneği gibi listele\n\nEMOJİ ANALİZİ\ncontains_emoji: emoji varsa true\nemoji_sentiment: \"positive\" (😍❤️🔥💯), \"negative\" (😢😭😡💔), \"neutral\" (🤔😐), \"mixed\" (karışık)\n\nSPAM/BOT TESPİTİ\nspam_score (0-100):\n- Çok kısa (<5): +30\n- Sadece emoji: +20\n- Tekrarlı karakter (aaa, !!!): +40\n- Link: +50\n- Anlamsız: +30\nis_spam: spam_score > 60\nbot_indicators:\n- \"generic_comment\", \"numeric_username\", \"repetitive\"\nis_bot: bot_indicators boş değilse true\n\nDİL ANALİZİ\nlanguage_formality: \"formal\" / \"informal\" / \"slang\"\ndetected_phrases: [\"önemli ifadeler\"] listele\n\nDUYGULAR\nprimary_emotion: \"joy\" | \"anger\" | \"sadness\" | \"fear\" | \"surprise\" | \"disgust\" | \"neutral\"\nsecondary_emotion: ikincil duygu veya null\nemotion_intensity: 1-10 (1=çok hafif, 10=çok yoğun)\n",
+              "role": "system"
+            },
+            {
+              "content": "=YORUM: \"{{ $json.comment_text }}\"\nKULLANICI: {{ $json.commenter_username || 'unknown' }}\nPOST: {{ $json.post_caption || '' }}\nMARKA: {{ $json.brand }}\nPLATFORM: {{ $json.platform }}\n\nBRAND_KEYWORDS: {{ JSON.stringify($json.brand_keywords || []) }}\nCOMPETITOR_KEYWORDS: {{ JSON.stringify($json.competitor_keywords || []) }}\nCAMPAIGN_HASHTAGS: {{ JSON.stringify($json.campaign_hashtags || []) }}\n\nBu yorumu analiz et ve TÜM alanları doldur. SADECE geçerli JSON döndür:\n{\n  \"sentiment_score\": -1.0 ile 1.0 arası ondalık,\n  \"sentiment_label\": \"positive\" | \"negative\" | \"neutral\",\n  \"confidence_score\": 0-100 tam sayı,\n  \"primary_emotion\": \"joy\" | \"anger\" | \"sadness\" | \"fear\" | \"surprise\" | \"disgust\" | \"neutral\",\n  \"mentions_brand\": boolean,\n  \"brand_sentiment\": -1.0 ile 1.0,\n  \"is_question\": boolean,\n  \"is_complaint\": boolean,\n  \"requires_response\": boolean,\n  \"response_priority\": \"high\" | \"medium\" | \"low\",\n  \"purchase_intent\": \"high\" | \"medium\" | \"low\" | \"none\",\n  \"is_spam\": boolean,\n  \n  \"content_relevance\": \"high\" | \"medium\" | \"low\" | \"irrelevant\",\n  \"content_relevance_score\": 0-100 tam sayı,\n  \"is_advertisement\": boolean,\n  \"spam_type\": \"advertisement\" | \"bot\" | \"irrelevant\" | \"offensive\" | null\n}\n\nKurallar:\n- Eğer yorum post içeriğiyle alakasızsa (klima temizliği reklamı gibi): content_relevance: \"irrelevant\", is_advertisement: true\n- Eğer yorum markayı hedef alıyorsa ama içerikle alakasızsa: content_relevance: \"low\"\n- Post hakkında soru veya yorum: content_relevance: \"high\"\n- Spam tespiti için: tekrarlayan karakterler, alakasız reklamlar, bot yorumları"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1840,
+        -144
+      ],
+      "id": "3dbfdb30-88d1-43c2-8ce6-dae236de8a78",
+      "name": "Analyze Comments",
+      "credentials": {
+        "openAiApi": {
+          "id": "H61hSNvtQj0auXts",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AI responses and enrich\nconst allResponses = $input.all();\nconst config = $('Process Config').first().json;\nconst results = [];\n\nallResponses.forEach((item, index) => {\n  const aiResponse = item.json;\n  let aiAnalysis = {};\n  \n  try {\n    // AI response'u parse et\n    if (aiResponse.choices && aiResponse.choices[0]) {\n      const content = aiResponse.choices[0].message.content;\n      aiAnalysis = typeof content === 'string' ? JSON.parse(content) : content;\n    } else if (aiResponse.message && aiResponse.message.content) {\n      const content = aiResponse.message.content;\n      aiAnalysis = typeof content === 'string' ? JSON.parse(content) : content;\n    } else if (typeof aiResponse === 'string') {\n      aiAnalysis = JSON.parse(aiResponse);\n    } else {\n      aiAnalysis = aiResponse;\n    }\n  } catch (error) {\n    console.error('Parse error for item', index, ':', error);\n    \n    // Default değerler\n    aiAnalysis = {\n      sentiment_score: 0,\n      sentiment_label: 'neutral',\n      confidence_score: 50,\n      primary_emotion: 'neutral',\n      mentions_brand: false,\n      brand_sentiment: 0,\n      is_question: false,\n      is_complaint: false,\n      requires_response: false,\n      response_priority: 'low',\n      purchase_intent: 'none',\n      is_spam: false,\n      content_relevance: 'medium',\n      content_relevance_score: 50,\n      is_advertisement: false,\n      spam_type: null\n    };\n  }\n  \n  // Original comment verisini al\n  const originalComments = $items('Prepare Comments');\n  const original = originalComments[index]?.json || {};\n  \n  // Eksik alanları doldur - YENİ ALANLAR EKLENDİ\n  const enrichedAnalysis = {\n    ...original,\n    ...aiAnalysis,\n    \n    // Ensure all required fields exist\n    sentiment_score: aiAnalysis.sentiment_score || 0,\n    sentiment_label: aiAnalysis.sentiment_label || 'neutral',\n    confidence_score: aiAnalysis.confidence_score || 50,\n    primary_emotion: aiAnalysis.primary_emotion || 'neutral',\n    \n    mentions_brand: aiAnalysis.mentions_brand || false,\n    brand_sentiment: aiAnalysis.brand_sentiment || 0,\n    \n    is_question: aiAnalysis.is_question || false,\n    is_complaint: aiAnalysis.is_complaint || false,\n    requires_response: aiAnalysis.requires_response || false,\n    response_priority: aiAnalysis.response_priority || 'low',\n    \n    purchase_intent: aiAnalysis.purchase_intent || 'none',\n    \n    is_spam: aiAnalysis.is_spam || false,\n    \n    // YENİ ALANLAR\n    content_relevance: aiAnalysis.content_relevance || 'medium',\n    content_relevance_score: aiAnalysis.content_relevance_score || 50,\n    is_advertisement: aiAnalysis.is_advertisement || false,\n    spam_type: aiAnalysis.spam_type || null,\n    \n    analyzed_at: new Date().toISOString()\n  };\n  \n  results.push({\n    json: enrichedAnalysis\n  });\n});\n\nconsole.log(`Parsed ${results.length} AI responses with relevance data`);\nreturn results;"
+      },
+      "id": "d3a0aab0-718b-491e-9e0c-b2b56aa1567b",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2176,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate sentiment analysis summary\nconst allComments = $input.all().map(item => item.json);\nconst config = $('Process Config').first().json;\n\n// Debug log\nconsole.log('Total comments received:', allComments.length);\nconsole.log('Sample comment:', allComments[0]);\n\n// Calculate metrics\nconst totalComments = allComments.length;\n\n// Eğer hiç yorum yoksa\nif (totalComments === 0) {\n  return [{\n    json: {\n      analysisType: 'sentiment',\n      requestId: config.requestId || `sentiment_${Date.now()}`,\n      brand: config.brand,\n      subbrand: config.subbrand || 'all',\n      dateRange: config.dateRange,\n      data: {\n        error: 'No comments found for analysis',\n        sentimentMetrics: {\n          totalAnalyzed: 0,\n          validComments: 0,\n          spamFiltered: 0,\n          avgSentiment: 0,\n          sentimentDistribution: { positive: 0, negative: 0, neutral: 0 }\n        }\n      }\n    }\n  }];\n}\n\n// Spam filtreleme\nconst spamComments = allComments.filter(c => c.is_spam === true).length;\nconst validComments = totalComments - spamComments;\n\n// Sentiment dağılımı\nconst sentimentCounts = {\n  positive: 0,\n  negative: 0,\n  neutral: 0\n};\n\n// Sentiment score toplamı için\nlet totalSentimentScore = 0;\nlet scoredComments = 0;\n\n// Brand mention metrikleri\nlet brandMentions = 0;\nlet totalBrandSentiment = 0;\nlet brandSentimentCount = 0;\n\n// Engagement metrikleri\nlet questionsCount = 0;\nlet complaintsCount = 0;\nlet requiresResponseCount = 0;\nlet highPriorityCount = 0;\n\n// Purchase intent\nconst purchaseIntentDist = {\n  high: 0,\n  medium: 0,\n  low: 0,\n  none: 0\n};\n\n// Emotion counts\nconst emotionCounts = {};\n\n// Platform breakdown\nconst platformBreakdown = {\n  instagram_comment_count: 0,\n  tiktok_comment_count: 0\n};\n\n// Relevance metrics - YENİ\nconst relevanceMetrics = {\n  high_relevance: 0,\n  medium_relevance: 0,\n  low_relevance: 0,\n  irrelevant: 0,\n  advertisements: 0\n};\n\n// Priority comments array\nconst priorityComments = [];\nconst allHighPriorityComments = []; // Tüm high priority yorumları topla\n\n// Her yorumu işle\nallComments.forEach(comment => {\n  // Platform\n  const platform = (comment.platform || '').toLowerCase();\n  if (platform === 'instagram') {\n    platformBreakdown.instagram_comment_count++;\n  } else if (platform === 'tiktok') {\n    platformBreakdown.tiktok_comment_count++;\n  }\n  \n  // Relevance metrics - YENİ\n  const relevance = comment.content_relevance || 'medium';\n  if (relevance === 'high') relevanceMetrics.high_relevance++;\n  else if (relevance === 'medium') relevanceMetrics.medium_relevance++;\n  else if (relevance === 'low') relevanceMetrics.low_relevance++;\n  else if (relevance === 'irrelevant') relevanceMetrics.irrelevant++;\n  \n  if (comment.is_advertisement === true) {\n    relevanceMetrics.advertisements++;\n  }\n  \n  // Skip spam for metrics\n  if (comment.is_spam === true) {\n    return;\n  }\n  \n  // Sentiment distribution\n  const sentimentLabel = comment.sentiment_label || 'neutral';\n  sentimentCounts[sentimentLabel]++;\n  \n  // Sentiment score\n  if (typeof comment.sentiment_score === 'number') {\n    totalSentimentScore += comment.sentiment_score;\n    scoredComments++;\n  }\n  \n  // Brand mentions\n  if (comment.mentions_brand === true) {\n    brandMentions++;\n    if (typeof comment.brand_sentiment === 'number') {\n      totalBrandSentiment += comment.brand_sentiment;\n      brandSentimentCount++;\n    }\n  }\n  \n  // Engagement metrics\n  if (comment.is_question === true) questionsCount++;\n  if (comment.is_complaint === true) complaintsCount++;\n  if (comment.requires_response === true) requiresResponseCount++;\n  \n  // Priority - GÜNCELLENDİ\n  if (comment.response_priority === 'high') {\n    highPriorityCount++;\n    \n    // Tüm high priority yorumları topla\n    allHighPriorityComments.push({\n      username: comment.commenter_username || 'unknown',\n      text: (comment.comment_text || '').substring(0, 100),\n      reason: comment.is_complaint ? 'complaint' : \n              comment.is_question ? 'question' : \n              'negative sentiment',\n      platform: comment.platform || 'unknown',\n      relevance: comment.content_relevance || 'unknown',\n      relevance_score: comment.content_relevance_score || 0,\n      is_advertisement: comment.is_advertisement || false\n    });\n  }\n  \n  // Purchase intent\n  const intent = comment.purchase_intent || 'none';\n  if (purchaseIntentDist.hasOwnProperty(intent)) {\n    purchaseIntentDist[intent]++;\n  }\n  \n  // Emotions\n  const emotion = comment.primary_emotion || 'neutral';\n  emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;\n});\n\n// Priority comments filtreleme - YENİ\n// Alakalı ve reklam olmayan high priority yorumları seç\nconst filteredPriorityComments = allHighPriorityComments\n  .filter(c => \n    c.relevance !== 'irrelevant' && \n    !c.is_advertisement\n  )\n  .sort((a, b) => b.relevance_score - a.relevance_score) // En alakalıları üste\n  .slice(0, 5);\n\n// Calculate averages\nconst avgSentiment = scoredComments > 0 ? totalSentimentScore / scoredComments : 0;\nconst avgBrandSentiment = brandSentimentCount > 0 ? totalBrandSentiment / brandSentimentCount : 0;\n\n// Top emotions\nconst topEmotions = Object.entries(emotionCounts)\n  .sort((a, b) => b[1] - a[1])\n  .slice(0, 3)\n  .map(([emotion, count]) => ({\n    emotion,\n    count,\n    percentage: validComments > 0 ? ((count / validComments) * 100).toFixed(1) : '0'\n  }));\n\n// Platform percentages - YENİ\nconst platformPercentages = {\n  instagram_percentage: totalComments > 0 ? \n    ((platformBreakdown.instagram_comment_count / totalComments) * 100).toFixed(1) : '0',\n  tiktok_percentage: totalComments > 0 ? \n    ((platformBreakdown.tiktok_comment_count / totalComments) * 100).toFixed(1) : '0'\n};\n\n// Relevance percentages - YENİ\nconst relevancePercentages = {\n  high_relevance_percentage: totalComments > 0 ? \n    ((relevanceMetrics.high_relevance / totalComments) * 100).toFixed(1) : '0',\n  medium_relevance_percentage: totalComments > 0 ? \n    ((relevanceMetrics.medium_relevance / totalComments) * 100).toFixed(1) : '0',\n  low_relevance_percentage: totalComments > 0 ? \n    ((relevanceMetrics.low_relevance / totalComments) * 100).toFixed(1) : '0',\n  irrelevant_percentage: totalComments > 0 ? \n    ((relevanceMetrics.irrelevant / totalComments) * 100).toFixed(1) : '0',\n  advertisement_percentage: totalComments > 0 ? \n    ((relevanceMetrics.advertisements / totalComments) * 100).toFixed(1) : '0'\n};\n\n// Final output\nreturn [{\n  json: {\n    analysisType: 'sentiment',\n    requestId: config.requestId || `sentiment_${Date.now()}`,\n    brand: config.brand,\n    subbrand: config.subbrand || 'all',\n    dateRange: config.dateRange,\n    \n    data: {\n      sentimentMetrics: {\n        totalAnalyzed: totalComments,\n        validComments: validComments,\n        spamFiltered: spamComments,\n        avgSentiment: parseFloat(avgSentiment.toFixed(3)),\n        sentimentDistribution: sentimentCounts,\n        positiveRate: validComments > 0 ? \n          ((sentimentCounts.positive / validComments) * 100).toFixed(1) : '0',\n        negativeRate: validComments > 0 ? \n          ((sentimentCounts.negative / validComments) * 100).toFixed(1) : '0',\n        neutralRate: validComments > 0 ? \n          ((sentimentCounts.neutral / validComments) * 100).toFixed(1) : '0'\n      },\n      \n      brandMetrics: {\n        brandMentions: brandMentions,\n        mentionRate: totalComments > 0 ? \n          ((brandMentions / totalComments) * 100).toFixed(1) : '0',\n        avgBrandSentiment: parseFloat(avgBrandSentiment.toFixed(3)),\n        brandPerception: avgBrandSentiment > 0.5 ? 'positive' : \n                        avgBrandSentiment < -0.5 ? 'negative' : 'neutral'\n      },\n      \n      engagementMetrics: {\n        questionsCount: questionsCount,\n        complaintsCount: complaintsCount,\n        requiresResponse: requiresResponseCount,\n        highPriorityCount: highPriorityCount,\n        priorityComments: filteredPriorityComments, // Filtrelenmiş yorumlar\n        relevanceMetrics: relevanceMetrics, // YENİ\n        relevancePercentages: relevancePercentages // YENİ\n      },\n      \n      purchaseIntent: purchaseIntentDist,\n      \n      emotionalAnalysis: {\n        topEmotions: topEmotions,\n        dominantEmotion: topEmotions[0]?.emotion || 'neutral',\n        emotionDistribution: emotionCounts\n      },\n      \n      platformBreakdown: {\n        ...platformBreakdown,\n        ...platformPercentages // Yüzdeler eklendi\n      },\n      \n      summary: {\n        message: `Analyzed ${totalComments} comments with ${validComments > 0 ? ((sentimentCounts.positive / validComments) * 100).toFixed(0) : 0}% positive sentiment`,\n        overallSentiment: avgSentiment > 0.3 ? 'Positive' : \n                         avgSentiment < -0.3 ? 'Negative' : 'Neutral',\n        actionRequired: highPriorityCount > 0,\n        relevantContentRate: totalComments > 0 ? \n          (((relevanceMetrics.high_relevance + relevanceMetrics.medium_relevance) / totalComments) * 100).toFixed(1) : '0'\n      }\n    },\n    \n    metadata: {\n      processedAt: new Date().toISOString(),\n      commentsAnalyzed: totalComments,\n      executionTime: 0\n    }\n  }\n}];"
+      },
+      "id": "f0766b54-2a13-45a6-8dac-b5f178258118",
+      "name": "Generate Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    post_id::text as post_id,\n    caption::text as post_caption,\n    owner_username::text as post_owner,\n    post_timestamp,\n    likes_count,\n    comments_count,\n    (c.value->>'owner_username')::text as commenter_username,\n    (c.value->>'text')::text as comment_text,\n    (c.value->>'created_at')::text as comment_date,\n    (c.value->>'like_count')::text as comment_likes,\n    (c.value->>'id')::text as comment_id\nFROM social_analytics.instagram_posts,\n     jsonb_array_elements(latest_comments) as c(value)\nWHERE latest_comments IS NOT NULL\n  AND post_timestamp >= '{{ $json.dateRange.start }}'::date\n  AND post_timestamp <= '{{ $json.dateRange.end }}'::date\n  {{ $json.filter_by_keywords ? \"AND (caption ILIKE ANY(ARRAY[\" + $json.brand_keywords.map(k => \"'%\" + k + \"%'\").join(',') + \"]) OR hashtags::text ILIKE ANY(ARRAY[\" + $json.brand_keywords.map(k => \"'%\" + k + \"%'\").join(',') + \"]))\" : \"\" }}\nORDER BY post_timestamp DESC\nLIMIT 100;",
+        "options": {}
+      },
+      "id": "2f87ce27-6be7-4be2-969c-dd3ecc3a1856",
+      "name": "Fetch Instagram Comments1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        912,
+        -160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "s407eDZqUbPatoCz",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1312,
+        -144
+      ],
+      "id": "2586adc1-cc0c-461a-acd3-53a35f78b514",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT name, display_name, sub_brands, is_active \nFROM social_analytics.brands \nWHERE name = '{{ $json.config ? $json.config.brand : $json.brand }}' \nAND is_active = true \nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "84927b20-05d9-4e96-ab37-82c52414fd30",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "s407eDZqUbPatoCz",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten Config node\nconst input = $input.first().json;\n\n// Config'i düzleştir\nlet flatConfig = {};\n\nif (input.config) {\n  // Orkestrasyon'dan gelen format\n  flatConfig = {\n    ...input.config,\n    originalInput: input\n  };\n} else if (input.brand) {\n  // Zaten düz format\n  flatConfig = input;\n} else {\n  throw new Error('No valid configuration found');\n}\n\nreturn [{\n  json: flatConfig\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "8a0d4a05-bf79-458c-b196-ff6b15ebaf47",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Config": {
+      "main": [
+        [
+          {
+            "node": "Fetch Instagram Comments1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch TikTok Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch TikTok Comments": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Prepare Comments": {
+      "main": [
+        [
+          {
+            "node": "Analyze Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Comments": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Generate Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Instagram Comments1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Process Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f0c885f8-413e-4020-9f64-bc7533e0f284",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ef6bf1f0b971cb4f6213bcce68190c06f333e44fa55d8adea43ced744293028"
+  },
+  "id": "s7qjND9RvQBzf4RW",
+  "tags": []
+}

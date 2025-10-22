@@ -1,0 +1,16 @@
+{
+  "input": {
+    "type": "query",
+    "value": "cat",
+    "scraped_at": "2025-10-21T23:05:00.532306"
+  },
+  "metadata": {
+    "max_videos": 5,
+    "scrape_comments": true,
+    "max_comment_pages": 1,
+    "total_videos": 0,
+    "scrape_duration_seconds": 2.29
+  },
+  "videos": [],
+  "comments": {}
+}

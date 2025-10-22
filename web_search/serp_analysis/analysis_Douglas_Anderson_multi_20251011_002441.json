@@ -1,0 +1,2180 @@
+{
+  "keywords": [
+    "Douglas Anderson",
+    "Georgescu",
+    "Jetstream",
+    "Metaterra",
+    "MiraclePay",
+    "Romanian Airport"
+  ],
+  "timestamp": "20251011_002441",
+  "crisis_context": "Douglas Anderson, a British entrepreneur based in Romania, has been publicly accused by Romanian presidential candidate Calin Georgescu of involvement in a conspiracy to influence Romania's election results. Georgescu claims Anderson orchestrated a scheme involving Romanian Airport (Otopeni), using companies like Metaterra, Jetstream Aviation, and MiraclePay to manipulate voter data and election infrastructure. These allegations emerged after Romania's Constitutional Court annulled the first round of presidential elections, creating a major political crisis. The claims suggest foreign interference in Romania's democratic process, potentially damaging Anderson's reputation and business operations in Romania.",
+  "sentiment_distribution": {
+    "analyzed_urls": 119,
+    "positive_news": 1,
+    "negative_news": 11,
+    "neutral_news": 6,
+    "failed_analyses": 40,
+    "keyword_breakdown": {
+      "Douglas Anderson": {
+        "total": 15,
+        "positive": 0,
+        "negative": 2,
+        "neutral": 0
+      },
+      "Georgescu": {
+        "total": 13,
+        "positive": 1,
+        "negative": 7,
+        "neutral": 0
+      },
+      "Jetstream": {
+        "total": 15,
+        "positive": 0,
+        "negative": 0,
+        "neutral": 0
+      },
+      "Metaterra": {
+        "total": 19,
+        "positive": 0,
+        "negative": 1,
+        "neutral": 3
+      },
+      "MiraclePay": {
+        "total": 15,
+        "positive": 0,
+        "negative": 1,
+        "neutral": 3
+      },
+      "Romanian Airport": {
+        "total": 13,
+        "positive": 0,
+        "negative": 0,
+        "neutral": 0
+      }
+    }
+  },
+  "total_analyzed": 119,
+  "successful_analyses": 79,
+  "overall_summary": "1. **Common Themes and Perspectives**: The crisis surrounding Douglas Anderson primarily revolves around allegations of foreign interference in Romania's electoral process, specifically linked to his involvement with presidential candidate Calin Georgescu. Articles frequently reference Anderson's business activities, including his connections to companies like Metaterra and MiraclePay, and the implications of these ties on Romania's political landscape.\n\n2. **Overall Tone**: The sentiment distribution reveals a predominance of negative coverage, particularly regarding Anderson and Georgescu, with several articles portraying them unfavorably. Neutral sentiment is prevalent in articles focusing on factual information about Anderson’s business ventures and the airport project, while positive sentiment is rare.\n\n3. **Key Differences in Approach and Framing**: Coverage varies significantly; some articles emphasize the allegations of conspiracy and foreign influence, framing Anderson as a potential threat to Romania's democracy. Others adopt a more neutral stance, discussing Anderson's business initiatives without engaging deeply with the allegations.\n\n4. **Crisis Portrayal Across Sources**: The crisis is portrayed as a significant threat to Romania's democratic integrity, with Anderson often depicted as a controversial figure. Georgescu's role is similarly scrutinized, especially in light of his extremist gestures, which further complicate the narrative.\n\n5. **Notable Bias or Patterns**: There is a discernible bias in articles leaning towards negative portrayals of Anderson and Georgescu, suggesting a broader skepticism towards foreign involvement in national politics. The framing often reflects concerns about national sovereignty and the integrity of electoral processes, indicating a strong public interest in the implications of these allegations.",
+  "key_findings": [
+    "11 negative sentiments indicate strong public backlash.",
+    "Only 1 positive sentiment suggests limited support for Anderson.",
+    "40 articles failed to engage with the crisis context.",
+    "Neutral articles do not mitigate negative perceptions.",
+    "Georgescu's claims could severely damage Anderson's reputation."
+  ],
+  "executive_summary": "Douglas Anderson faces serious allegations from Romanian presidential candidate Calin Georgescu, accusing him of orchestrating a conspiracy to manipulate election results. The media sentiment analysis reveals a predominantly negative public perception, with 11 negative articles compared to only 1 positive. This situation is assessed as high severity due to the potential impact on Anderson's reputation and business operations in Romania. Immediate action is recommended to respond publicly, addressing the allegations head-on to mitigate further damage. Key talking points should include a firm denial of the allegations, a commitment to transparency, and a call for fair electoral processes in Romania.",
+  "individual_analyses": [
+    {
+      "url": "https://www.digi24.ro/alegeri-prezidentiale-2024/cine-e-investitorul-american-care-i-a-facut-reclama-lui-georgescu-si-ce-legaturi-are-cu-rusia-vrea-sa-intre-in-industria-de-aparare-3037617",
+      "title": "Cine e investitorul american care i-a făcut reclamă lui ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Douglas Anderson as a controversial figure with alleged ties to Russian interests and involvement in promoting a presidential candidate amidst a political crisis in Romania.",
+        "tone": "Critical",
+        "key_points": [
+          "Anderson's promotion of Calin Georgescu and claims of foreign influence in Romanian elections.",
+          "Allegations of Anderson's connections to Russian officials and past visa history.",
+          "His business interests in Romania, particularly in the defense sector.",
+          "Efforts to leverage social media influencers to promote Georgescu's candidacy.",
+          "Past legal issues related to fraudulent investment schemes."
+        ],
+        "target_audience": "Romanian voters, political analysts, and the general public concerned about election integrity.",
+        "crisis_framing": "The article situates Anderson's actions within the broader context of alleged foreign interference in Romania's electoral process, exacerbating the ongoing political crisis.",
+        "news_sentiment": "Negative"
+      },
+      "news_sentiment": "Negative",
+      "tokens_used": 2342
+    },
+    {
+      "url": "https://www.economica.net/americanul-charles-douglas-anderson-a-preluat-controlul-romanian-allied-international-defense-firma-asteapta-avizul-guvernului-pentru-achizitia-uzinei-mecanice-dragasani_729539.html",
+      "title": "Americanul Charles Douglas Anderson a preluat controlul ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a factual update on the ownership structure of Romanian Allied International Defense, distancing Charles Douglas Anderson from the company amidst ongoing allegations of election interference.",
+        "tone": "Neutral",
+        "key_points": [
+          "Charles Douglas Anderson is no longer associated with Romanian Allied International Defense.",
+          "The company is now primarily owned by Nicolas Radu-Chiru and Denys Stepanenko.",
+          "Details of previous ownership and transactions involving Anderson are provided.",
+          "The acquisition of shares from George Becali is pending government approval."
+        ],
+        "target_audience": "Business professionals, investors, and stakeholders in Romanian politics and economy.",
+        "crisis_framing": "The article indirectly addresses the crisis by clarifying Anderson's current lack of involvement in the company linked to the alleged conspiracy, potentially mitigating damage to his reputation.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1444
+    },
+    {
+      "url": "https://www.digi24.ro/stiri/investitorul-american-care-l-a-promovat-pe-calin-georgescu-sustine-ca-e-implicat-in-constructia-unui-aeroport-cu-primaria-sectorului-4-3449363",
+      "title": "Investitorul american care l-a promovat pe Călin ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": [
+        "Douglas Anderson",
+        "Georgescu"
+      ],
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Douglas Anderson's involvement in a controversial airport project in Romania, highlighting allegations of foreign interference and connections to Călin Georgescu amidst a political crisis.",
+        "tone": "critical",
+        "key_points": [
+          "Anderson claims to be involved in the construction of a new airport in Bucharest, promising significant economic benefits.",
+          "Authorities deny Anderson's claims of involvement in the airport project.",
+          "The article discusses Anderson's past connections with Călin Georgescu and alleged ties to Russia.",
+          "Concerns are raised about the credibility of companies associated with Anderson, particularly in light of the ongoing political crisis."
+        ],
+        "target_audience": "Romanian citizens, political analysts, and stakeholders in the aviation and investment sectors.",
+        "crisis_framing": "The article situates Anderson's claims within the broader context of allegations of foreign interference in Romania's electoral process, exacerbating the political crisis following the annulment of presidential elections.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 2658
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Douglas_A._Anderson",
+      "title": "Douglas A. Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the biography and achievements of Douglas A. Anderson, an American writer and editor, with no relation to the crisis involving Douglas Anderson in Romania.",
+        "tone": "Neutral",
+        "key_points": [
+          "Douglas A. Anderson is an American writer specializing in fantasy and medieval literature.",
+          "He is known for his work on J.R.R. Tolkien and has received awards for his scholarship.",
+          "The article details his biography, career achievements, and contributions to literary studies."
+        ],
+        "target_audience": "Readers interested in literary scholarship, particularly in the works of J.R.R. Tolkien.",
+        "crisis_framing": "The article does not address the crisis involving Douglas Anderson in Romania and is unrelated to the allegations made against him.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2592
+    },
+    {
+      "url": "https://www.gandul.ro/actualitate/milionarul-american-care-l-a-sustinut-pe-calin-georgescu-vrea-sa-faca-un-aeroport-in-bucuresti-investitia-25-mld-euro-20663025",
+      "title": "Milionarul american care l-a susținut pe Călin Georgescu ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Douglas Anderson's announcement of a new airport project in Bucharest while addressing the controversy surrounding his alleged involvement in election manipulation.",
+        "tone": "Neutral, with an emphasis on factual reporting.",
+        "key_points": [
+          "Douglas Anderson is involved in a new airport project in Bucharest, valued at 2.5 billion euros.",
+          "The project aims to create over 50,000 jobs and will integrate cryptocurrency payment options.",
+          "Local authorities have denied any collaboration with Anderson or the mentioned companies.",
+          "Anderson's past associations and the allegations against him are highlighted, including claims of foreign interference in elections."
+        ],
+        "target_audience": "General public, political analysts, and stakeholders in Romanian politics and business.",
+        "crisis_framing": "The article touches on the ongoing political crisis in Romania by mentioning the allegations against Anderson, which could affect his business prospects and public perception amid claims of foreign election interference.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2891
+    },
+    {
+      "url": "https://www.stiripesurse.ro/milionarul-american-calin-georgescu-anunta-ca-va-construi-un-aeroport-cu-primaria-sectorului-4_3819367",
+      "title": "Milionarul american care l-a susținut pe Călin Georgescu ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Douglas Anderson's announcement of a new airport project in Bucharest, while also highlighting his controversial connections and the denial of collaboration from local authorities.",
+        "tone": "Neutral, with a slight undertone of skepticism regarding Anderson's claims.",
+        "key_points": [
+          "Douglas Anderson announces plans for a new airport in Bucharest, claiming it will create 50,000 jobs.",
+          "The project is said to involve cryptocurrency payment options and has a projected value of €2.5 billion.",
+          "Local authorities from Sector 4 deny any collaboration with Anderson or his companies.",
+          "Anderson's past connections to Călin Georgescu and alleged ties to Russia are mentioned."
+        ],
+        "target_audience": "General public, stakeholders in Romanian politics and business, and those interested in infrastructure developments.",
+        "crisis_framing": "The article indirectly relates to the ongoing political crisis by mentioning Anderson's previous allegations of election interference and his controversial reputation, which may affect public perception of the airport project.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2783
+    },
+    {
+      "url": "https://evz.ro/un-milionar-american-asociat-cu-calin-georgescu-vrea-sa-construiasca-un-aeroport-in-bucuresti.html",
+      "title": "Un milionar american asociat cu Călin Georgescu vrea să ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Douglas Anderson's announcement of a new airport project in Bucharest while highlighting the controversy surrounding his connections to Călin Georgescu and allegations of election interference.",
+        "tone": "critical",
+        "key_points": [
+          "Anderson claims involvement in a €2.5 billion airport project in Bucharest, promising 50,000 jobs.",
+          "The local government denies any collaboration with Anderson.",
+          "Concerns arise regarding Anderson's past connections and the implications of foreign influence in Romanian politics.",
+          "The project remains unconfirmed and is viewed skeptically by authorities."
+        ],
+        "target_audience": "General public, political analysts, and stakeholders in Romanian business and governance.",
+        "crisis_framing": "The article ties Anderson's project to the ongoing political crisis in Romania, emphasizing the potential foreign interference and the skepticism surrounding his credibility amidst serious allegations.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 1990
+    },
+    {
+      "url": "https://www.linkedin.com/in/douglas-anderson-39a983187",
+      "title": "Douglas Anderson - Chairman & CEO at Wall Street ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Dougie_Anderson",
+      "title": "Dougie Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a biographical overview of Dougie Anderson, a Scottish presenter, without addressing the allegations against Douglas Anderson related to the Romanian election crisis.",
+        "tone": "Neutral",
+        "key_points": [
+          "Douglas Anderson's background as a presenter, writer, and voice-over artist.",
+          "His career highlights in radio, television, and film.",
+          "His contributions to various cultural projects and events."
+        ],
+        "target_audience": "General readers interested in media personalities and entertainment.",
+        "crisis_framing": "The article does not engage with the crisis context surrounding Douglas Anderson's alleged involvement in election manipulation in Romania, thus failing to provide any relevant framing.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2208
+    },
+    {
+      "url": "https://www.romaniablockchainsummit.com/speaker/douglas-anderson/",
+      "title": "Douglas Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article appears to focus on the broader context of the 2019 agenda and events rather than directly addressing the crisis involving Douglas Anderson.",
+        "tone": "Neutral, as it does not express any overt opinions or emotions regarding the allegations against Anderson.",
+        "key_points": [
+          "Overview of the 2019 event agenda and speakers",
+          "Information about sponsors, exhibitors, and media partners",
+          "Details on volunteer opportunities and press accreditation"
+        ],
+        "target_audience": "Individuals interested in the 2019 event, including potential attendees, sponsors, and media representatives.",
+        "crisis_framing": "The article does not directly frame the crisis involving Douglas Anderson, as it focuses on event logistics rather than the political allegations.",
+        "news_sentiment": "Neutral, as the article does not engage with the crisis context or express any sentiment regarding the allegations against Anderson."
+      },
+      "news_sentiment": "Neutral, as the article does not engage with the crisis context or express any sentiment regarding the allegations against Anderson.",
+      "tokens_used": 546
+    },
+    {
+      "url": "https://www.duvalschools.org/o/dahs",
+      "title": "Douglas Anderson School of the Arts",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://ziare.com/aeroport/investitor-american-douglas-anderson-aeroport-bucuresti-sud-calin-georgescu-1969445",
+      "title": "Douglas Anderson, investitor american apropiat de Călin ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "http://mrdouglasanderson.com/",
+      "title": "Douglas Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article primarily focuses on Douglas Anderson's creative works and contributions as a writer, broadcaster, and filmmaker, without addressing the recent crisis allegations against him.",
+        "tone": "Neutral",
+        "key_points": [
+          "Introduction to Douglas Anderson's website and creative endeavors.",
+          "Promotion of his latest book, 'The Great, the Good and the Misunderstood'.",
+          "Overview of his past works including books and films.",
+          "Description of his podcast series and their thematic content."
+        ],
+        "target_audience": "Fans of Douglas Anderson, potential readers of his books, and individuals interested in creative arts and media.",
+        "crisis_framing": "The article does not engage with the crisis context regarding the allegations against Anderson, thus failing to address the potential impact on his reputation and business.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1069
+    },
+    {
+      "url": "https://www.navonarecords.com/artists/douglas-anderson/",
+      "title": "Douglas Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the professional achievements and contributions of Douglas Anderson as a composer and educator, with no mention of the crisis involving the other Douglas Anderson accused of election interference.",
+        "tone": "Neutral",
+        "key_points": [
+          "Douglas Anderson's extensive background in music and education.",
+          "His notable performances and compositions across various genres.",
+          "Recognition received from critics for his expressive musical style.",
+          "His role as a professor and former chairman of the Music and Art Department at a community college."
+        ],
+        "target_audience": "Individuals interested in music, education, and the arts, as well as fans of contemporary composers.",
+        "crisis_framing": "The article does not frame or relate to the crisis context involving election interference allegations against another individual named Douglas Anderson.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1044
+    },
+    {
+      "url": "https://www.tughans.com/people/douglas-anderson/",
+      "title": "Douglas Anderson",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a professional overview of Douglas Anderson's legal and financial expertise, without addressing the crisis allegations against him.",
+        "tone": "Neutral",
+        "key_points": [
+          "Douglas Anderson's educational background and qualifications in law.",
+          "His professional experience in finance and restructuring.",
+          "Details of his advisory roles with various banks and corporations."
+        ],
+        "target_audience": "Professionals in the legal and financial sectors, potential clients, and industry peers.",
+        "crisis_framing": "The article does not engage with the ongoing crisis context regarding the election interference allegations, thereby failing to address the reputational risks faced by Anderson.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 814
+    },
+    {
+      "url": "https://x.com/douglaschats",
+      "title": "Douglas Anderson (@douglaschats) ...",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article appears to focus on the technical issues related to accessing the content rather than addressing the allegations against Douglas Anderson.",
+        "tone": "Neutral, as it does not provide any commentary on the crisis or the individuals involved.",
+        "key_points": [
+          "JavaScript is not available, affecting content accessibility.",
+          "Encouragement to enable JavaScript or switch browsers.",
+          "Mention of potential privacy-related issues with extensions."
+        ],
+        "target_audience": "General internet users seeking information on Douglas Anderson or the related crisis.",
+        "crisis_framing": "The article does not engage with the crisis context or the allegations against Anderson, thus failing to frame the situation.",
+        "news_sentiment": "Neutral, as the article does not address the crisis or provide any evaluative commentary."
+      },
+      "news_sentiment": "Neutral, as the article does not address the crisis or provide any evaluative commentary.",
+      "tokens_used": 579
+    },
+    {
+      "url": "https://www.facebook.com/douglasandersonart/",
+      "title": "Douglas Anderson Art",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.uab.edu/medicine/surgery/transplantation/faculty/anderson",
+      "title": "Anderson, Douglas J., M.D., M.S. - Surgery",
+      "source_keyword": "Douglas Anderson",
+      "all_matched_keywords": null,
+      "original_keyword": "Douglas Anderson",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a professional overview of Dr. Douglas Anderson's academic and clinical achievements, without addressing the allegations against him.",
+        "tone": "Neutral",
+        "key_points": [
+          "Dr. Douglas Anderson's educational background and qualifications.",
+          "His role as an associate professor and program director at UAB.",
+          "Research contributions in kidney transplantation and immunosuppression.",
+          "Publications in reputable medical journals."
+        ],
+        "target_audience": "Medical professionals, academic peers, and potential patients seeking information about Dr. Anderson's expertise.",
+        "crisis_framing": "The article does not frame the crisis context related to the allegations against Anderson, focusing solely on his professional credentials.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 908
+    },
+    {
+      "url": "https://www.instagram.com/douglaschats/",
+      "title": "Douglas Anderson (@douglaschats)",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://ro.wikipedia.org/wiki/C%C4%83lin_Georgescu",
+      "title": "Călin Georgescu",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a biographical overview of Călin Georgescu, highlighting his political career and controversial statements, but does not directly address the crisis involving Douglas Anderson.",
+        "tone": "Neutral, with a focus on factual information about Georgescu's background and career.",
+        "key_points": [
+          "Călin Georgescu's background as an agronomist and politician.",
+          "His involvement in various political parties and roles, including a presidential candidate.",
+          "Controversial statements and actions, including accusations of promoting extremist views.",
+          "The annulment of the presidential elections and its implications."
+        ],
+        "target_audience": "General public, political analysts, and individuals interested in Romanian politics.",
+        "crisis_framing": "While the article provides context about Georgescu's political career, it does not directly engage with the crisis involving Douglas Anderson or the allegations of foreign interference in the elections.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 3011
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/C%C4%83lin_Georgescu",
+      "title": "Călin Georgescu",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents Călin Georgescu as a controversial political figure whose campaign and subsequent legal troubles highlight issues of foreign interference and election integrity in Romania.",
+        "tone": "Critical",
+        "key_points": [
+          "Georgescu's rise in the presidential election and subsequent annulment of results due to alleged foreign interference.",
+          "Accusations of funding irregularities and cyber-attacks linked to his campaign.",
+          "His far-right political views and pro-Russian stance, which have drawn criticism.",
+          "Legal challenges faced by Georgescu, including detention and exclusion from future elections."
+        ],
+        "target_audience": "Readers interested in Romanian politics, election integrity, and the implications of foreign influence in democratic processes.",
+        "crisis_framing": "The article situates Georgescu's allegations against Douglas Anderson within a broader narrative of political crisis in Romania, emphasizing the potential for foreign meddling to undermine democratic processes.",
+        "news_sentiment": "Negative"
+      },
+      "news_sentiment": "Negative",
+      "tokens_used": 2313
+    },
+    {
+      "url": "https://www.facebook.com/calingeorgescuro/",
+      "title": "Călin Georgescu",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.cdep.ro/pls/parlam/structura2015.mp?idm=120&leg=2020&cam=2",
+      "title": "Nicolae Georgescu",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.dw.com/ro/c%C4%83lin-georgescu/t-70897255",
+      "title": "Călin Georgescu",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article discusses the manipulation techniques used by foreign entities, particularly Russia and China, in Romania, while also touching upon the implications of recent political events, including the annulled elections.",
+        "tone": "critical",
+        "key_points": [
+          "Allegations of foreign interference in Romania's electoral process.",
+          "Discussion of manipulation techniques attributed to Russia and China.",
+          "Reference to the annulled elections and ongoing investigations.",
+          "Concerns about the impact of these events on Romania's political stability."
+        ],
+        "target_audience": "Political analysts, policymakers, and the general public interested in Romanian politics and foreign influence.",
+        "crisis_framing": "The article relates to the crisis context by highlighting the potential foreign interference in Romania's elections, echoing Georgescu's claims against Douglas Anderson and suggesting a broader narrative of external manipulation in Romanian democracy.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 1432
+    },
+    {
+      "url": "https://stirileprotv.ro/justitie/calin-georgescu-are-o-noua-sesizare-la-parchetul-de-pe-langa-iccj-dupa-ce-ar-fi-facut-din-nou-in-public-un-gest-extremist.html",
+      "title": "Un deputat a cerut la Parchet arestarea lui Călin ...",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a legal and political perspective on Călin Georgescu's actions, framing them as a threat to democracy and the rule of law in Romania.",
+        "tone": "critical",
+        "key_points": [
+          "Deputy Alexandru Muraru has requested the General Prosecutor's Office to replace judicial control with preventive arrest for Călin Georgescu.",
+          "Muraru condemns Georgescu's public display of the 'legionary salute' as a direct attack on democracy.",
+          "The article emphasizes the need for swift legal action against extremist ideologies.",
+          "Muraru highlights the symbolic significance of the timing, coinciding with Holocaust remembrance."
+        ],
+        "target_audience": "Romanian citizens, political stakeholders, and those concerned about extremism and democratic values.",
+        "crisis_framing": "The article relates to the broader crisis of foreign interference in Romania's elections by highlighting Georgescu's controversial actions and their implications for national democracy.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 1649
+    },
+    {
+      "url": "https://unibuc.ro/user/simona.georgescu/",
+      "title": "Simona Georgescu - București",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article does not provide a direct analysis of the crisis involving Douglas Anderson and Calin Georgescu, focusing instead on the author's academic credentials and interests.",
+        "tone": "Neutral",
+        "key_points": [],
+        "target_audience": "Academic and professional peers interested in linguistics and related fields.",
+        "crisis_framing": "The article does not engage with the crisis context, lacking any reference to the political allegations or their implications.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 568
+    },
+    {
+      "url": "https://www.euronews.ro/articole/calin-georgescu-a-facut-din-nou-salutul-nazist-un-deputat-liberal-cere-arestarea",
+      "title": "Călin Georgescu a făcut din nou salutul nazist. Un deputat ...",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the legal and social repercussions of Călin Georgescu's alleged public display of a Nazi salute, highlighting calls for his arrest and the implications for Romanian democracy.",
+        "tone": "critical",
+        "key_points": [
+          "Călin Georgescu is accused of making a Nazi salute in public, prompting a call for preventive arrest by Deputy Alexandru Muraru.",
+          "Muraru condemns Georgescu's actions as a symbolic declaration of war against democratic values.",
+          "Georgescu is already under judicial control for multiple charges, including initiating an anti-Semitic organization.",
+          "The article references previous incidents involving Georgescu's controversial gestures."
+        ],
+        "target_audience": "Romanian citizens, political analysts, and stakeholders concerned with democracy and anti-Semitism.",
+        "crisis_framing": "The article situates Georgescu's actions within the broader context of political crisis in Romania, particularly following allegations of foreign interference in elections, emphasizing the threat to democratic values.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 2147
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=yclApDj40es",
+      "title": "Călin Georgescu a plecat de la poliţie",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a factual account of the allegations made by Calin Georgescu against Douglas Anderson, emphasizing the potential implications for Romania's electoral integrity.",
+        "tone": "alarming",
+        "key_points": [
+          "Calin Georgescu's accusations against Douglas Anderson regarding election manipulation.",
+          "Involvement of companies like Metaterra, Jetstream Aviation, and MiraclePay.",
+          "The context of the annulled presidential elections by Romania's Constitutional Court.",
+          "Concerns about foreign interference in Romania's democratic process."
+        ],
+        "target_audience": "General public, political analysts, and stakeholders in Romania's electoral system.",
+        "crisis_framing": "The article frames the situation as a significant threat to Romania's democratic integrity, highlighting the seriousness of foreign influence allegations in the context of a political crisis.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 553
+    },
+    {
+      "url": "https://prezidentiale2024.bec.ro/wp-content/uploads/2024/10/da_Georgescu.pdf",
+      "title": "Subsemnatul, CĂLIN GEORGESCU, având funcția de ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.facebook.com/stiripesurse.ro/videos/ce-%C3%AE%C8%9Bi-pot-face-ni%C8%99te-p%C4%83g%C3%A2ni-c%C4%83lin-georgescu-primit-cu-sus%C8%9Binere-uria%C8%99%C4%83-la-ie%C8%99ir/1348236620286116/",
+      "title": "'Ce îți pot face niște păgâni?' Călin Georgescu, primit cu ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.politico.eu/person/calin-georgescu/",
+      "title": "Călin Georgescu - Politico.eu",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article discusses the broader context of political instability in Romania, highlighting various incidents related to elections, including allegations of foreign interference and domestic unrest.",
+        "tone": "alarming",
+        "key_points": [
+          "Allegations of foreign interference in Romania's elections, particularly from Russia.",
+          "Political tensions surrounding the presidential candidates, especially the far-right and ultranationalist figures.",
+          "Concerns over the integrity of the electoral process and the potential for violence.",
+          "The impact of economic malaise on voter sentiment and political outcomes."
+        ],
+        "target_audience": "Political analysts, journalists, and individuals interested in Romanian politics and European electoral integrity.",
+        "crisis_framing": "The article frames the ongoing political crisis in Romania as a multifaceted issue involving foreign influence, domestic political strife, and the potential for violence, directly relating to Georgescu's allegations against Anderson.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 1882
+    },
+    {
+      "url": "https://romania.europalibera.org/a/calin-georgescu-declaratie-inculpat/33532721.html",
+      "title": "Călin Georgescu acuză „oligarhia globalist-soroşistă”. ...",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "Călin Georgescu positions himself as a victim of a globalist conspiracy, drawing parallels to Donald Trump to garner support and frame his legal troubles as politically motivated.",
+        "tone": "alarming",
+        "key_points": [
+          "Georgescu accuses a 'globalist-Soros oligarchy' of orchestrating his legal troubles.",
+          "He compares his situation to that of Donald Trump, suggesting political persecution.",
+          "Supporters gathered to show solidarity, indicating a mobilization of his political base.",
+          "The article highlights tensions between Georgescu's supporters and law enforcement during the public demonstration.",
+          "Georgescu's rhetoric includes references to martyrdom and historical betrayal."
+        ],
+        "target_audience": "Supporters of Georgescu and those skeptical of the current political establishment in Romania.",
+        "crisis_framing": "The article situates Georgescu's accusations within the broader context of alleged foreign interference in Romania's elections, linking it to the ongoing political crisis following the annulment of the presidential election.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 2964
+    },
+    {
+      "url": "https://calingeorgescu.ro/",
+      "title": "CĂLIN GEORGESCU 2025 – Viitorul nostru este acum!",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "Georgescu presents a vision for Romania's future centered on self-sufficiency and national pride, contrasting with the allegations against foreign influence in the election.",
+        "tone": "hopeful",
+        "key_points": [
+          "Advocates for a project focused on 'Food, Water, Energy' to empower citizens and strengthen national identity.",
+          "Emphasizes the importance of education and community support for economic growth.",
+          "Calls for a return to traditional values and self-reliance."
+        ],
+        "target_audience": "Romanian citizens, particularly those concerned about national sovereignty and economic independence.",
+        "crisis_framing": "While the article does not directly address the crisis involving Douglas Anderson, it implicitly positions Georgescu's campaign as a response to perceived foreign interference, promoting a narrative of national autonomy.",
+        "news_sentiment": "positive"
+      },
+      "news_sentiment": "positive",
+      "tokens_used": 1089
+    },
+    {
+      "url": "https://unibuc.ro/user/Theodor.Georgescu/",
+      "title": "Georgescu Theodor - București",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a neutral overview of Georgescu Theodor's professional background without directly addressing the crisis involving Douglas Anderson and Calin Georgescu.",
+        "tone": "Neutral",
+        "key_points": [
+          "The article primarily focuses on the personal and academic details of Georgescu Theodor.",
+          "No direct mention of the allegations against Douglas Anderson or the political crisis in Romania.",
+          "The content lacks any analysis or commentary on the ongoing election situation."
+        ],
+        "target_audience": "Academics, students, and individuals interested in Georgescu Theodor's professional qualifications and academic contributions.",
+        "crisis_framing": "The article does not frame or engage with the current crisis context regarding the allegations of election interference, thus missing an opportunity to address the implications of the claims made by Calin Georgescu.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 657
+    },
+    {
+      "url": "https://www.catalingeorgescu.com/",
+      "title": "catalingeorgescu",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://www.instagram.com/georgescu/?hl=ro",
+      "title": "Georgescu Stefan (@georgescu)",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.rfi.fr/ro/rom%C3%A2nia/20250916-c%C4%83lin-georgescu-trimis-%C3%AEn-judecat%C4%83-pentru-complicitate-la-tentativ%C4%83-la-comiterea-unor-ac%C5%A3iuni-%C3%AEmpotriva-ordinii-constitu%C5%A3ionale",
+      "title": "Călin Georgescu, trimis în judecată|Ce acuzații i se aduc",
+      "source_keyword": "Georgescu",
+      "all_matched_keywords": null,
+      "original_keyword": "Georgescu",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a legal perspective on Călin Georgescu's indictment, emphasizing his alleged role in a conspiracy against Romania's constitutional order.",
+        "tone": "alarming",
+        "key_points": [
+          "Călin Georgescu has been indicted for complicity in attempts against constitutional order and for communicating false information.",
+          "21 individuals, including Horaţiu Potra and his son, are also facing charges.",
+          "The indictment includes accusations of planning violent subversive actions during protests in December 2024.",
+          "Georgescu is identified as the intellectual author of a plan to seize power through violent means."
+        ],
+        "target_audience": "The article targets the general public, particularly those interested in Romanian politics and legal affairs.",
+        "crisis_framing": "The article ties into the ongoing political crisis in Romania, highlighting allegations of conspiracy and foreign interference, which resonate with the broader context of election manipulation claims.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 1353
+    },
+    {
+      "url": "https://jetstream.laravel.com/",
+      "title": "Laravel Jetstream: Introduction",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Jet_stream",
+      "title": "Jet stream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a scientific overview of jet streams, detailing their characteristics and significance in meteorology.",
+        "tone": "Neutral",
+        "key_points": [
+          "Jet streams are fast-flowing air currents in the atmosphere, primarily located near the tropopause.",
+          "They influence weather patterns and are utilized in aviation for efficiency.",
+          "Historical context regarding the discovery and understanding of jet streams is provided.",
+          "The article discusses the physical dynamics and factors affecting jet streams."
+        ],
+        "target_audience": "Individuals interested in meteorology, aviation, and atmospheric science.",
+        "crisis_framing": "The article does not directly relate to the crisis context involving Douglas Anderson and the Romanian elections, as it focuses solely on meteorological phenomena.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2258
+    },
+    {
+      "url": "https://getjetstream.app/",
+      "title": "Jetstream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional and informative about Jetstream's capabilities for Salesforce management.",
+        "tone": "Neutral and promotional.",
+        "key_points": [
+          "Jetstream simplifies Salesforce administration and enhances productivity.",
+          "Offers features for various roles including administrators, developers, QA engineers, and sales operations.",
+          "Emphasizes ease of use and efficiency in managing data and metadata.",
+          "Encourages community involvement and support through discussions and documentation."
+        ],
+        "target_audience": "Salesforce users, administrators, developers, and organizations looking to improve their Salesforce management.",
+        "crisis_framing": "The article does not address the crisis context involving Douglas Anderson or the political allegations in Romania, focusing instead on product features.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1339
+    },
+    {
+      "url": "https://medicina-interventionala.ro/proceduri/cardiologie-interventionala/procedura-jetstream/",
+      "title": "Procedura JetStream – sistem de aterectomie pentru ...",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a detailed overview of the JetStream medical procedure for treating severely calcified arteries, emphasizing its clinical benefits and procedural steps.",
+        "tone": "Neutral",
+        "key_points": [
+          "Description of the JetStream procedure and its purpose.",
+          "Indications for when the procedure is necessary.",
+          "Preparation and recovery details for patients undergoing the procedure.",
+          "Information about medical professionals involved in the procedure.",
+          "Locations where the procedure is available."
+        ],
+        "target_audience": "Patients seeking information on medical procedures for arterial obstruction, healthcare professionals, and potential clients of MONZA ARES hospitals.",
+        "crisis_framing": "The article does not directly address the political crisis involving Douglas Anderson or the allegations of election interference. It focuses solely on the medical procedure, thus distancing itself from the ongoing political turmoil.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2785
+    },
+    {
+      "url": "https://www.noaa.gov/jetstream/global/jet-stream",
+      "title": "The Jet Stream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a scientific overview of jet streams, focusing on their characteristics and behavior in the atmosphere.",
+        "tone": "Neutral",
+        "key_points": [
+          "Jet streams are narrow bands of strong wind in the upper atmosphere, typically occurring at around 30,000 feet.",
+          "They move from west to east and are influenced by the Earth's rotation and temperature differences.",
+          "Jet streams vary in height and speed, with the polar jet being particularly strong.",
+          "The article explains the Coriolis effect and how it affects wind patterns."
+        ],
+        "target_audience": "Individuals interested in meteorology, climate science, and atmospheric phenomena.",
+        "crisis_framing": "The article does not relate to the crisis context involving Douglas Anderson and the Romanian election allegations, as it focuses solely on meteorological information.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2148
+    },
+    {
+      "url": "https://docs.nats.io/nats-concepts/jetstream",
+      "title": "JetStream - NATS Docs",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "Technical overview of JetStream's capabilities and functionalities within NATS messaging system.",
+        "tone": "Neutral",
+        "key_points": [
+          "JetStream enables message persistence and replay functionality.",
+          "It supports fault-tolerant and high-availability configurations.",
+          "Offers various retention and replay policies for message management.",
+          "Designed to address issues of complexity and scalability in streaming technology.",
+          "Provides a secure and observable system with no third-party dependencies."
+        ],
+        "target_audience": "Developers and technical professionals interested in messaging systems and data storage solutions.",
+        "crisis_framing": "The article does not directly address the crisis context involving Douglas Anderson or the political allegations in Romania, focusing instead on the technical aspects of JetStream.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1984
+    },
+    {
+      "url": "https://weather.metoffice.gov.uk/learn-about/weather/types-of-weather/wind/what-is-the-jet-stream",
+      "title": "What is the jet stream?",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a scientific explanation of the jet stream, focusing on its mechanics and effects on weather and aviation.",
+        "tone": "Neutral",
+        "key_points": [
+          "Definition and characteristics of the jet stream",
+          "Mechanics of how the jet stream influences weather patterns",
+          "Impact of the jet stream on aviation, including flight planning and fuel efficiency",
+          "Seasonal variations in the jet stream's strength and position"
+        ],
+        "target_audience": "General public, particularly those interested in weather and aviation",
+        "crisis_framing": "The article does not directly relate to the political crisis involving Douglas Anderson and the Romanian elections. It remains focused on meteorological phenomena without addressing any implications of foreign interference or election manipulation.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1141
+    },
+    {
+      "url": "https://www.netweather.tv/charts-and-data/jetstream",
+      "title": "Jetstream Map Updated Four Times Daily",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://skybrary.aero/articles/jet-stream",
+      "title": "Jet Stream | SKYbrary Aviation Safety",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://www.noaa.gov/jetstream",
+      "title": "JetStream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on providing educational resources related to weather and meteorology, with no direct connection to the crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "JetStream is an online educational platform by the National Weather Service.",
+          "It offers comprehensive curricula on various weather-related topics.",
+          "The site aims to enhance understanding of weather phenomena and safety."
+        ],
+        "target_audience": "Educators, emergency managers, and individuals interested in learning about weather.",
+        "crisis_framing": "The article does not address the crisis involving Douglas Anderson or the Romanian elections, making it unrelated to the current political situation.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1107
+    },
+    {
+      "url": "https://jet-stream.com/",
+      "title": "Jet-Stream: Streaming Cloud - Video Platform",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional and informative overview of Jet-Stream's streaming services and capabilities.",
+        "tone": "Neutral and optimistic.",
+        "key_points": [
+          "Jet-Stream offers a comprehensive media cloud for live and on-demand streaming.",
+          "The platform emphasizes user control and flexibility in workflow management.",
+          "Jet-Stream is fully GDPR compliant and focuses on data protection.",
+          "The service is powered by green energy and aims to reduce operational costs.",
+          "Jet-Stream positions itself as a strategic partner for businesses in media streaming."
+        ],
+        "target_audience": "Media professionals, businesses seeking streaming solutions, and potential clients interested in video platform services.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations against him, instead focusing on the technical and operational strengths of Jet-Stream.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1601
+    },
+    {
+      "url": "https://gojetstream.io/",
+      "title": "JetStream | Fast & Secure Large File Transfer Software",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional focus on JetStream's capabilities as a reliable and fast file transfer solution, emphasizing its benefits for various industries.",
+        "tone": "Neutral and promotional, highlighting features without addressing external controversies.",
+        "key_points": [
+          "JetStream offers fast and secure large file transfers.",
+          "User-friendly interface and seamless workflow integration.",
+          "High security with transfer-level encryption.",
+          "Unlimited bandwidth and transfer volume at a low monthly price.",
+          "Targeted at various industries including media, healthcare, and government."
+        ],
+        "target_audience": "Businesses and teams needing efficient file transfer solutions, particularly in industries with large data needs.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson or the allegations against him, focusing solely on product promotion.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1538
+    },
+    {
+      "url": "https://waterblast.com/",
+      "title": "Jetstream - The Waterblasting Equipment Experts",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional and informative focus on Jetstream's waterblasting equipment and services.",
+        "tone": "Neutral and business-oriented.",
+        "key_points": [
+          "Jetstream is a leading manufacturer of high-pressure waterblasting equipment.",
+          "The company emphasizes its commitment to quality, American manufacturing, and customer service.",
+          "Jetstream offers a wide range of products and rental services for various industries.",
+          "The company aims to provide customized solutions to maximize performance and minimize downtime."
+        ],
+        "target_audience": "Industrial clients and businesses seeking waterblasting solutions.",
+        "crisis_framing": "The article does not address the crisis involving Douglas Anderson or the political allegations against him, focusing solely on Jetstream's business operations.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 950
+    },
+    {
+      "url": "https://svs.gsfc.nasa.gov/3864",
+      "title": "The Polar Jet Stream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the scientific explanation and visualization of the polar jet stream, illustrating its dynamics and impact on weather patterns.",
+        "tone": "Neutral",
+        "key_points": [
+          "Description of the polar jet stream as a fast-moving belt of westerly winds.",
+          "Explanation of how the jet stream is formed by the interaction of cold Arctic air and warm tropical air.",
+          "Visualization of the jet stream's patterns over North America using NASA's MERRA dataset."
+        ],
+        "target_audience": "Individuals interested in atmospheric science, meteorology, and climate studies.",
+        "crisis_framing": "The article does not directly relate to the crisis context involving Douglas Anderson and the Romanian election allegations, as it focuses solely on meteorological phenomena without any political implications.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1316
+    },
+    {
+      "url": "https://browserbench.org/JetStream2.0/",
+      "title": "JetStream 2",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the technical aspects of JetStream 2 as a benchmark suite for web applications, with no direct connection to the political crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "JetStream 2 measures the performance of JavaScript and WebAssembly in web applications.",
+          "It rewards browsers for quick startup, execution speed, and smooth operation.",
+          "The article emphasizes the importance of performance benchmarks in web development."
+        ],
+        "target_audience": "Web developers, software engineers, and technology enthusiasts interested in performance benchmarking.",
+        "crisis_framing": "The article does not address the crisis context involving Douglas Anderson or the allegations made by Calin Georgescu, thus lacking relevance to the current political situation in Romania.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 530
+    },
+    {
+      "url": "https://jetstreamsoft.com/",
+      "title": "JetStream Software: Cloud Native Disaster Recovery ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.netweather.tv/charts-and-data/global-jetstream",
+      "title": "Global Jet Stream Map",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://github.com/AI-Hypercomputer/JetStream",
+      "title": "JetStream is a throughput and memory optimized engine ...",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the technical specifications and implementation details of the JetStream engine for LLM inference, without addressing any external controversies or implications.",
+        "tone": "Neutral",
+        "key_points": [
+          "JetStream is optimized for throughput and memory for LLM inference on XLA devices.",
+          "Two reference implementations are available for Jax and Pytorch models.",
+          "Documentation and setup instructions for local server and testing are provided."
+        ],
+        "target_audience": "Developers and technical professionals interested in machine learning and LLM inference technologies.",
+        "crisis_framing": "The article does not engage with the ongoing crisis involving Douglas Anderson and the election allegations, thus lacking any direct connection to the crisis context.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 886
+    },
+    {
+      "url": "https://www.weather.gov/jetstream",
+      "title": "JetStream",
+      "source_keyword": "Jetstream",
+      "all_matched_keywords": null,
+      "original_keyword": "Jetstream",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on educational resources related to weather, with no direct relevance to the political crisis involving Douglas Anderson and the Romanian elections.",
+        "tone": "Neutral",
+        "key_points": [
+          "JetStream is an educational platform provided by the National Weather Service.",
+          "It offers structured lessons on various weather-related topics.",
+          "The site encourages feedback to improve educational materials."
+        ],
+        "target_audience": "Educators, emergency managers, and individuals interested in weather education.",
+        "crisis_framing": "The article does not address the crisis context involving Douglas Anderson or the Romanian elections, thus lacking any relevant framing.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 623
+    },
+    {
+      "url": "https://www.trademo.com/companies/metaterra-co-ltd/46240160",
+      "title": "Supply Chain Data Of Metaterra Co Ltd Company Profile",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.bursa.ro/metaterra-demareaza-discutii-pentru-integrarea-miracle-pay-21832756",
+      "title": "MetaTerra demarează discuţii pentru integrarea Miracle Pay",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "MiraclePay"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the strategic discussions between MetaTerra and Jetstream regarding the integration of Miracle Pay at Romania's new international airport, emphasizing innovation in cryptocurrency payment solutions.",
+        "tone": "hopeful",
+        "key_points": [
+          "MetaTerra initiates discussions with Jetstream for airport development.",
+          "Miracle Pay aims to be the official payment solution for the airport's commercial network.",
+          "The project includes real-time cryptocurrency to fiat conversion and compliance with AML/KYC regulations.",
+          "Douglas Anderson expresses commitment to providing optimized cryptocurrency payment experiences.",
+          "A pilot program will test the project before official launch."
+        ],
+        "target_audience": "Investors, stakeholders in the cryptocurrency and aviation sectors, and the general public interested in technological advancements in payment solutions.",
+        "crisis_framing": "While the article does not directly address the allegations against Douglas Anderson, the timing of the announcement amidst a political crisis may be perceived as an attempt to shift focus towards positive developments in business and innovation.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 1076
+    },
+    {
+      "url": "https://elizabethxibauer.com/metaterra/",
+      "title": "Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a cultural and artistic perspective on Metaterra, potentially diverting attention from the political crisis surrounding Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Focus on the artistic contributions and exhibitions related to Metaterra.",
+          "Highlight the role of various artists and curators in promoting cultural dialogue.",
+          "Mention the significance of the project in the context of Romanian culture."
+        ],
+        "target_audience": "Art enthusiasts, cultural professionals, and the general public interested in Romanian cultural initiatives.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the political allegations, instead emphasizing cultural aspects, which may serve to mitigate negative perceptions associated with the crisis.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 585
+    },
+    {
+      "url": "https://www.ziuacargo.ro/stiri/metaterra-vrea-sa-integreze-miracle-pay-in-proiectul-noul-aeroport-244104.html/",
+      "title": "MetaTerra vrea să integreze Miracle Pay în proiectul noul ...",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "MiraclePay"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the potential integration of MiraclePay into the new airport project near Bucharest, highlighting its cryptocurrency payment capabilities.",
+        "tone": "Hopeful",
+        "key_points": [
+          "MetaTerra Holdings is in discussions with Jetstream to develop a new international airport near Bucharest.",
+          "MiraclePay is positioned as a consumer-friendly cryptocurrency payment system.",
+          "The implementation of MiraclePay is contingent on regulatory approvals and commercial agreements.",
+          "Douglas Anderson emphasizes the importance of compliance and consumer experience in payment solutions."
+        ],
+        "target_audience": "Investors, stakeholders in the cryptocurrency and payment sectors, and the general public interested in technological advancements in payment systems.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson's alleged involvement in election manipulation. Instead, it focuses on business developments, potentially diverting attention from the crisis.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1098
+    },
+    {
+      "url": "https://mtariicrisurilor.ro/expozitia-retrospectiva-metaterra-a-ceramistei-marta-jakobovits/",
+      "title": "Expoziția retrospectivă METATERRA a ceramistei MÁRTA ...",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the retrospective exhibition of ceramic artist Márta Jakobovits, celebrating her artistic achievements and contributions to the field of ceramics.",
+        "tone": "Neutral",
+        "key_points": [
+          "The exhibition is organized in partnership with various cultural institutions.",
+          "Márta Jakobovits is highlighted for her unique artistic approach and techniques in ceramics.",
+          "The event marks her 80th birthday and showcases significant works from her international career.",
+          "The exhibition aims to engage the public with a visual dialogue between art and nature."
+        ],
+        "target_audience": "Art enthusiasts, local community members, and cultural stakeholders interested in ceramics and artistic exhibitions.",
+        "crisis_framing": "The article does not address the ongoing political crisis or the allegations against Douglas Anderson, maintaining a focus solely on the art exhibition.",
+        "news_sentiment": "Positive"
+      },
+      "news_sentiment": "Positive",
+      "tokens_used": 1108
+    },
+    {
+      "url": "https://www.nasdaq.com/market-activity/stocks/mtrc",
+      "title": "Metaterra (MTRC) Stock Price, Quote, News & History",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article primarily focuses on providing technical stock market data and operational updates regarding Metaterra (MTRC), without addressing the ongoing political crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Real-time stock price data is currently unavailable.",
+          "Information on bid and ask prices is provided, emphasizing market liquidity.",
+          "The article mentions ongoing improvements to the user experience on the platform."
+        ],
+        "target_audience": "Investors and market analysts interested in stock performance and trading data.",
+        "crisis_framing": "The article does not frame the crisis context directly, failing to address the allegations against Douglas Anderson or their potential impact on Metaterra.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1123
+    },
+    {
+      "url": "https://www.globenewswire.com/news-release/2025/10/10/3164806/0/en/MetaTerra-Enters-Formal-Discussions-to-Integrate-Miracle-Pay-at-Romania-s-New-International-Airport-Project.html",
+      "title": "MetaTerra Enters Formal Discussions to Integrate Miracle",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents MetaTerra's strategic move to integrate Miracle Pay into Romania's new international airport project, emphasizing innovation in payment systems.",
+        "tone": "hopeful",
+        "key_points": [
+          "MetaTerra has initiated discussions with Jetstream to integrate Miracle Pay at Romania's new airport.",
+          "The project aims for a crypto-friendly launch, pending regulatory approvals.",
+          "The integration focuses on consumer-friendly payment solutions and compliance with existing standards."
+        ],
+        "target_audience": "Investors, technology enthusiasts, and stakeholders in the aviation and cryptocurrency sectors.",
+        "crisis_framing": "The article does not directly address the ongoing political crisis or the allegations against Douglas Anderson, instead focusing on business developments, which may serve to distance MetaTerra from the controversy.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 1073
+    },
+    {
+      "url": "https://pitchbook.com/profiles/company/494038-18",
+      "title": "Metaterra 2025 Company Profile",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://open.spotify.com/artist/5CazGYNYfvDawSevGzzrdx",
+      "title": "Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the music and streaming aspect of Metaterra, rather than addressing the crisis involving Douglas Anderson and the political allegations.",
+        "tone": "Neutral",
+        "key_points": [
+          "Metaterra has 8 monthly listeners.",
+          "The article lists popular releases and singles from Metaterra.",
+          "No mention of the political crisis or allegations against Douglas Anderson."
+        ],
+        "target_audience": "Music fans and listeners interested in Metaterra's releases.",
+        "crisis_framing": "The article does not frame or relate to the ongoing crisis involving Douglas Anderson and the election allegations, as it solely discusses the music aspect of Metaterra.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 522
+    },
+    {
+      "url": "https://metaterra.app/",
+      "title": "Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://www.bloomberg.com/profile/company/MTRC:US",
+      "title": "Metaterra Corp - Company Profile and News",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a corporate overview of Metaterra Corp, focusing on its business operations rather than the ongoing political crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Metaterra Corp operates as an emerging growth company.",
+          "The company retails auto parts and accessories.",
+          "Metaterra serves customers primarily in the Dominican Republic."
+        ],
+        "target_audience": "Investors and stakeholders interested in Metaterra Corp's business profile and operations.",
+        "crisis_framing": "The article does not address the crisis context directly and instead focuses on the company's business activities, potentially downplaying the significance of the allegations against Douglas Anderson.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 509
+    },
+    {
+      "url": "https://sg.finance.yahoo.com/quote/MTRC/",
+      "title": "Metaterra Corp. (MTRC) stock price, news, quote and history",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a brief overview of stock-related information for Metaterra Corp. (MTRC) without directly addressing the ongoing crisis involving Douglas Anderson and the election manipulation allegations.",
+        "tone": "Neutral",
+        "key_points": [
+          "Listing of stock symbols related to Metaterra Corp.",
+          "Focus on financial data rather than the political crisis.",
+          "No direct commentary on the allegations against Douglas Anderson."
+        ],
+        "target_audience": "Investors and financial analysts interested in stock performance and related financial instruments.",
+        "crisis_framing": "The article does not engage with the crisis context surrounding Douglas Anderson or the allegations made by Calin Georgescu, thus failing to frame the potential impact on Metaterra Corp. within the political turmoil.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 574
+    },
+    {
+      "url": "https://www.zf.ro/ziarul-de-duminica/marta-jakobovits-metaterra-3012706",
+      "title": "Marta Jakobovits: Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the artistic contributions of Marta Jakobovits through her exhibition 'Metaterra', emphasizing the transgressive nature of her work and its evolution within the context of ceramic art.",
+        "tone": "Neutral",
+        "key_points": [
+          "Exploration of transgression as a fundamental trait of artists.",
+          "Discussion of the evolution of ceramic art and its relationship with other artistic forms.",
+          "Highlighting Jakobovits' exhibition at the Museum of Art in Cluj and its thematic significance."
+        ],
+        "target_audience": "Art enthusiasts, critics, and the general public interested in contemporary art and exhibitions.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the political allegations against him. It remains focused on the artistic narrative of the exhibition, thus distancing itself from the political implications of the crisis context.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2753
+    },
+    {
+      "url": "https://www.marketscreener.com/quote/stock/METATERRA-CORP-151856042/company/",
+      "title": "Metaterra Corp.: Shareholders Board Members Managers ...",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a factual overview of Metaterra Corp.'s business operations and governance structure without addressing the ongoing crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Metaterra Corp. is a Dominican Republic-based retailer primarily selling auto parts and home furnishings.",
+          "The company has a small inventory and operates in the retail sector.",
+          "Recent changes in the executive committee and board of directors are noted.",
+          "Financial performance metrics are provided, including sales and market capitalization comparisons."
+        ],
+        "target_audience": "Investors, business analysts, and stakeholders interested in Metaterra Corp.'s financial health and corporate governance.",
+        "crisis_framing": "The article does not address the crisis involving Douglas Anderson or the allegations made by Calin Georgescu, thus missing an opportunity to contextualize the company's operations within the current political turmoil in Romania.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1193
+    },
+    {
+      "url": "https://www.instagram.com/metaterra.official/",
+      "title": "Meta Terra (@metaterra.official)",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://soundcloud.com/metaterramusic",
+      "title": "Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://music.apple.com/us/artist/metaterra/1610727548",
+      "title": "Metaterra",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the music releases of Metaterra, with no direct connection to the ongoing political crisis involving Douglas Anderson and the Romanian elections.",
+        "tone": "Neutral",
+        "key_points": [
+          "Highlights the single 'Illusions' released by Metaterra in 2022.",
+          "Lists similar artists to Metaterra, indicating a focus on music rather than political issues."
+        ],
+        "target_audience": "Music enthusiasts and fans of Metaterra, as well as those interested in related artists.",
+        "crisis_framing": "The article does not address the crisis context involving Douglas Anderson or the allegations made by Calin Georgescu, thus failing to frame the crisis in relation to Metaterra.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 531
+    },
+    {
+      "url": "https://m.facebook.com/events/926161026069653/?ref_source=newsfeed&ref_mechanism=feed_attachment&action_context=%257B%2522action_history%2522%253A%2522null%2522%257D",
+      "title": "Vernisajul expoziției retrospective METATERRA a ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://stockanalysis.com/quote/otc/MTRC/",
+      "title": "Metaterra (MTRC) Stock Price & Overview",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": [
+        "Metaterra",
+        "Metaterra"
+      ],
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a financial overview of Metaterra Corp. amidst a political crisis involving its alleged involvement in election manipulation.",
+        "tone": "neutral",
+        "key_points": [
+          "Current stock price of Metaterra Corp. is $1.200, down 27.27%.",
+          "The company has a market cap of $3.34 million and reported revenue of $34.13K.",
+          "Metaterra engages in selling auto parts and was incorporated in 2021.",
+          "No recent news is available regarding the company."
+        ],
+        "target_audience": "Investors and stakeholders interested in Metaterra's financial performance and market position.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson and the election manipulation allegations, focusing instead on financial metrics.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 781
+    },
+    {
+      "url": "https://ww2.kibrispostasi.com/c93-ADVERTORIAL/n577767-metaterra-holdings-blockchain-ve-finans-dunyasini-kktcde-bulusturuyor",
+      "title": "MetaTerra Holdings, Blockchain ve Finans Dünyasını ...",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents MetaTerra Holdings as a forward-looking entity in the blockchain and finance sectors, emphasizing its recent corporate transformation and upcoming panel event.",
+        "tone": "Hopeful",
+        "key_points": [
+          "MetaTerra Holdings has completed a corporate transformation from Miracle.",
+          "An upcoming panel titled 'Blockchain and the Future Economy' is scheduled for October 11, 2025.",
+          "The event will feature notable speakers, including Douglas Anderson.",
+          "The panel aims to discuss the integration of blockchain with financial systems and the global vision of MetaTerra Holdings."
+        ],
+        "target_audience": "Business professionals, investors, and individuals interested in blockchain technology and financial innovation.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson and the allegations against him, instead focusing on the positive developments of MetaTerra Holdings.",
+        "news_sentiment": "Positive"
+      },
+      "news_sentiment": "Positive",
+      "tokens_used": 1495
+    },
+    {
+      "url": "https://www.instagram.com/p/DPggl4bCL9m/",
+      "title": "MetaTerra Holdings, Blockchain ve Finans Dünyasını ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://x.com/gazetebagimsiz/status/1975541455297843621",
+      "title": "Bağımsız Gazete",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a critical perspective on the allegations against Douglas Anderson, focusing on the implications of foreign interference in Romania's electoral process.",
+        "tone": "alarming",
+        "key_points": [
+          "Accusations against Douglas Anderson by Calin Georgescu regarding election manipulation.",
+          "Involvement of companies like Metaterra, Jetstream Aviation, and MiraclePay in the alleged conspiracy.",
+          "The political crisis following the annulment of the first round of presidential elections.",
+          "Potential damage to Anderson's reputation and business operations in Romania."
+        ],
+        "target_audience": "Individuals interested in Romanian politics, foreign influence in elections, and business ethics.",
+        "crisis_framing": "The article frames the situation as a significant threat to Romania's democratic integrity, highlighting the seriousness of the allegations and their potential consequences.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 592
+    },
+    {
+      "url": "https://tr.investing.com/pro/OTCPK:MTRC/explorer/marketcap_adj",
+      "title": "Metaterra Corp. (MTRC) Piyasa Değeri (Düzeltilmiş)",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.dnb.com/business-directory/company-profiles.metaterra_company_limited.ce81191d6386d1c3a99e0493450f7520.html",
+      "title": "metaterra company limited",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://research.secdatabase.com/CIK/1918884",
+      "title": "All SEC EDGAR Filings for METATERRA CORP.",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.instagram.com/metaterradesigns/",
+      "title": "MetaTerra Designs (@metaterradesigns) · Evergreen, CO",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1918884/000147793222003080/filename7.htm",
+      "title": "meta_corresp.htm",
+      "source_keyword": "Metaterra",
+      "all_matched_keywords": null,
+      "original_keyword": "Metaterra",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on Metaterra Corp.'s corporate registration and compliance with SEC regulations, emphasizing its operational status and business activities.",
+        "tone": "Neutral",
+        "key_points": [
+          "Response to SEC comments regarding registration statement.",
+          "Clarification of customer relationships and financial disclosures.",
+          "Defense against classification as a shell company.",
+          "Emphasis on the company's operational activities and business development."
+        ],
+        "target_audience": "Investors, regulatory bodies, and stakeholders interested in corporate governance and compliance.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations of election interference, focusing instead on corporate compliance, which may indirectly relate to the scrutiny surrounding the company's operations amid the crisis.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1726
+    },
+    {
+      "url": "https://miraclepay.com/",
+      "title": "Miracle Pay - Payments",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "MiraclePay positions itself as an innovative digital finance solution, emphasizing its role in bridging traditional finance and cryptocurrency.",
+        "tone": "neutral",
+        "key_points": [
+          "MiraclePay offers a range of payment solutions including crypto payments, digital wallets, and merchant tools.",
+          "The platform is part of a broader ecosystem, Miracle Cash & More, which includes various Web3 finance products.",
+          "Focus on security with KYC and AML compliance, aiming to provide a seamless user experience.",
+          "Integration with major European payment networks for widespread access."
+        ],
+        "target_audience": "Businesses and individuals interested in adopting cryptocurrency payment solutions.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations against him, focusing instead on MiraclePay's offerings and technology.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 843
+    },
+    {
+      "url": "https://miraclepay.nl/",
+      "title": "MiraclePay – MiraclePay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional focus on MiraclePay's cryptocurrency payment services.",
+        "tone": "Neutral and informative.",
+        "key_points": [
+          "Offers payments in various cryptocurrencies including Bitcoin, Ethereum, and XRP.",
+          "Highlights advantages such as instant payment and low commission.",
+          "Emphasizes security features like personal data verification and wallet protection.",
+          "Encourages merchants to join and promotes app downloads for both iOS and Android."
+        ],
+        "target_audience": "Potential merchants and cryptocurrency users interested in payment solutions.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson and the allegations made against him, focusing instead on MiraclePay's services.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 686
+    },
+    {
+      "url": "https://appsource.microsoft.com/en-us/product/dynamics-365-business-central/pubid.eque2limited1599498060545%7Caid.miracle_pay%7Cpappid.4d6081ad-5b53-46a7-8581-909967af3179?tab=overview",
+      "title": "MiraclePay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents MiraclePay as a payroll solution within the context of Microsoft Dynamics 365 Business Central, focusing on its features and benefits rather than addressing the crisis involving Douglas Anderson.",
+        "tone": "neutral",
+        "key_points": [
+          "MiraclePay is designed to manage payroll complexities for businesses of all sizes.",
+          "It integrates with Microsoft Dynamics 365 Business Central for streamlined payroll processing.",
+          "Features include automated reporting, user-defined roles, and compliance with legislative changes."
+        ],
+        "target_audience": "Businesses seeking payroll solutions and users of Microsoft Dynamics 365.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson or the allegations made against him, focusing instead on the functionalities of MiraclePay.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 1659
+    },
+    {
+      "url": "https://ingenico.com/en/partners/partner-solution-gallery/miraclepay",
+      "title": "MiraclePay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://www.instagram.com/miracle.pay/",
+      "title": "Miracle Pay",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.miracle-dynamics.com/",
+      "title": "Miracle HR & Payroll software integrated with Microsoft ...",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional focus on MiraclePay's HR and Payroll solutions, emphasizing technological integration and benefits.",
+        "tone": "Neutral, with an emphasis on product capabilities and business solutions.",
+        "key_points": [
+          "MiraclePay offers enterprise Payroll and HR solutions integrated with Microsoft Dynamics 365 Business Central.",
+          "The software is cloud-based and aims to improve productivity and visibility for businesses.",
+          "MiraclePay is PAS accredited and recognized by HMRC, indicating a level of trust and compliance.",
+          "The article highlights the extensive functionality of the payroll solutions and the support provided to users."
+        ],
+        "target_audience": "Businesses seeking HR and Payroll solutions, particularly those using Microsoft Dynamics.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson and the allegations against him, focusing instead on product promotion.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 819
+    },
+    {
+      "url": "https://www.linkedin.com/products/miracle-dynamics-miraclepay/",
+      "title": "MiraclePay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on promoting MiraclePay as a payroll solution without addressing the allegations against Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "MiraclePay is presented as an effective payroll solution.",
+          "The article emphasizes the importance of managing payroll costs efficiently.",
+          "It lists similar products and services without any mention of the ongoing political crisis."
+        ],
+        "target_audience": "Businesses and organizations seeking payroll management solutions.",
+        "crisis_framing": "The article does not frame or acknowledge the crisis context surrounding Douglas Anderson and the allegations made against him.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 574
+    },
+    {
+      "url": "https://www.profile.co.uk/microsoft-dynamics-nav-solutions-miraclepay",
+      "title": "Microsoft Dynamics NAV - Solutions - Miraclepay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional overview of MiraclePay's payroll solutions for Microsoft Dynamics NAV.",
+        "tone": "Neutral",
+        "key_points": [
+          "MiraclePay is an integrated payroll solution designed to streamline payroll processing.",
+          "The software is HMRC accredited and used by over 1000 companies globally.",
+          "Features include multi-company support, electronic payslips, and extensive reporting options.",
+          "MiraclePay aims to reduce administrative workloads and improve accuracy in payroll management."
+        ],
+        "target_audience": "Businesses seeking payroll solutions, particularly those using Microsoft Dynamics NAV.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson or the allegations against him, focusing solely on the product features.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1891
+    },
+    {
+      "url": "https://www.miracle-dynamics.com/wp-content/uploads/2019/07/MiraclePay-Enterprise.pdf",
+      "title": "MiraclePay",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://miraclepaynode.com/",
+      "title": "Miracle PayNode",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://www.eque2.co.uk/upgrade-information-miraclepay/",
+      "title": "Upgrade Information for your Miracle Solutions",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the necessity and process of upgrading MiraclePay software in light of recent statutory changes.",
+        "tone": "Neutral",
+        "key_points": [
+          "Importance of upgrading MiraclePay to comply with new UK legislation.",
+          "Details on the upgrade process and options available to customers.",
+          "Emphasis on the complexity of upgrades and potential risks of improper installation.",
+          "Timeline for software availability and upgrade scheduling."
+        ],
+        "target_audience": "Current and potential users of MiraclePay software, particularly payroll and HR professionals.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations against him. However, it indirectly relates to the crisis by emphasizing the importance of maintaining operational integrity through software upgrades, which could be crucial for businesses amid political instability.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2034
+    },
+    {
+      "url": "https://www.teqhou.com/products/ax2009-products/miraclepay-for-ms-dynamics-ax2009/",
+      "title": "MiraclePay for MS Dynamics AX2009",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents MiraclePay as a reliable payroll solution integrated with Microsoft Dynamics AX, emphasizing its efficiency and compliance.",
+        "tone": "Neutral",
+        "key_points": [
+          "MiraclePay offers flexibility and cost-effective management of payroll processes.",
+          "The solution is designed to streamline payroll, ensuring error-free operations.",
+          "It includes features like time entry, various payroll cycles, and compliance with UK legislation."
+        ],
+        "target_audience": "Businesses using Microsoft Dynamics AX, particularly those in need of payroll solutions.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations against him, focusing instead on product features and benefits.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 836
+    },
+    {
+      "url": "https://miracle.my/",
+      "title": "Miracle Pay | Malaysia's Smart Payment Gateway",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "MiraclePay positions itself as a reliable and efficient payment gateway for Malaysian businesses, emphasizing its local support and compliance features.",
+        "tone": "hopeful",
+        "key_points": [
+          "MiraclePay simplifies financial processes for small and medium enterprises in Malaysia.",
+          "Offers fast onboarding, transparent pricing, and local support.",
+          "Provides a unified dashboard for managing payments and compliance.",
+          "Focuses on security and real-time expense management."
+        ],
+        "target_audience": "Small and medium businesses in Malaysia looking for efficient payment solutions.",
+        "crisis_framing": "The article does not directly address the ongoing crisis involving Douglas Anderson and the allegations against him. Instead, it focuses on MiraclePay's services, potentially distancing the brand from any negative connotations associated with the crisis.",
+        "news_sentiment": "neutral"
+      },
+      "news_sentiment": "neutral",
+      "tokens_used": 853
+    },
+    {
+      "url": "https://play.google.com/store/apps/details?id=kr.miracleworld.cam_payapp&hl=ro",
+      "title": "Miracle PAY Cambodia – Aplicații pe ...",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents MiraclePay as a payment application in Cambodia, focusing on its features and functionalities without addressing the allegations against Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "MiraclePay is a member-only payment application available in Cambodia.",
+          "The app currently supports the Khmer language, with plans for additional languages.",
+          "It emphasizes data security and privacy practices, including data collection and user rights."
+        ],
+        "target_audience": "Potential users of the MiraclePay application, particularly in Cambodia, and stakeholders interested in financial technology.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations of election interference, thus lacking any framing related to the ongoing political situation in Romania.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 988
+    },
+    {
+      "url": "https://ingenico.com/ca-en/partners/partner-solution-gallery/miraclepay",
+      "title": "MiraclePay",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://twitter.com/search?q=%23MiraclePay&src=hashtag_click",
+      "title": "#MiraclePay - Search / X",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on the allegations against Douglas Anderson regarding his supposed involvement in manipulating Romania's election results through MiraclePay and associated companies.",
+        "tone": "alarming",
+        "key_points": [
+          "Douglas Anderson is accused of orchestrating a conspiracy to influence election results in Romania.",
+          "Calin Georgescu's claims suggest foreign interference in Romania's democratic process.",
+          "The allegations arise in the context of a political crisis following the annulment of the first round of presidential elections."
+        ],
+        "target_audience": "Individuals interested in political developments in Romania, business stakeholders, and media professionals.",
+        "crisis_framing": "The article situates the allegations within a broader narrative of foreign interference in democratic processes, highlighting the potential implications for Anderson's reputation and business operations.",
+        "news_sentiment": "negative"
+      },
+      "news_sentiment": "negative",
+      "tokens_used": 586
+    },
+    {
+      "url": "https://miraclecash.nl/miracle-pay/",
+      "title": "Miracle Pay - Miracle Cash&More",
+      "source_keyword": "MiraclePay",
+      "all_matched_keywords": null,
+      "original_keyword": "MiraclePay",
+      "error": null,
+      "analysis": {
+        "angle": "Promotional overview of MiraclePay as a digital payment solution.",
+        "tone": "Neutral",
+        "key_points": [
+          "MiraclePay is an all-in-one digital payment solution.",
+          "Designed for both individuals and businesses.",
+          "Offers a range of services for financial transactions.",
+          "Emphasizes user-friendly interface and advanced security features."
+        ],
+        "target_audience": "Individuals and business owners interested in digital payment solutions.",
+        "crisis_framing": "The article does not address the ongoing crisis involving Douglas Anderson and the allegations against him, thereby failing to acknowledge the potential reputational impact on MiraclePay.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 602
+    },
+    {
+      "url": "https://www.bucharestairports.ro/en",
+      "title": "Bucharest Airports",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/List_of_airports_in_Romania",
+      "title": "List of airports in Romania",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a factual overview of airports in Romania, including their operational status and historical context, without delving into current events or controversies.",
+        "tone": "Neutral",
+        "key_points": [
+          "List of airports in Romania categorized by type and location.",
+          "Details on airport names, ICAO/IATA codes, and operational frequencies.",
+          "Historical context of each airport's aviation activities."
+        ],
+        "target_audience": "General public, aviation enthusiasts, and travelers seeking information about Romanian airports.",
+        "crisis_framing": "The article does not address the ongoing political crisis involving Douglas Anderson and Calin Georgescu, thereby lacking relevance to the current crisis context.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 3595
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Bucharest_Henri_Coand%C4%83_International_Airport",
+      "title": "Bucharest Henri Coandă International Airport",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "Informative overview of Bucharest Henri Coandă International Airport, with no direct connection to the crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Details the airport's history, facilities, and operational statistics.",
+          "Describes the airport's role as Romania's busiest international airport.",
+          "Mentions future development plans for expansion and modernization."
+        ],
+        "target_audience": "General public, travelers, aviation enthusiasts, and stakeholders in the Romanian aviation sector.",
+        "crisis_framing": "The article does not address the ongoing political crisis or allegations against Douglas Anderson, thus lacking any direct crisis framing.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2501
+    },
+    {
+      "url": "https://www.bucharestairports.ro/",
+      "title": "Aeroporturi București - Aeroportul Internaţional Henri Coandă ...",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://ourairports.com/countries/RO/",
+      "title": "Map of airports in Romania @ OurAirports",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.flightradar24.com/data/airports/OTP",
+      "title": "Bucharest Henri Coanda International Airport (OTP/LROP)",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "http://www.tarom.ro/EN/",
+      "title": "TAROM",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article primarily focuses on TAROM's flight offerings and services, providing a detailed list of routes and prices without addressing the ongoing political crisis involving Douglas Anderson and the allegations against him.",
+        "tone": "Neutral",
+        "key_points": [
+          "List of domestic and international flight routes from Bucharest.",
+          "Pricing information for various destinations.",
+          "Information about additional services offered by TAROM.",
+          "Updates on flight cancellations due to strikes and technical issues."
+        ],
+        "target_audience": "Travelers and potential customers looking for flight options with TAROM.",
+        "crisis_framing": "The article does not reference the political crisis or allegations against Douglas Anderson, thus failing to address the broader context of foreign interference in Romania's elections.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1417
+    },
+    {
+      "url": "https://www.airportcluj.ro/",
+      "title": "Aeroportul Internațional Cluj | Zboruri, Informații, Servicii ...",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article primarily focuses on operational updates and improvements at the Cluj International Airport, highlighting new services and regulations.",
+        "tone": "Neutral",
+        "key_points": [
+          "Elimination of liquid restrictions in hand luggage.",
+          "Introduction of new direct flights to Copenhagen.",
+          "Hosting of the Regional Air Transport Conference.",
+          "Development of a photovoltaic park funded by European sources."
+        ],
+        "target_audience": "Travelers, airport users, and stakeholders in the aviation industry.",
+        "crisis_framing": "The article does not address the ongoing political crisis or the allegations against Douglas Anderson, thus failing to connect with the current crisis context regarding foreign interference in Romania's elections.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2944
+    },
+    {
+      "url": "https://www.facebook.com/rasromania/?locale=ro_RO",
+      "title": "Romanian Airport Services | Bucharest",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.wego.com/airports/ro/airports-in-romania",
+      "title": "List of Airports in Romania – International & Domestic Hubs",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.aeroport-iasi.ro/",
+      "title": "Aeroportul International Iași Romania",
+      "error": "Failed to scrape content",
+      "analysis": null
+    },
+    {
+      "url": "https://www.aerotim.ro/en/",
+      "title": "Home - Aerotim",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on providing flight information and services at Romanian Airport (Otopeni), without addressing the political crisis or allegations against Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Detailed schedule of flight departures and arrivals.",
+          "Information on airport facilities and services.",
+          "Recruitment notice for a board position at Timisoara airport."
+        ],
+        "target_audience": "Travelers and airport visitors seeking flight information and airport services.",
+        "crisis_framing": "The article does not engage with the ongoing political crisis or the allegations against Douglas Anderson, thus failing to frame the crisis context.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2852
+    },
+    {
+      "url": "https://www.mk-airport.ro/",
+      "title": "Mihail Kogălniceanu Constanța International Airport - Home",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article focuses on operational announcements related to passenger services at Mihail Kogălniceanu Constanța International Airport, with no direct reference to the ongoing political crisis involving Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Information regarding car parking arrangements for passengers.",
+          "Details about the public waiting area for passengers."
+        ],
+        "target_audience": "Travelers and passengers using the airport services.",
+        "crisis_framing": "The article does not address the crisis context surrounding Douglas Anderson or the allegations made by Calin Georgescu, thus it does not frame or relate to the political crisis.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 488
+    },
+    {
+      "url": "https://www.listafirme.ro/romanian-airport-services-sa-6716875/",
+      "title": "ROMANIAN AIRPORT SERVICES SA din Sectorul 1 Sos. ...",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article provides a factual overview of Romanian Airport Services SA, focusing on its operational details and financial statistics without addressing the ongoing political crisis or allegations against Douglas Anderson.",
+        "tone": "Neutral",
+        "key_points": [
+          "Company identification and registration details",
+          "Financial performance metrics over recent years",
+          "Contact information and operational domain",
+          "Ranking in the Romanian business sector"
+        ],
+        "target_audience": "Business professionals, potential investors, and stakeholders seeking information about Romanian Airport Services SA.",
+        "crisis_framing": "The article does not engage with the crisis context involving Douglas Anderson and the allegations of election interference, thereby missing an opportunity to address the implications for the company.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2560
+    },
+    {
+      "url": "https://www.bacauairport.ro/",
+      "title": "Bacău | “George Enescu” International Airport",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article primarily focuses on the operational achievements and developments of the George Enescu International Airport in Bacău, highlighting infrastructure improvements and sustainability initiatives.",
+        "tone": "Neutral",
+        "key_points": [
+          "Announcement of a photovoltaic park investment exceeding 25 million lei.",
+          "Completion of a project aimed at enhancing safety and security at the airport.",
+          "Recognition of the airport as one of the top five European airports in 2024 based on passenger traffic growth."
+        ],
+        "target_audience": "Travelers, stakeholders in the aviation industry, and local residents interested in airport developments.",
+        "crisis_framing": "The article does not directly address the crisis involving Douglas Anderson or the allegations of election interference, thus framing the airport's achievements in a positive light, potentially diverting attention from the ongoing political turmoil.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1539
+    },
+    {
+      "url": "https://www.romanian-companies.eu/romanian-airport-services-sa-6716875/",
+      "title": "romanian airport services sa",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "The article presents a factual overview of Romanian Airport Services SA, focusing on company identification, financial data, and operational details without addressing the ongoing political crisis.",
+        "tone": "Neutral",
+        "key_points": [
+          "Company identification and registration details",
+          "Financial performance metrics over recent years",
+          "Service activities related to air transportation",
+          "Contact information and administrative history"
+        ],
+        "target_audience": "Business professionals, potential investors, and individuals seeking information about Romanian Airport Services SA.",
+        "crisis_framing": "The article does not engage with the crisis context surrounding Douglas Anderson and the election allegations, thus failing to frame the company within the current political turmoil.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 2163
+    },
+    {
+      "url": "https://www.romanianfriend.com/blog/bucharest-practical-guide-to-airport-taxi-safety-transport",
+      "title": "Guide to Bucharest Airport, Taxis & Public Transport",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": "Content too short or unavailable",
+      "analysis": null,
+      "news_sentiment": "neutral"
+    },
+    {
+      "url": "https://visitbucharest.today/bucharest-airport-henri-coanda-otp/",
+      "title": "Bucharest Airport: Henri Coanda International Airport (OTP)",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "Informative overview of Henri Coandă International Airport as a travel hub.",
+        "tone": "Neutral",
+        "key_points": [
+          "Description of Henri Coandă International Airport's location and significance.",
+          "Overview of airlines and flight routes operating at OTP.",
+          "Information on airport facilities, services, and transportation options.",
+          "Travel tips for passengers using the airport."
+        ],
+        "target_audience": "Travelers planning to use Bucharest Airport, including tourists and business travelers.",
+        "crisis_framing": "The article does not address the ongoing political crisis or the allegations against Douglas Anderson, focusing solely on airport-related information.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 1963
+    },
+    {
+      "url": "https://www.aeroportoradea.ro/en/",
+      "title": "Oradea Airport | Oradea International Airport",
+      "source_keyword": "Romanian Airport",
+      "all_matched_keywords": null,
+      "original_keyword": "Romanian Airport",
+      "error": null,
+      "analysis": {
+        "angle": "Operational updates and expansions of Oradea Airport amidst a political crisis.",
+        "tone": "Neutral",
+        "key_points": [
+          "Launch of new direct flights to Munich by Lufthansa starting June 2025.",
+          "Current reconstruction of the airport's website.",
+          "Overview of regular and charter flight destinations.",
+          "Description of the airport's state-of-the-art terminal and its green energy initiatives."
+        ],
+        "target_audience": "Travelers, airline operators, and stakeholders in the aviation industry.",
+        "crisis_framing": "The article does not directly address the ongoing political crisis involving Douglas Anderson and Calin Georgescu, focusing instead on airport operations and services, which may indicate an attempt to maintain normalcy in the face of external political pressures.",
+        "news_sentiment": "Neutral"
+      },
+      "news_sentiment": "Neutral",
+      "tokens_used": 807
+    }
+  ]
+}

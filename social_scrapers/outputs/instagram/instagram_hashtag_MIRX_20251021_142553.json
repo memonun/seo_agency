@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "MIRX",
+    "scraped_at": "2025-10-21T14:24:44.869272"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 68.35
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

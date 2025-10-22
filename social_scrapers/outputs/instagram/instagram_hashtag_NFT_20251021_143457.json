@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "NFT",
+    "scraped_at": "2025-10-21T14:34:03.374820"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 53.77
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

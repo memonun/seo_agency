@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "Testnet",
+    "scraped_at": "2025-10-21T14:28:27.274998"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 111.86
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

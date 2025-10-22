@@ -1,0 +1,15 @@
+{
+  "input": {
+    "type": "hashtag",
+    "value": "Airdrop",
+    "scraped_at": "2025-10-21T14:27:50.054095"
+  },
+  "metadata": {
+    "test_mode": false,
+    "results_limit": 50,
+    "scrape_duration_seconds": 36.24
+  },
+  "results": {
+    "error": "No posts found for hashtag"
+  }
+}

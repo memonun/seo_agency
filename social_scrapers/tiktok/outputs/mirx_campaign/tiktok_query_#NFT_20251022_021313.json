@@ -1,0 +1,2471 @@
+{
+  "input": {
+    "type": "query",
+    "value": "#NFT",
+    "scraped_at": "2025-10-22T02:11:50.945480"
+  },
+  "metadata": {
+    "max_videos": 200,
+    "scrape_comments": true,
+    "max_comment_pages": 10,
+    "total_videos": 47,
+    "total_comments": 0,
+    "scrape_duration_seconds": 82.94
+  },
+  "videos": [
+    {
+      "video_id": "7111476819324423425",
+      "desc": "NFT Newyork #nftnyc2022 buggest NFT conference",
+      "create_time": 1655769733,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6770415259980694530",
+        "unique_id": "waqarzaka",
+        "nickname": "Waqar Zaka",
+        "verified": true,
+        "signature": "Researcher - Money Making ideas",
+        "follower_count": 1300000,
+        "following_count": 6,
+        "heart_count": 16900000,
+        "video_count": 1405
+      },
+      "stats": {
+        "play_count": 140300,
+        "digg_count": 5891,
+        "comment_count": 78,
+        "share_count": 304,
+        "repost_count": 277,
+        "engagement_rate": 4.67
+      },
+      "video": {
+        "duration": 59,
+        "ratio": "480p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/343b6e9cb3d24087b7313df808d81406~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=nOkN2EXv5PocQA9pSn13S9MOs%2B0%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7111477226087910146",
+        "title": "original sound",
+        "author": "Waqar Zaka",
+        "original": true
+      },
+      "hashtags": [
+        "nftnyc2022"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7035970197429177602",
+      "desc": "NFT nasıl oluşturulur? Kaydetmeyi unutmayın🏋️",
+      "create_time": 1638189471,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7026625481260844033",
+        "unique_id": "kriptovekediler",
+        "nickname": "Talha Korkmaz",
+        "verified": false,
+        "signature": "NFT - Metaverse - Blockchain\n👇NFT Eğitimi, Twitter, Discord👇",
+        "follower_count": 24900,
+        "following_count": 30,
+        "heart_count": 280800,
+        "video_count": 170
+      },
+      "stats": {
+        "play_count": 293400,
+        "digg_count": 13600,
+        "comment_count": 185,
+        "share_count": 1666,
+        "repost_count": 3531,
+        "engagement_rate": 6.47
+      },
+      "video": {
+        "duration": 37,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/9dfe546534494903b503ccfde5cc8e13~tplv-tiktokx-dmt-logom:tos-alisg-i-0000/79f1c7214ef54b91a2a23edfc8b3c399.image?dr=14573&x-expires=1761260400&x-signature=5AahO4WWdWUkZ8F3xNU%2BYBUUygk%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6756879114637967368",
+        "title": "Lazy Sunday",
+        "author": "Official Sound Studio",
+        "original": false
+      },
+      "hashtags": [],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7102068447458233602",
+      "desc": "#nft #nfttr #keşfet #fyp #kripto",
+      "create_time": 1653579169,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7087295543541515270",
+        "unique_id": "selim_.c",
+        "nickname": "Selim C",
+        "verified": false,
+        "signature": "Metaverse & Nft daha fazlası için takipte kalın 🦉\nWeb3'de yaşayan insan",
+        "follower_count": 141,
+        "following_count": 67,
+        "heart_count": 3303,
+        "video_count": 34
+      },
+      "stats": {
+        "play_count": 5290,
+        "digg_count": 72,
+        "comment_count": 1,
+        "share_count": 0,
+        "repost_count": 2,
+        "engagement_rate": 1.42
+      },
+      "video": {
+        "duration": 27,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/31f0d3b6459c4432ab759d55b4555899_1653579171~tplv-tiktokx-dmt-logom:tos-alisg-i-0068/288e9fde4c504079a382f379a8a4b1ce.image?dr=14573&x-expires=1761260400&x-signature=qCowAr1mLbh1aQbcF9aB2nun3Ck%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7087231964255668994",
+        "title": "orijinal ses",
+        "author": "Motivasyon Tepesi",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "nfttr",
+        "keşfet",
+        "fyp",
+        "kripto"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7050512130801470721",
+      "desc": "Daha iyi bir NFT koleksiyonu varsa haber verin",
+      "create_time": 1641575278,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7026625481260844033",
+        "unique_id": "kriptovekediler",
+        "nickname": "Talha Korkmaz",
+        "verified": false,
+        "signature": "NFT - Metaverse - Blockchain\n👇NFT Eğitimi, Twitter, Discord👇",
+        "follower_count": 24900,
+        "following_count": 30,
+        "heart_count": 280800,
+        "video_count": 170
+      },
+      "stats": {
+        "play_count": 14200,
+        "digg_count": 578,
+        "comment_count": 10,
+        "share_count": 25,
+        "repost_count": 110,
+        "engagement_rate": 5.09
+      },
+      "video": {
+        "duration": 29,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/8df658ae4ba24711a9542faee269c97b_1641575281~tplv-tiktokx-dmt-logom:tos-alisg-i-0000/5a3dcce0036545f2bee256a5734d1f07.image?dr=14573&x-expires=1761260400&x-signature=%2BDDHGa9KQTvPpkQa41YqEky1QL4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6861355060333398789",
+        "title": "Paris",
+        "author": "Else",
+        "original": false
+      },
+      "hashtags": [],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7151023115991059713",
+      "desc": "Glutton 🍔🌭🍕.  #art #artistsoftiktok #artwork #nftartwork #work #illustration #tiktok",
+      "create_time": 1664977329,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7073504368482468869",
+        "unique_id": "thirdeyex0",
+        "nickname": "thirdeye",
+        "verified": false,
+        "signature": "Freelance illustrator \n\n📩",
+        "follower_count": 210400,
+        "following_count": 46,
+        "heart_count": 3100000,
+        "video_count": 50
+      },
+      "stats": {
+        "play_count": 49700000,
+        "digg_count": 2700000,
+        "comment_count": 12900,
+        "share_count": 59700,
+        "repost_count": 188168,
+        "engagement_rate": 5.96
+      },
+      "video": {
+        "duration": 37,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/e4adc151ea96431a86428b1872e216e1~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=uLZq8NAERnDrfLMvXuocXf2svhE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6932934440205977601",
+        "title": "Loneliness",
+        "author": "LONI",
+        "original": false
+      },
+      "hashtags": [
+        "art",
+        "artistsoftiktok",
+        "artwork",
+        "nftartwork",
+        "work",
+        "illustration",
+        "tiktok"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7056439815377538305",
+      "desc": "NFT çizerek satmak aslında anlatıldığı kadar kolay olmayacaktır🤨 #nft #nfts",
+      "create_time": 1642955425,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6911825148463334401",
+        "unique_id": "safakgungorr",
+        "nickname": "Şafak Güngör",
+        "verified": false,
+        "signature": "📩 safakgungor@creatorstation.com\n🇹🇷|🇺🇸",
+        "follower_count": 51000,
+        "following_count": 415,
+        "heart_count": 658100,
+        "video_count": 183
+      },
+      "stats": {
+        "play_count": 18600,
+        "digg_count": 637,
+        "comment_count": 14,
+        "share_count": 30,
+        "repost_count": 202,
+        "engagement_rate": 4.75
+      },
+      "video": {
+        "duration": 52,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/805ee26a16974ed09562c8f5f62a3349~tplv-tiktokx-dmt-logom:tos-alisg-i-0000/18213cfab5cf4baba4afa8203b4f2874.image?dr=14573&x-expires=1761260400&x-signature=OPF%2FKjga16edVOYYyAWBYpSzV7w%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6766128122128500738",
+        "title": "Paris",
+        "author": "Else",
+        "original": false
+      },
+      "hashtags": [
+        "nft",
+        "nfts"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7081309838583549185",
+      "desc": "Solana ağı NFT'lerine selam olsun! #nft #nfts",
+      "create_time": 1648745928,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7026625481260844033",
+        "unique_id": "kriptovekediler",
+        "nickname": "Talha Korkmaz",
+        "verified": false,
+        "signature": "NFT - Metaverse - Blockchain\n👇NFT Eğitimi, Twitter, Discord👇",
+        "follower_count": 24900,
+        "following_count": 30,
+        "heart_count": 280800,
+        "video_count": 170
+      },
+      "stats": {
+        "play_count": 10800,
+        "digg_count": 411,
+        "comment_count": 29,
+        "share_count": 4,
+        "repost_count": 29,
+        "engagement_rate": 4.38
+      },
+      "video": {
+        "duration": 34,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/b4b950123c5e4f62aea0c0c14a1d48d3_1648745930~tplv-tiktokx-dmt-logom:tos-alisg-i-0000/6521758eff2e4adbafde4ced33c76416.image?dr=14573&x-expires=1761260400&x-signature=oE4jL2Ds5XsjcGHS21r%2FHLdriL8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6839383430875056130",
+        "title": "Witch Familiar (Classical) [Classic](143628)",
+        "author": "dice",
+        "original": false
+      },
+      "hashtags": [
+        "nft",
+        "nfts"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562494490078956856",
+      "desc": "#NFT#plushpepe ",
+      "create_time": 1760780483,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7470178460435710982",
+        "unique_id": "nftinfo5",
+        "nickname": "nft info",
+        "verified": false,
+        "signature": "https://t.me/Nftinfo373 тгк",
+        "follower_count": 42,
+        "following_count": 9,
+        "heart_count": 6,
+        "video_count": 6
+      },
+      "stats": {
+        "play_count": 381,
+        "digg_count": 2,
+        "comment_count": 1,
+        "share_count": 1,
+        "repost_count": 1,
+        "engagement_rate": 1.31
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/o4ghaQseRC4MYR3hAMCIfKc5WBFISQ8jMI4gze~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=jxo0kvZY6X3q42ackro%2FhspVouI%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562494559943412491",
+        "title": "оригинальный звук - nft info",
+        "author": "nft info",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "plushpepe"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7097266566722620673",
+      "desc": "NFT içerikleri gelsin mi? #fyp #ckfc #NFT",
+      "create_time": 1652461144,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6659754443909660678",
+        "unique_id": "cankatko",
+        "nickname": "Cankatko",
+        "verified": false,
+        "signature": "PSİKOLOG\n\nReklam ve işbirliği için👇\n📩 cankatko@outlook.com 📩\nlinkler 👇",
+        "follower_count": 947800,
+        "following_count": 61,
+        "heart_count": 53400000,
+        "video_count": 1002
+      },
+      "stats": {
+        "play_count": 176000,
+        "digg_count": 6698,
+        "comment_count": 51,
+        "share_count": 180,
+        "repost_count": 445,
+        "engagement_rate": 4.19
+      },
+      "video": {
+        "duration": 27,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/c6b32f81d4684d21b9c808388fb31d95~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=sT%2FvaEYpyL5qVIL4DaV%2B%2F9hucmA%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6728562975734515713",
+        "title": "Love You So",
+        "author": "The King Khan & BBQ Show",
+        "original": false
+      },
+      "hashtags": [
+        "fyp",
+        "ckfc",
+        "nft"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563312164321234184",
+      "desc": "что это за удача?📈🥵😎💀☠️👹👺😱#nft#Roblox ",
+      "create_time": 1760970844,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7475718143458870278",
+        "unique_id": "poshalko2288",
+        "nickname": "oleg228@",
+        "verified": false,
+        "signature": "",
+        "follower_count": 2,
+        "following_count": 43,
+        "heart_count": 17,
+        "video_count": 1
+      },
+      "stats": {
+        "play_count": 1069,
+        "digg_count": 17,
+        "comment_count": 4,
+        "share_count": 4,
+        "repost_count": 3,
+        "engagement_rate": 2.62
+      },
+      "video": {
+        "duration": 12,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/owr4DQ8MoIeGjFRIPSOef7TJ2CFAiQBwXByjQA~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=F1rjWKvMa3B4gXbmaFf%2BkevHBow%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7563312192020384513",
+        "title": "оригинальный звук",
+        "author": "oleg228@",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "roblox"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7056820646625447215",
+      "desc": "How to draw characters for NFT Art #nft #art #procreate #drawing #character #bills",
+      "create_time": 1643044094,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6692416085437121542",
+        "unique_id": "ryryart",
+        "nickname": "Ryan - Drawing & Animation",
+        "verified": false,
+        "signature": "Cartoonist & Motion Designer",
+        "follower_count": 215700,
+        "following_count": 1086,
+        "heart_count": 3000000,
+        "video_count": 2324
+      },
+      "stats": {
+        "play_count": 872000,
+        "digg_count": 36700,
+        "comment_count": 561,
+        "share_count": 912,
+        "repost_count": 2233,
+        "engagement_rate": 4.63
+      },
+      "video": {
+        "duration": 22,
+        "ratio": "540p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/75014ec1477b44bd8ab4226a32ba1ec8_1643044096~tplv-tiktokx-dmt-logom:tos-useast5-p-0000-tx/b432d5418c29428db57df5be57351399.image?dr=14573&x-expires=1761260400&x-signature=cH4CmcibVDCN%2BnEQ3%2BUGqaT9rKY%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6702010411413145602",
+        "title": "Howl's Moving Castle - Merry Go Round of Life",
+        "author": "Vitamin String Quartet",
+        "original": false
+      },
+      "hashtags": [
+        "nft",
+        "art",
+        "procreate",
+        "drawing",
+        "character",
+        "bills"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7143725307344784645",
+      "desc": "Top 5 pixel NFTs🔥 #NFT #pixelart #ethereum #nfts #nftartwork #nftart #crypto #cryptok #cryptocurrency",
+      "create_time": 1663278169,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7122217263260238854",
+        "unique_id": "nextnftmint",
+        "nickname": "nextNFTmint.com",
+        "verified": false,
+        "signature": "Your daily source for NFT news, upcoming Web3 drops, project reviews!",
+        "follower_count": 640,
+        "following_count": 59,
+        "heart_count": 1046,
+        "video_count": 131
+      },
+      "stats": {
+        "play_count": 4649,
+        "digg_count": 65,
+        "comment_count": 9,
+        "share_count": 1,
+        "repost_count": 12,
+        "engagement_rate": 1.87
+      },
+      "video": {
+        "duration": 14,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/d0d8d053dce149b99f6bbc32aabe8810~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=6RCLsuQz9J052cx7WBT6e4p29DI%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6987050676949878786",
+        "title": "INDUSTRY BABY",
+        "author": "Lil Nas X & Jack Harlow",
+        "original": false
+      },
+      "hashtags": [
+        "nft",
+        "pixelart",
+        "ethereum",
+        "nfts",
+        "nftartwork",
+        "nftart",
+        "crypto",
+        "cryptok",
+        "cryptocurrency"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562419756498816278",
+      "desc": "#top #nft #topper ",
+      "create_time": 1760763084,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7213159769727927301",
+        "unique_id": "nft666668",
+        "nickname": "Nft66666",
+        "verified": false,
+        "signature": "ю",
+        "follower_count": 169,
+        "following_count": 10,
+        "heart_count": 11,
+        "video_count": 4
+      },
+      "stats": {
+        "play_count": 682,
+        "digg_count": 6,
+        "comment_count": 9,
+        "share_count": 0,
+        "repost_count": 2,
+        "engagement_rate": 2.49
+      },
+      "video": {
+        "duration": 37,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oU1vI8QGGRpGenGgWWALfzNmIeHGjDIGHEeRzA~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=Qlyq03TlXG5zv35PVMsQ3wzifj0%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7271691136788318982",
+        "title": "sonido original",
+        "author": "𝐈𝐯𝐚́𝐧 𝐑𝐌𝐮𝐬𝐢𝐜 🎧",
+        "original": true
+      },
+      "hashtags": [
+        "top",
+        "nft",
+        "topper"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7152849926102256901",
+      "desc": "How many mask he has ? 🎭 #nft #spin #3danimation #viral #fyp ",
+      "create_time": 1665402661,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6912125401276793858",
+        "unique_id": "nftbrothers_",
+        "nickname": "NFT Brothers",
+        "verified": false,
+        "signature": "Hey bro, Logan and Joe here  👋🏻\n \nContact:👇🏻\n\nworkwithjoeandlogan@gmail.com",
+        "follower_count": 5613,
+        "following_count": 1259,
+        "heart_count": 5503,
+        "video_count": 78
+      },
+      "stats": {
+        "play_count": 3633,
+        "digg_count": 99,
+        "comment_count": 11,
+        "share_count": 29,
+        "repost_count": 17,
+        "engagement_rate": 4.29
+      },
+      "video": {
+        "duration": 12,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/4ae5225eb51d47c3b3a6864b949a6a5a_1665402663~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=UggeXDmf8j1OXSiGl4vqB0JTUk4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7065048651919690502",
+        "title": "original sound",
+        "author": "Nate 🍇",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "spin",
+        "3danimation",
+        "viral",
+        "fyp"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563638038098742559",
+      "desc": "nft battle кто под этим видео напишет рекламу тгк у того мать свинья грязная, моджно только @nft_battlerbx #нфтбаттл #nft #roblox #nftbattle #pepe #nft_battle ",
+      "create_time": 1761046748,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7519866980553589791",
+        "unique_id": "sell1ng000",
+        "nickname": "тгк: @nft_battlerbx",
+        "verified": false,
+        "signature": "",
+        "follower_count": 8,
+        "following_count": 1,
+        "heart_count": 194,
+        "video_count": 3
+      },
+      "stats": {
+        "play_count": 965,
+        "digg_count": 4,
+        "comment_count": 4,
+        "share_count": 0,
+        "repost_count": 2,
+        "engagement_rate": 1.04
+      },
+      "video": {
+        "duration": 7,
+        "ratio": "720p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/oofdctgq7CIFbdcIBQZ3nrAtCVfANRvmDIj3Ef~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=5Da1X0PuScrt9uDGE1ov6FOdNvU%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7281014362846907182",
+        "title": "original sound",
+        "author": "edmondx",
+        "original": true
+      },
+      "hashtags": [
+        "нфтбаттл",
+        "nft",
+        "roblox",
+        "nftbattle",
+        "pepe",
+        "nft_battle"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7561243620293102870",
+      "desc": "✨ Discover the Legends Universe on @cryptocomnft — breathtaking NFT art from another dimension! 🚀 👉 crypto.com/nft/profile/sascha8910 #NFT #CryptoArt #LegendsUniverse #fyp #foryou ",
+      "create_time": 1760489233,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7145424401230611462",
+        "unique_id": "legends.universe",
+        "nickname": "Legends Universe",
+        "verified": false,
+        "signature": "Clips from the other side 👽👾",
+        "follower_count": 126,
+        "following_count": 12,
+        "heart_count": 69,
+        "video_count": 6
+      },
+      "stats": {
+        "play_count": 2045,
+        "digg_count": 64,
+        "comment_count": 2,
+        "share_count": 8,
+        "repost_count": 0,
+        "engagement_rate": 3.62
+      },
+      "video": {
+        "duration": 6,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/okDuwILeIDs33EESxfj7IG4Lh1UedApNB7ACFR~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=2hqY5RyjVTSPsqqUSfuNdzyxAiU%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7561243556682156822",
+        "title": "Originalton",
+        "author": "Legends Universe",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "cryptoart",
+        "legendsuniverse",
+        "fyp",
+        "foryou"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7464993436547026183",
+      "desc": "",
+      "create_time": 1738079231,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7200020368429532166",
+        "unique_id": "busratemurcin",
+        "nickname": "busratemurcin",
+        "verified": false,
+        "signature": "MSc in Financial Markets and  Investment Management\n\nTelegram kanal linkim👇🏻",
+        "follower_count": 11000,
+        "following_count": 0,
+        "heart_count": 17500,
+        "video_count": 101
+      },
+      "stats": {
+        "play_count": 683,
+        "digg_count": 16,
+        "comment_count": 0,
+        "share_count": 5,
+        "repost_count": 3,
+        "engagement_rate": 3.51
+      },
+      "video": {
+        "duration": 31,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oQm9fAAu8EMi8MfxSJLIAfG5ixAMQzAQIjeqge~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=oAwHiB%2By%2BnlhYuOo%2BZwxdZERlIo%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7464993469263792912",
+        "title": "orijinal ses",
+        "author": "busratemurcin",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "blockchain",
+        "finans",
+        "teknoloji",
+        "fyp",
+        "foryoupage",
+        "eğitim",
+        "dijitaldünya"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7050488695358491906",
+      "desc": "@0zcan345 kişisine yanıt verin  NFT Serisi devam etsin mi?",
+      "create_time": 1641569822,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6950546993571709953",
+        "unique_id": "osefcelik",
+        "nickname": "Osef #Reklam",
+        "verified": false,
+        "signature": "🎥 Teknoloji, Finans, Kripto, Araba 🎥\n📩 hello@osefmedya.com 📩\n👇🏻👇🏻",
+        "follower_count": 295900,
+        "following_count": 1870,
+        "heart_count": 10800000,
+        "video_count": 1259
+      },
+      "stats": {
+        "play_count": 723600,
+        "digg_count": 29700,
+        "comment_count": 176,
+        "share_count": 883,
+        "repost_count": 6798,
+        "engagement_rate": 5.19
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/d21abe1f5acb40e9852eda69d0a1cbcf_1641569823~tplv-tiktokx-dmt-logom:tos-alisg-i-0000/bfe76fcc1b244ced8fdd672a3158f193.image?dr=14573&x-expires=1761260400&x-signature=NXPOX4knIaaX%2FnBPsD1Rfxu64ZM%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7038611997868755718",
+        "title": "som original",
+        "author": "dudaaa",
+        "original": true
+      },
+      "hashtags": [],
+      "mentions": [
+        "osurktan"
+      ],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7552521318701255947",
+      "desc": "Промо:pepegang | крутил на giftsbattle #giftsbattle #кейс #nft ",
+      "create_time": 1758458406,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6883028215372940289",
+        "unique_id": "nftpepegang",
+        "nickname": "тeлега: nftpepegang",
+        "verified": false,
+        "signature": "NFT - новое направление?\nЕжедневные новости и раздачи в моем тгк",
+        "follower_count": 17700,
+        "following_count": 203,
+        "heart_count": 527000,
+        "video_count": 293
+      },
+      "stats": {
+        "play_count": 262200,
+        "digg_count": 2331,
+        "comment_count": 1432,
+        "share_count": 159,
+        "repost_count": 352,
+        "engagement_rate": 1.63
+      },
+      "video": {
+        "duration": 8,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/ogG8gIBBQQ8PNLFRokXefyUiYOzeEGAXPjIeAF~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=ewQm5o2tB26a81GzX5F1jHjF6g8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7547978000073345793",
+        "title": "оригинальный звук",
+        "author": "saut1337",
+        "original": true
+      },
+      "hashtags": [
+        "giftsbattle",
+        "кейс",
+        "nft"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7170570118806637867",
+      "desc": "Interesting #NFTART #NFT #digitalart #metaverse #META #virtual #virtualreality #anime #animetiktok #amazing #3d #fyp ",
+      "create_time": 1669528468,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7161308170785719338",
+        "unique_id": "nft_timecreatesvalue",
+        "nickname": "NFT.timeCreatesvalue",
+        "verified": false,
+        "signature": "NFT. Web3.0. Digital collection combined with real art collection.",
+        "follower_count": 47000,
+        "following_count": 202,
+        "heart_count": 1100000,
+        "video_count": 43
+      },
+      "stats": {
+        "play_count": 4500000,
+        "digg_count": 114200,
+        "comment_count": 1392,
+        "share_count": 3395,
+        "repost_count": 8054,
+        "engagement_rate": 2.82
+      },
+      "video": {
+        "duration": 13,
+        "ratio": "540p",
+        "cover": "https://p19-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/5d49f89e834a4b208ea3bf55a7b27442~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=n5mUpeLeFh5RxFr4GXiC7H7EhZ4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7170570150121409326",
+        "title": "原聲",
+        "author": "NFT.timeCreatesvalue",
+        "original": true
+      },
+      "hashtags": [
+        "nftart",
+        "nft",
+        "digitalart",
+        "metaverse",
+        "meta",
+        "virtual",
+        "virtualreality",
+        "anime",
+        "animetiktok",
+        "amazing",
+        "3d",
+        "fyp"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7561406258431986974",
+      "desc": "Тгк @arbitrahaem #нфт #тгподарки #telegram #podarkinews #nft ",
+      "create_time": 1760527099,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7376252137523495979",
+        "unique_id": "arbitrahaem",
+        "nickname": "Podarkirezhu",
+        "verified": false,
+        "signature": "Telegram: arbitrahaem",
+        "follower_count": 33,
+        "following_count": 77,
+        "heart_count": 490,
+        "video_count": 22
+      },
+      "stats": {
+        "play_count": 815,
+        "digg_count": 20,
+        "comment_count": 1,
+        "share_count": 4,
+        "repost_count": 3,
+        "engagement_rate": 3.44
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "720p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/oAPFSPg4GjgO9UQkFNYeMvtgwfevAALheCCXAR~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=Ccgve4rwKtp7y3389TKXDvpSp4I%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7561406094300547870",
+        "title": "оригинальный звук",
+        "author": "Podarkirezhu",
+        "original": true
+      },
+      "hashtags": [],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7509101858787577144",
+      "desc": "#nft #nftgifts #stars #нфт #нфтподарки #тгподарки #тгзвезды #рекомендации ",
+      "create_time": 1748349025,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7341151281362682885",
+        "unique_id": "worldnftgifts",
+        "nickname": "tg: @worldnftgifts",
+        "verified": false,
+        "signature": "↘️ Новости | Розыгрыши ↙️",
+        "follower_count": 380,
+        "following_count": 4,
+        "heart_count": 18900,
+        "video_count": 25
+      },
+      "stats": {
+        "play_count": 66200,
+        "digg_count": 2508,
+        "comment_count": 491,
+        "share_count": 302,
+        "repost_count": 259,
+        "engagement_rate": 5.38
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/o0Q5roHEeBb0JQRQzSQAZFEBAYDTONFvqfySMJ~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=hvXI5YZ4H8x4yNSNUab53BqGCUY%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7509101858084866821",
+        "title": "оригинальный звук",
+        "author": "tg: @worldnftgifts",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "nftgifts",
+        "stars",
+        "нфт",
+        "нфтподарки",
+        "тгподарки",
+        "тгзвезды",
+        "рекомендации"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7561071047068405003",
+      "desc": "📹 Делали на GoGift #gift #nft #reels #shorts #reels ",
+      "create_time": 1760449042,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7529829299340215352",
+        "unique_id": "kolyaploiskiy",
+        "nickname": "GoGift",
+        "verified": false,
+        "signature": "заходите в бота:GoGift",
+        "follower_count": 5,
+        "following_count": 4,
+        "heart_count": 209,
+        "video_count": 21
+      },
+      "stats": {
+        "play_count": 565,
+        "digg_count": 2,
+        "comment_count": 1,
+        "share_count": 1,
+        "repost_count": 0,
+        "engagement_rate": 0.71
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/ooAqISBUd7yfkigIuxYVkGHiALwiEC0ogIoAhL~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=JY%2FNnY2fVnAROsQXMFTJ9PB1juA%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7561071045713742648",
+        "title": "оригинальный звук",
+        "author": "GoGift",
+        "original": true
+      },
+      "hashtags": [
+        "gift",
+        "nft",
+        "reels",
+        "shorts"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7052288841201241345",
+      "desc": "Уже создал своё NFT? 💸 #nft #нфт #криптовалюта #крипта #crypto #богатаяжизнь #lisenokinvest",
+      "create_time": 1641988951,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6831633744513123333",
+        "unique_id": "chugunow.d",
+        "nickname": "chugunow.d",
+        "verified": false,
+        "signature": "🎓Чёрный пояс по финансовой грамотности\n✨Инвестиции — это не сложно, я докажу!",
+        "follower_count": 171600,
+        "following_count": 31,
+        "heart_count": 1700000,
+        "video_count": 1066
+      },
+      "stats": {
+        "play_count": 6600000,
+        "digg_count": 294700,
+        "comment_count": 2062,
+        "share_count": 25100,
+        "repost_count": 82354,
+        "engagement_rate": 6.12
+      },
+      "video": {
+        "duration": 59,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/04b5286b87cd4cd8adf8d2ac9e16000c_1641988956~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=xpknME9XA0cq0lLbD9MMnZuCjc4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7005888397580208130",
+        "title": "MONEY",
+        "author": "LISA",
+        "original": false
+      },
+      "hashtags": [
+        "nft",
+        "нфт",
+        "криптовалюта",
+        "крипта",
+        "crypto",
+        "богатаяжизнь",
+        "lisenokinvest"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562681061172415764",
+      "desc": "#nft #gifts #gift #pepe #concept ",
+      "create_time": 1760823910,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6960959701660648449",
+        "unique_id": "barvita",
+        "nickname": "Barvita",
+        "verified": false,
+        "signature": "Обзоры NFT и MRKT! \nTG: @Barvita",
+        "follower_count": 28,
+        "following_count": 0,
+        "heart_count": 1598,
+        "video_count": 50
+      },
+      "stats": {
+        "play_count": 278,
+        "digg_count": 3,
+        "comment_count": 3,
+        "share_count": 0,
+        "repost_count": 0,
+        "engagement_rate": 2.16
+      },
+      "video": {
+        "duration": 21,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/o8f5ogVgGteV6CFHAIeNACE13LbF8RDIzngj2o~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=G3FF%2BbTOpu6mdzuXR%2BrX6GANDe8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562681115497614097",
+        "title": "оригинальный звук",
+        "author": "Barvita",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "gifts",
+        "gift",
+        "pepe",
+        "concept"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7052715015991725317",
+      "desc": "This NFT is crazy!😱 #nft #metaverse #nftartwork #nftcollector #community #fyp #viral #vr #digitalart",
+      "create_time": 1642088178,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7041321654618424325",
+        "unique_id": "metaverse.today",
+        "nickname": "Metaverse",
+        "verified": false,
+        "signature": "📚 | #1 Place for Metaverse Education \n🚀 | Follow for Daily Infos!\n👇 | Links",
+        "follower_count": 27500,
+        "following_count": 119,
+        "heart_count": 412900,
+        "video_count": 229
+      },
+      "stats": {
+        "play_count": 3200000,
+        "digg_count": 78600,
+        "comment_count": 1232,
+        "share_count": 2460,
+        "repost_count": 2685,
+        "engagement_rate": 2.66
+      },
+      "video": {
+        "duration": 7,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/7aed4bb6ea894b27b16fe37d03096f88_1642088178~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=aadLQFDEl6WekGLYXWIVTI7DfO8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7052714953908095750",
+        "title": "Originalton",
+        "author": "Metaverse",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "metaverse",
+        "nftartwork",
+        "nftcollector",
+        "community",
+        "fyp",
+        "viral",
+        "vr",
+        "digitalart"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563538476277320968",
+      "desc": "🐰𝓝𝓮𝔀 𝓭𝓻𝓸𝓹 #NFT🐇 🐰UsaGIF: ♡美𝓊𝓃ⓛ𝓋𝑒𝓇∫𝑒 ✬ #➊➊ @objktcom S♡ĿD☺︎uT🙏🌟🐰 . . https://objkt.com/tokens/KT1MCC9QsUqryhMXdRjLK8UkLRjXogioUm3s/13 . . #🐰 #🐇 #usagi #usagiacid #art #music #digitalart #digitalartist #objkt #tezos #cryptoartist #nftart #nftarti̇sts #aether #aesthetic #aethetics #ether #vaporwave #postvaporwave #アート #nftアート #nftproject #artcollection #nftcreator  #internet #nftcommmunity #ａｅｓｔｈｅｔｉｃ #うさぎ",
+      "create_time": 1761023539,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6773939895477748737",
+        "unique_id": "usagi.acid",
+        "nickname": "♡u∫agi幻覚∀∁ⓛᙌ✬",
+        "verified": false,
+        "signature": "🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🐰🎼⬇️💛🌝⭐️🌠🌍🎶",
+        "follower_count": 42,
+        "following_count": 0,
+        "heart_count": 599,
+        "video_count": 166
+      },
+      "stats": {
+        "play_count": 111,
+        "digg_count": 2,
+        "comment_count": 0,
+        "share_count": 0,
+        "repost_count": 2,
+        "engagement_rate": 3.6
+      },
+      "video": {
+        "duration": 6,
+        "ratio": "720p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/o0IjfpI3EvpkbLGeCAeoLsAoDwEnjWPNDi7RFI~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=gkpsnaLZZCHEKGXx%2BmLs13OtAK0%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7519833875338774545",
+        "title": "Sacred Flow - 528 Hz",
+        "author": "8D Audio Relax & Oleksandr Chukhlib",
+        "original": false
+      },
+      "hashtags": [
+        "nft🐇",
+        "➊➊",
+        "🐰",
+        "🐇",
+        "usagi",
+        "usagiacid",
+        "art",
+        "music",
+        "digitalart",
+        "digitalartist",
+        "objkt",
+        "tezos",
+        "cryptoartist",
+        "nftart",
+        "nftarti",
+        "aether",
+        "aesthetic",
+        "aethetics",
+        "ether",
+        "vaporwave",
+        "postvaporwave",
+        "アート",
+        "nftアート",
+        "nftproject",
+        "artcollection",
+        "nftcreator",
+        "internet",
+        "nftcommmunity",
+        "うさぎ"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563373029783325974",
+      "desc": "Would you still buy a digital collectible? #didyouknow #interestingfacts #fyp #newsattiktok #nfts ",
+      "create_time": 1760985015,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7117340025134187526",
+        "unique_id": "oneillel",
+        "nickname": "oneillel",
+        "verified": false,
+        "signature": "like everybody else, figuring life out \none interesting fact at a time🤯",
+        "follower_count": 3218,
+        "following_count": 331,
+        "heart_count": 303400,
+        "video_count": 515
+      },
+      "stats": {
+        "play_count": 13000,
+        "digg_count": 48,
+        "comment_count": 3,
+        "share_count": 0,
+        "repost_count": 2,
+        "engagement_rate": 0.41
+      },
+      "video": {
+        "duration": 5,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oUDgs7feEFVPRF3IE1uDAYIgE7QLfIkAjgnCbW~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=JMcW6mZkqsIEjzJQarAaTcHB3eo%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7491034869150665518",
+        "title": "original sound",
+        "author": "NYES | Fashion",
+        "original": true
+      },
+      "hashtags": [
+        "DidYouKnow",
+        "interestingfacts",
+        "fyp",
+        "newsattiktok",
+        "nfts"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7088338625586285826",
+      "desc": "behind the scenessss #painting #nft #nftartwork #crypto #nftart #investing #photoshop #opensea",
+      "create_time": 1650382446,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6770953919302321158",
+        "unique_id": "hayatininevreni",
+        "nickname": "hayatininevreni",
+        "verified": false,
+        "signature": "visual designer",
+        "follower_count": 183200,
+        "following_count": 33,
+        "heart_count": 12600000,
+        "video_count": 99
+      },
+      "stats": {
+        "play_count": 27400000,
+        "digg_count": 4800000,
+        "comment_count": 18900,
+        "share_count": 71100,
+        "repost_count": 182026,
+        "engagement_rate": 18.51
+      },
+      "video": {
+        "duration": 30,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/2c45f054d09b445a80ed7f96a5e92d68~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=%2B3tFFEaSfPJeoigrgQ%2BMZy31CzY%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "6711176322418214914",
+        "title": "Dirty Harry (feat. Bootie Brown)",
+        "author": "Gorillaz",
+        "original": false
+      },
+      "hashtags": [
+        "painting",
+        "nft",
+        "nftartwork",
+        "crypto",
+        "nftart",
+        "investing",
+        "photoshop",
+        "opensea"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7064876659018632475",
+      "desc": "#disponsori Game NFT.,  game cuan ini bos.  DYOR dulu ya.!#gamecrypto #crypto #gamenft #nft",
+      "create_time": 1644919782,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6966120564571800577",
+        "unique_id": "sr...aja",
+        "nickname": "SR...aja",
+        "verified": false,
+        "signature": "hanya seseorang pedagang yang mencari cuan💰   dari rumah 🏡",
+        "follower_count": 3386,
+        "following_count": 9401,
+        "heart_count": 33600,
+        "video_count": 147
+      },
+      "stats": {
+        "play_count": 517300,
+        "digg_count": 3141,
+        "comment_count": 128,
+        "share_count": 76,
+        "repost_count": 2112,
+        "engagement_rate": 1.05
+      },
+      "video": {
+        "duration": 10,
+        "ratio": "540p",
+        "cover": "https://p19-common-sign-useastred.tiktokcdn-eu.com/tos-useast2a-p-0037-aiso/2252781f6cce4fe0a70a1a7ed6e99384~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=WuHhWQj1AXF%2BI7DvSLfAY4Mbe%2BQ%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7064876668556462874",
+        "title": "suara asli - SR",
+        "author": "SR...aja",
+        "original": true
+      },
+      "hashtags": [
+        "disponsori",
+        "gamecrypto",
+        "crypto",
+        "gamenft",
+        "nft"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7533512183938895122",
+      "desc": "هل عادت NFTs وهل تفكرون بالاستثمار بها مجدداً؟ #NFT #الفن_الرقمي #الاستثمار_الرقمي",
+      "create_time": 1754032496,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7094498247007273990",
+        "unique_id": "almalchannel",
+        "nickname": "قناة المال | Almal Channel",
+        "verified": false,
+        "signature": "نبسّط المال للعرب",
+        "follower_count": 1300000,
+        "following_count": 0,
+        "heart_count": 7600000,
+        "video_count": 1348
+      },
+      "stats": {
+        "play_count": 123800,
+        "digg_count": 1272,
+        "comment_count": 18,
+        "share_count": 30,
+        "repost_count": 146,
+        "engagement_rate": 1.18
+      },
+      "video": {
+        "duration": 106,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/o4AlprBbAAEHWi4MI1riqYAIZlaVuAACxiAva~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=AgoSA2V1MizByHSBeQlDlvqatOs%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7533512258186578689",
+        "title": "original sound - قناة المال | Almal Channel",
+        "author": "قناة المال | Almal Channel",
+        "original": true
+      },
+      "hashtags": [],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7560261123925183762",
+      "desc": "𝗡𝗙𝗧 𝗛𝗢𝗕𝗢𝗖𝗧𝘂 𝗕 𝗯𝘂𝗼 #fyp #тикток #рекомендации #nft #telegram й",
+      "create_time": 1760260469,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7450180197091017744",
+        "unique_id": "starsbozor",
+        "nickname": "⭐️тгк StarsBozor",
+        "verified": false,
+        "signature": "Если не работает сcылкa\n3 точки в углу - войти через браузер\nнаш тгк\n⬇️⬇️⬇️",
+        "follower_count": 440,
+        "following_count": 51,
+        "heart_count": 32200,
+        "video_count": 32
+      },
+      "stats": {
+        "play_count": 186200,
+        "digg_count": 5925,
+        "comment_count": 208,
+        "share_count": 168,
+        "repost_count": 485,
+        "engagement_rate": 3.64
+      },
+      "video": {
+        "duration": 11,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oMIWQADAj4p1ANGRzLHeepAKwLeIjIAAo8uuEb~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=H%2B0588QfG%2FV3aLM7GTHwEgBBPCE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7560261155013282576",
+        "title": "оригинальный звук",
+        "author": "⭐️тгк StarsBozor",
+        "original": true
+      },
+      "hashtags": [
+        "fyp",
+        "тикток",
+        "рекомендации",
+        "nft",
+        "telegram"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563356671993449736",
+      "desc": "It's true, it's not AI, I saw it myself 😀 #ai#viral#nft#sora#usa ",
+      "create_time": 1760981209,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6769221009909597189",
+        "unique_id": "the_des3d",
+        "nickname": "The_des3d",
+        "verified": false,
+        "signature": "3d Motion Designer/Cinematic Artist/VFX/CGI",
+        "follower_count": 205,
+        "following_count": 37,
+        "heart_count": 184,
+        "video_count": 16
+      },
+      "stats": {
+        "play_count": 1257,
+        "digg_count": 4,
+        "comment_count": 2,
+        "share_count": 0,
+        "repost_count": 0,
+        "engagement_rate": 0.48
+      },
+      "video": {
+        "duration": 10,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oozBPBACpaigZIygErAmbuqka2Iv9YwNZciX6~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=si3k2JIOniNOti7%2FTMyOqiyv5bU%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7563356717795560209",
+        "title": "оригинальный звук",
+        "author": "The_des3d",
+        "original": true
+      },
+      "hashtags": [
+        "ai",
+        "viral",
+        "nft",
+        "sora",
+        "usa"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7559862761602272519",
+      "desc": "сколько стоить будет? #nft ",
+      "create_time": 1760167717,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7559850946844689464",
+        "unique_id": "nftbroao",
+        "nickname": "nftbroao",
+        "verified": false,
+        "signature": "",
+        "follower_count": 8,
+        "following_count": 0,
+        "heart_count": 1015,
+        "video_count": 1
+      },
+      "stats": {
+        "play_count": 109800,
+        "digg_count": 1015,
+        "comment_count": 341,
+        "share_count": 98,
+        "repost_count": 78,
+        "engagement_rate": 1.4
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oYoe1cQj3IQMIB8DIRAAy4GFLZeBACy8fQEqlP~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=a419NHHkufbFqTDu72OnJaJrFu8%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7313742330777946885",
+        "title": "BRONYA SUCESS ANTHEM on all plats",
+        "author": "Я",
+        "original": true
+      },
+      "hashtags": [
+        "nft"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7560588741379656967",
+      "desc": "#игра #врекомендации #нфт #роблокс #врек #кодндд #актив #тг #коллекционер ",
+      "create_time": 1760336750,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6891294686629250053",
+        "unique_id": "kod.ndd",
+        "nickname": "KODNDD",
+        "verified": false,
+        "signature": "тгк: @kodndd",
+        "follower_count": 427,
+        "following_count": 8,
+        "heart_count": 4753,
+        "video_count": 15
+      },
+      "stats": {
+        "play_count": 98000,
+        "digg_count": 1056,
+        "comment_count": 261,
+        "share_count": 149,
+        "repost_count": 147,
+        "engagement_rate": 1.65
+      },
+      "video": {
+        "duration": 23,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/ocqHtfDRIESuKESBJmoEsD3B7ImOUsmfgARFXR~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=RWgUs8JsP1q2Ur2jQyRw0q7VuAQ%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7560588774057511688",
+        "title": "оригинальный звук",
+        "author": "KODNDD",
+        "original": true
+      },
+      "hashtags": [
+        "игра",
+        "врекомендации",
+        "нфт",
+        "роблокс",
+        "врек",
+        "кодндд",
+        "актив",
+        "тг",
+        "коллекционер"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7559949500186512652",
+      "desc": "битва за нфт #роблокс #нфт #рек #рекомендации ",
+      "create_time": 1760187914,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7394083567951528965",
+        "unique_id": "bigbrrrrr3802",
+        "nickname": "Негр В пене",
+        "verified": false,
+        "signature": "https://t.me/+OsKoXMpt2LI4Mjdi",
+        "follower_count": 672,
+        "following_count": 42,
+        "heart_count": 1620,
+        "video_count": 10
+      },
+      "stats": {
+        "play_count": 84100,
+        "digg_count": 1091,
+        "comment_count": 391,
+        "share_count": 111,
+        "repost_count": 152,
+        "engagement_rate": 2.07
+      },
+      "video": {
+        "duration": 9,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/o8CBrYoQqN8D2BGVQHJglfETFEARfB6koiORHI~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=ujtLl%2BjYvFGljurpn4TMtSnHEWA%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7559949502568844088",
+        "title": "оригинальный звук",
+        "author": "Негр В пене",
+        "original": true
+      },
+      "hashtags": [
+        "роблокс",
+        "нфт",
+        "рек",
+        "рекомендации"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562235552741854475",
+      "desc": "#robloxx #nftbattle ",
+      "create_time": 1760720180,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7562211827213534219",
+        "unique_id": "lllllllllll0351",
+        "nickname": "lllllllllll",
+        "verified": false,
+        "signature": "",
+        "follower_count": 123,
+        "following_count": 1,
+        "heart_count": 1966,
+        "video_count": 14
+      },
+      "stats": {
+        "play_count": 78600,
+        "digg_count": 1096,
+        "comment_count": 228,
+        "share_count": 111,
+        "repost_count": 161,
+        "engagement_rate": 2.03
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/o4JBe53AXTlBxxxSBBORTQfqEdBiydioQEOIiR~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=rhK7AMB4UEEXrOUxUpG4pG%2BFxUk%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562235574849932043",
+        "title": "оригинальный звук",
+        "author": "lllllllllll",
+        "original": true
+      },
+      "hashtags": [
+        "robloxx",
+        "nftbattle"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562192954694110486",
+      "desc": "Good News Treasure NFT withdrawals are starting from 01 Nov 2025  #newupdate #treasurenft #tuft #foryou #comeback ",
+      "create_time": 1760710257,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7436659337307751457",
+        "unique_id": "msharif_098",
+        "nickname": "Punjabi Trader",
+        "verified": false,
+        "signature": "For Learning , Loss Recovery & Signals",
+        "follower_count": 12800,
+        "following_count": 0,
+        "heart_count": 92900,
+        "video_count": 202
+      },
+      "stats": {
+        "play_count": 11400,
+        "digg_count": 704,
+        "comment_count": 143,
+        "share_count": 162,
+        "repost_count": 100,
+        "engagement_rate": 9.73
+      },
+      "video": {
+        "duration": 111,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oEIBBqCPOAAi20cEaFJAPBYyTZiEcn0YZzpKO~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=Xw0TmkruGopkdqmBJRH657nLPAk%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7562192942673906454",
+        "title": "original sound",
+        "author": "Punjabi Trader",
+        "original": true
+      },
+      "hashtags": [
+        "newupdate",
+        "treasurenft",
+        "tuft",
+        "foryou",
+        "comeback"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7540211515417169170",
+      "desc": "уведомляю о выходе новых подарков в тгк: NftGiftsTlg | #нфт #stars #звезды #подарки #подаркитг #gifts #telegram #tg #nft #NftGiftsHub #redo #pepe #snoopdogg ",
+      "create_time": 1755592303,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7213451588194976769",
+        "unique_id": "nftgiftstghub",
+        "nickname": "NftGiftsHub",
+        "verified": false,
+        "signature": "розыгрыши подарков каждый день в тгк: NftGiftsTlg",
+        "follower_count": 201,
+        "following_count": 1,
+        "heart_count": 22900,
+        "video_count": 5
+      },
+      "stats": {
+        "play_count": 322700,
+        "digg_count": 22900,
+        "comment_count": 3322,
+        "share_count": 1259,
+        "repost_count": 2555,
+        "engagement_rate": 9.31
+      },
+      "video": {
+        "duration": 13,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oY7TQr2YymAIBiy19KExEHviVNw2BhaApkYEA~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=6eSxikSWAC%2BVupLSOJqFpLkk3CI%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7540211541971454736",
+        "title": "оригинальный звук",
+        "author": "NftGiftsHub",
+        "original": true
+      },
+      "hashtags": [
+        "нфт",
+        "stars",
+        "звезды",
+        "подарки",
+        "подаркитг",
+        "gifts",
+        "telegram",
+        "tg",
+        "nft",
+        "nftgiftshub",
+        "redo",
+        "pepe",
+        "snoopdogg"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7562575008426495253",
+      "desc": "Ответит?@maluynft  #trand #pepa #nftgift #gift #подарки #nfttelegram #nft #fyp #trnding ",
+      "create_time": 1760799211,
+      "search_query": "#NFT",
+      "author": {
+        "id": "6853421127311262725",
+        "unique_id": "viktor_zyurikov",
+        "nickname": "ТГК: viktor_zyurikov",
+        "verified": false,
+        "signature": "https://t.me/viktor_zyurikov",
+        "follower_count": 466,
+        "following_count": 715,
+        "heart_count": 51300,
+        "video_count": 104
+      },
+      "stats": {
+        "play_count": 2242,
+        "digg_count": 25,
+        "comment_count": 11,
+        "share_count": 1,
+        "repost_count": 0,
+        "engagement_rate": 1.65
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oY4E5i3AH1lDRpjKAAAj7ffOIoDFnUERAISQCf~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=%2FgmpD1hQVrFyg26xOht5H853G88%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7417539688213285649",
+        "title": "оригинальный звук",
+        "author": "ミ★",
+        "original": true
+      },
+      "hashtags": [
+        "trand",
+        "pepa",
+        "nftgift",
+        "gift",
+        "подарки",
+        "nfttelegram",
+        "nft",
+        "fyp",
+        "trnding"
+      ],
+      "mentions": [
+        "maluynft"
+      ],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7560776601512824120",
+      "desc": "#nft #роблокс #fyp #nftbattle ",
+      "create_time": 1760380492,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7560736751669691403",
+        "unique_id": "xiston11",
+        "nickname": "xiston11",
+        "verified": false,
+        "signature": "",
+        "follower_count": 507,
+        "following_count": 2,
+        "heart_count": 14000,
+        "video_count": 41
+      },
+      "stats": {
+        "play_count": 5905,
+        "digg_count": 67,
+        "comment_count": 16,
+        "share_count": 2,
+        "repost_count": 14,
+        "engagement_rate": 1.68
+      },
+      "video": {
+        "duration": 16,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/o4Ktv9yRzSPE0Ovi1UkrMbURBCIaQihFYB3AI~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=PAlF8iI8t6JDGupbuGVSxvfTdPc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7559988401378790157",
+        "title": "оригинальный звук - Qura",
+        "author": "Qura",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "роблокс",
+        "fyp",
+        "nftbattle"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7538911067984907550",
+      "desc": "Все Новости о нфт-подарках в тгк @jsojps #новыеподарки #подаркитг #звезды #gifts #nft #нфт #телеграмм #рынок ",
+      "create_time": 1755289539,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7485469872456533038",
+        "unique_id": "sywixup",
+        "nickname": "ТГ: @SYWIXUP",
+        "verified": false,
+        "signature": "✅ПРИВАТНЫЕ СКРИПТЫ, БОТЫ И ПРОГРАММЫ",
+        "follower_count": 1049,
+        "following_count": 0,
+        "heart_count": 90000,
+        "video_count": 27
+      },
+      "stats": {
+        "play_count": 1200000,
+        "digg_count": 57800,
+        "comment_count": 3903,
+        "share_count": 3424,
+        "repost_count": 4988,
+        "engagement_rate": 5.84
+      },
+      "video": {
+        "duration": 14,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/oIQIfLR9yCZvIuGPgevSfqDAILlh8PWvm05Aj8~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=kaaRaWflWfeOG%2BdqOc%2FSxPiD4ws%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7538916244301400862",
+        "title": "оригинальный звук",
+        "author": "ТГ: @SYWIXUP",
+        "original": true
+      },
+      "hashtags": [
+        "новыеподарки",
+        "подаркитг",
+        "звезды",
+        "gifts",
+        "nft",
+        "нфт",
+        "телеграмм",
+        "рынок"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7563687706992069902",
+      "desc": "надеюсь получится #fyp #telegram #nft #elbruso #рек",
+      "create_time": 1761058331,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7524348037020959774",
+        "unique_id": "pepelovervolt",
+        "nickname": "тг webvolt",
+        "verified": false,
+        "signature": "пр я вольт\nтг @webvolt",
+        "follower_count": 3,
+        "following_count": 12,
+        "heart_count": 127,
+        "video_count": 5
+      },
+      "stats": {
+        "play_count": 341,
+        "digg_count": 12,
+        "comment_count": 0,
+        "share_count": 0,
+        "repost_count": 1,
+        "engagement_rate": 3.81
+      },
+      "video": {
+        "duration": 28,
+        "ratio": "540p",
+        "cover": "https://p16-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/oEtIBfL7wQGebnCArI1AeVIYRvgQjBCHkHDzPC~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=AXCIPWXymj2OJL74HqQ3jycf6UA%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7563687852823907085",
+        "title": "оригинальный звук",
+        "author": "тг webvolt",
+        "original": true
+      },
+      "hashtags": [
+        "fyp",
+        "telegram",
+        "nft",
+        "elbruso",
+        "рек"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7560266933875117342",
+      "desc": "Nahhh #бешбармак #battle #батл #нфт #nft #roblox #pyf ",
+      "create_time": 1760261916,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7532201826383053854",
+        "unique_id": "alibaba_3520",
+        "nickname": "Alibaba",
+        "verified": false,
+        "signature": "рб тт",
+        "follower_count": 121,
+        "following_count": 4,
+        "heart_count": 2643,
+        "video_count": 6
+      },
+      "stats": {
+        "play_count": 24500,
+        "digg_count": 268,
+        "comment_count": 134,
+        "share_count": 2,
+        "repost_count": 47,
+        "engagement_rate": 1.84
+      },
+      "video": {
+        "duration": 12,
+        "ratio": "540p",
+        "cover": "https://p16-pu-sign-useast8.tiktokcdn-us.com/tos-useast8-p-0068-tx2/owgR1BGpIICIN3pVeIAAQaJL1uWJfez4jBqjq7~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=gwrFf5P3xVLHULjxips1CAQcROc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7560267157527874335",
+        "title": "оригинальный звук",
+        "author": "Alibaba",
+        "original": true
+      },
+      "hashtags": [
+        "бешбармак",
+        "battle",
+        "батл",
+        "нфт",
+        "nft",
+        "roblox",
+        "pyf"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7486510203358170375",
+      "desc": "مارکہ این ایف ٹی برینڈ اے  چاچے  نے دیکھے دن کو خواب😂 #nft #teamchutachacha ",
+      "create_time": 1743088992,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7144666605644235803",
+        "unique_id": "teamchutachacha",
+        "nickname": "TeamChutaChacha",
+        "verified": false,
+        "signature": "https://youtube.com/@saqlainofficial777?si=KAAYP36wVqdaDhgU",
+        "follower_count": 6293,
+        "following_count": 5,
+        "heart_count": 129200,
+        "video_count": 96
+      },
+      "stats": {
+        "play_count": 2600000,
+        "digg_count": 103900,
+        "comment_count": 3691,
+        "share_count": 35200,
+        "repost_count": 7370,
+        "engagement_rate": 5.78
+      },
+      "video": {
+        "duration": 113,
+        "ratio": "540p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oQteBP2XCigKIVbnRAzwiBrlExIVAAx1DAzAbH~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=vTJ6tn6fVKgvPBnMxJfIHiS610k%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7486510351740308225",
+        "title": "original sound",
+        "author": "TeamChutaChacha",
+        "original": true
+      },
+      "hashtags": [
+        "nft",
+        "teamchutachacha"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7561489461364772152",
+      "desc": "Игра в рб nft battle",
+      "create_time": 1760546464,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7366147417606276102",
+        "unique_id": "qeewixx0",
+        "nickname": "qeewixx0",
+        "verified": false,
+        "signature": "",
+        "follower_count": 46,
+        "following_count": 86,
+        "heart_count": 1686,
+        "video_count": 55
+      },
+      "stats": {
+        "play_count": 6543,
+        "digg_count": 27,
+        "comment_count": 27,
+        "share_count": 0,
+        "repost_count": 6,
+        "engagement_rate": 0.92
+      },
+      "video": {
+        "duration": 7,
+        "ratio": "540p",
+        "cover": "https://p16-sign-va.tiktokcdn.com/tos-maliva-p-0068/oMfQE81OEFAMK7IQQRLDJFmH8Ozu6qovpBVfBq~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=5vZ%2FBDtHx9hNy1SeG6A0fNamZJA%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7460100068696590353",
+        "title": "Protection Charm",
+        "author": "acecore",
+        "original": false
+      },
+      "hashtags": [],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    },
+    {
+      "video_id": "7560269590987640072",
+      "desc": "Писать: @Maro58 спамблок или я не отвечаю - @maaro58bot #рекомендации #телеграм #звездытг #подарки #nft ",
+      "create_time": 1760262438,
+      "search_query": "#NFT",
+      "author": {
+        "id": "7430858117980324869",
+        "unique_id": "maaro_58",
+        "nickname": "Машка💋🙏",
+        "verified": false,
+        "signature": "@Maro58 подарю 2 колечка 💍 и тортик 🎂",
+        "follower_count": 8306,
+        "following_count": 4,
+        "heart_count": 102800,
+        "video_count": 32
+      },
+      "stats": {
+        "play_count": 63300,
+        "digg_count": 2150,
+        "comment_count": 3380,
+        "share_count": 28,
+        "repost_count": 256,
+        "engagement_rate": 9.18
+      },
+      "video": {
+        "duration": 15,
+        "ratio": "360p",
+        "cover": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/oozeJAACoHBYXlDWCsFEgiDVE6ARjUAQIWf0c3~tplv-tiktokx-origin.image?dr=14575&x-expires=1761260400&x-signature=laNEbmK5TAVX5CDrF1k%2F95eOIyk%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=maliva"
+      },
+      "music": {
+        "id": "7482427133788998405",
+        "title": "оригинальный звук",
+        "author": "JAPYR | Шаблоны CapCut 🐸",
+        "original": true
+      },
+      "hashtags": [
+        "рекомендации",
+        "телеграм",
+        "звездытг",
+        "подарки",
+        "nft"
+      ],
+      "mentions": [],
+      "is_ad": false,
+      "is_duet": false,
+      "is_stitch": false
+    }
+  ],
+  "comments": {
+    "7111476819324423425": {
+      "video_id": "7111476819324423425",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7035970197429177602": {
+      "video_id": "7035970197429177602",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7102068447458233602": {
+      "video_id": "7102068447458233602",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7050512130801470721": {
+      "video_id": "7050512130801470721",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7151023115991059713": {
+      "video_id": "7151023115991059713",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7056439815377538305": {
+      "video_id": "7056439815377538305",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7081309838583549185": {
+      "video_id": "7081309838583549185",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562494490078956856": {
+      "video_id": "7562494490078956856",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7097266566722620673": {
+      "video_id": "7097266566722620673",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563312164321234184": {
+      "video_id": "7563312164321234184",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7056820646625447215": {
+      "video_id": "7056820646625447215",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7143725307344784645": {
+      "video_id": "7143725307344784645",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562419756498816278": {
+      "video_id": "7562419756498816278",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7152849926102256901": {
+      "video_id": "7152849926102256901",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563638038098742559": {
+      "video_id": "7563638038098742559",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7561243620293102870": {
+      "video_id": "7561243620293102870",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7464993436547026183": {
+      "video_id": "7464993436547026183",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7050488695358491906": {
+      "video_id": "7050488695358491906",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7552521318701255947": {
+      "video_id": "7552521318701255947",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7170570118806637867": {
+      "video_id": "7170570118806637867",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7561406258431986974": {
+      "video_id": "7561406258431986974",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7509101858787577144": {
+      "video_id": "7509101858787577144",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7561071047068405003": {
+      "video_id": "7561071047068405003",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7052288841201241345": {
+      "video_id": "7052288841201241345",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562681061172415764": {
+      "video_id": "7562681061172415764",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7052715015991725317": {
+      "video_id": "7052715015991725317",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563538476277320968": {
+      "video_id": "7563538476277320968",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563373029783325974": {
+      "video_id": "7563373029783325974",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7088338625586285826": {
+      "video_id": "7088338625586285826",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7064876659018632475": {
+      "video_id": "7064876659018632475",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7533512183938895122": {
+      "video_id": "7533512183938895122",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7560261123925183762": {
+      "video_id": "7560261123925183762",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563356671993449736": {
+      "video_id": "7563356671993449736",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7559862761602272519": {
+      "video_id": "7559862761602272519",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7560588741379656967": {
+      "video_id": "7560588741379656967",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7559949500186512652": {
+      "video_id": "7559949500186512652",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562235552741854475": {
+      "video_id": "7562235552741854475",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562192954694110486": {
+      "video_id": "7562192954694110486",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7540211515417169170": {
+      "video_id": "7540211515417169170",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7562575008426495253": {
+      "video_id": "7562575008426495253",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7560776601512824120": {
+      "video_id": "7560776601512824120",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7538911067984907550": {
+      "video_id": "7538911067984907550",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7563687706992069902": {
+      "video_id": "7563687706992069902",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7560266933875117342": {
+      "video_id": "7560266933875117342",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7486510203358170375": {
+      "video_id": "7486510203358170375",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7561489461364772152": {
+      "video_id": "7561489461364772152",
+      "total_comments": 0,
+      "comments": []
+    },
+    "7560269590987640072": {
+      "video_id": "7560269590987640072",
+      "total_comments": 0,
+      "comments": []
+    }
+  }
+}

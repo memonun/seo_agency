@@ -1,0 +1,135 @@
+{
+  "input": {
+    "type": "profile",
+    "value": "https://www.instagram.com/artibir/",
+    "scraped_at": "2025-10-20T13:59:48.749007"
+  },
+  "metadata": {
+    "test_mode": true,
+    "results_limit": 5,
+    "total_posts": 5,
+    "scrape_duration_seconds": 52.7
+  },
+  "results": {
+    "profile_data": {
+      "url": "https://www.instagram.com/artibir/",
+      "posts": [
+        {
+          "post_id": "3742626678209024121",
+          "short_code": "DPweyJxjJB5",
+          "caption": "Ders 3: +1 Bilet’in avantajları neler? \nHemen bio’daki linke tıkla ve +1 Bilet dünyasının avantajlarını keşfetmeye başla! 💙\n\n#artıbir",
+          "post_type": "video",
+          "likes_count": 77,
+          "comments_count": 0,
+          "video_view_count": 26787,
+          "owner_username": "artibir",
+          "owner_full_name": "#artıbir",
+          "display_url": "https://scontent-ord5-2.cdninstagram.com/v/t51.2885-15/563551014_18525041137005208_7968423238271956908_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2QHm-R-CAdPAFGXWWFAqHoVy9QEJBOO1XkbdSSoMWygxccD-AK7Fuch12M69sXnegi4&_nc_ohc=L6FN48Lvg0YQ7kNvwG47DM5&_nc_gid=FOx8QhFbr4jjDtPFA-XnAg&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfdqKBwXgDlwoajy3s0CzGyguXhO10EY0oIEBLHYsLg_qg&oe=68FBE51F&_nc_sid=10d13b",
+          "video_url": "https://scontent-ord5-1.cdninstagram.com/o1/v/t16/f2/m86/AQPTrvi_bUrikOOXYufGEUYbGa8iIRUWuQB9K22yzhN_B2EWSjQB2JKmix77stewo9l_HJa5An3Cm2qFVvhilTWORAZ0EhdRSHjmkfc.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=111&vs=1456518545886931_2589442812&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9CMDREODZEMEQxOEFFQzcwNDYxMUZDNUM2Mzc3OEE5NV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HUDZIcENFNmRQTWx5SkVPQVBvSGNRQ3Y2TE1wYnN0VEFRQUYVAgLIARIAKAAYABsAFQAAJv7l5oGcgdg%2FFQIoAkMzLBdARIAAAAAAABgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=622b97cbe1&ccb=9-4&oh=00_AffoyvM4ZDQDT_4GcRLUG1a1rqwqzUt4fcw-70zUmXsPtA&oe=68F800B0&_nc_sid=10d13b",
+          "url": "https://www.instagram.com/p/DPweyJxjJB5/",
+          "timestamp": "2025-10-13T17:18:54.000Z",
+          "hashtags": [
+            "#artıbir"
+          ],
+          "mentions": [],
+          "hashtag_count": 1,
+          "mention_count": 0,
+          "is_sponsored": false,
+          "location_name": ""
+        },
+        {
+          "post_id": "3724465277925906643",
+          "short_code": "DOv9W_tDNjT",
+          "caption": "Ders 1: +1 Bilet nedir?​\nHemen bio’daki linke tıkla ve +1 Bilet dünyasının avantajlarını keşfetmeye başla. 💙\n\n#artıbir",
+          "post_type": "video",
+          "likes_count": 300,
+          "comments_count": 2,
+          "video_view_count": 36036,
+          "owner_username": "artibir",
+          "owner_full_name": "#artıbir",
+          "display_url": "https://scontent-atl3-2.cdninstagram.com/v/t51.2885-15/564618708_18525039931005208_1153590078808854493_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&_nc_ht=scontent-atl3-2.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2QH6tKzUZE4Ulgu_sHzwJ8HqQJqimZxi5AAXFXUfQJpULimKsJG9f-i96ke4iMCMm2g&_nc_ohc=qEACNY2EgS8Q7kNvwGWtBOM&_nc_gid=XUYU3JNe5un_QQ9AU2TYAg&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfeSZvWTnWr_s08MM_wdX8tsdACEYXVQGI225hpF1P1Nqw&oe=68FBEC6C&_nc_sid=10d13b",
+          "video_url": "https://scontent-atl3-3.cdninstagram.com/o1/v/t16/f2/m86/AQPOmRjjVrfGg0vI-jcuoaj5ldnX9w9uxws4fZ2W8WJs0gjYgPJThRfroGjIjQJtZAKx_7V5DpstbJ14190NOPAU3RyAF1cfPbF0BfY.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=107&vs=728329390241462_722322217&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8wQTQ0NDRERTY2RUM1MjFGRTMzRTdDNzU0Q0E3NzVBQV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTnY1eHlBNVJDVV8xMUFDQU51eEtMSVcydVl4YnFfRUFBQUYVAgLIARIAKAAYABsAFQAAJv6ul8ijzNY%2FFQIoAkMzLBdARtmZmZmZmhgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=83d9b155d1&ccb=9-4&oh=00_AfcH3zq45Iu6sIGC_Xso5UBjuoHuX7TRO33vZk0Cybo9-Q&oe=68F7DA5E&_nc_sid=10d13b",
+          "url": "https://www.instagram.com/p/DOv9W_tDNjT/",
+          "timestamp": "2025-09-18T15:55:59.000Z",
+          "hashtags": [
+            "#artıbir"
+          ],
+          "mentions": [],
+          "hashtag_count": 1,
+          "mention_count": 0,
+          "is_sponsored": false,
+          "location_name": ""
+        },
+        {
+          "post_id": "3735929055909529846",
+          "short_code": "DPYr667jEj2",
+          "caption": "Ders 2: +1 Bilet’e üye oldun mu? \nHemen bio’daki linke tıkla ve +1 Bilet dünyasının avantajlarını keşfetmeye başla. 💙\n\n#artıbir",
+          "post_type": "video",
+          "likes_count": 126,
+          "comments_count": 1,
+          "video_view_count": 54542,
+          "owner_username": "artibir",
+          "owner_full_name": "#artıbir",
+          "display_url": "https://scontent-lga3-3.cdninstagram.com/v/t51.2885-15/565089247_18525039871005208_3698293084926204598_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&_nc_ht=scontent-lga3-3.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2QGDOBJaXaG03kDWYEy1JeNbYgzjr-9HEWKTyogoA05dvrPfYTG60NKe5TKSFNnnKhw&_nc_ohc=_e0uyjSY3SYQ7kNvwEPkvxF&_nc_gid=t1WEz2ZXSpkHV9y97zdK2A&edm=APs17CUBAAAA&ccb=7-5&oh=00_AffLzgVyn2r-oW4o_Qb8CZqy46Qk7VIP9XpD9TSRqforKA&oe=68FBF27E&_nc_sid=10d13b",
+          "video_url": "https://scontent-lga3-2.cdninstagram.com/o1/v/t16/f2/m86/AQM1D8Lct2rX9xZSivCu82FJWX5VPHndbDm2oY_rCZZmEu6GmJM2z3enMF9JzWBGwnUim04ZB0dF-CWVioXubr_SdwDtmpAIaOcpHXg.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzEuNzIwLmJhc2VsaW5lIn0&_nc_cat=109&vs=24347745391590969_703920942&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9CNzRDMDk1RkYxMTFBMkQzMThEMjBFODFBMEE5NTY5NF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HRFQwVXlFT18zcnNnMFVHQUVoeFpCTFluNHRIYnFfRUFBQUYVAgLIARIAKAAYABsAFQAAJv7t3PbsxNc%2FFQIoAkMzLBdARIAAAAAAABgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=742aee99ce&ccb=9-4&oh=00_AfeZcBwaRQue6DLWrb3o0dVpLOx5NDfF5jQKvR_NloGzJg&oe=68F80EA5&_nc_sid=10d13b",
+          "url": "https://www.instagram.com/p/DPYr667jEj2/",
+          "timestamp": "2025-10-04T11:31:55.000Z",
+          "hashtags": [
+            "#artıbir"
+          ],
+          "mentions": [],
+          "hashtag_count": 1,
+          "mention_count": 0,
+          "is_sponsored": false,
+          "location_name": ""
+        },
+        {
+          "post_id": "3733915832528199567",
+          "short_code": "DPRiKqjDN-P",
+          "caption": "Günlerce sürecek +1 Oktoberfest coşkusu seni bekliyor! Hemen bio’daki linke tıkla, müziğe ve dansa +1 ol. 💙🥨\n\n#artıbir",
+          "post_type": "video",
+          "likes_count": 73,
+          "comments_count": 0,
+          "video_view_count": 1506,
+          "owner_username": "artibir",
+          "owner_full_name": "#artıbir",
+          "display_url": "https://scontent-den2-1.cdninstagram.com/v/t51.2885-15/557352851_18522514948005208_3328480742391036745_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&_nc_ht=scontent-den2-1.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2QGU0pQhCf3f2_rIk9M0yUV6HD5e-fdnCV-vL2q6NPfdJGVaFrfDTYLKkUg1t-0tkM8&_nc_ohc=_jvU9ppSRL8Q7kNvwHfAAnA&_nc_gid=8ovNnWjIlzee3i9V-s5gDA&edm=APs17CUBAAAA&ccb=7-5&oh=00_AffPbE0H10WPzaz8n9nM52L-2zlz3nhDH2iq4bdGKZplhQ&oe=68FBE612&_nc_sid=10d13b",
+          "video_url": "https://scontent-den2-1.cdninstagram.com/o1/v/t16/f2/m86/AQPR6vC70bUk5wMuv_XHnM4rge6Vf_KcrDgow4XBTPvboD2HwJJBsXXiQpcGoWYcOL0Rvbnqudjc39SEcGb5rVPWaA-hGGf1k-WiFGI.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=103&vs=24718194027822021_3601252860&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9DMzQzQ0FERkE4N0JBQzYxNDQ3NTRDNUJDM0REQzZCNF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HS1p1TFNGanZ1bmRVRjhHQUdhVEhXMUEwbGxrYnFfRUFBQUYVAgLIARIAKAAYABsAFQAAJv6P9oLDstc%2FFQIoAkMzLBdAOgAAAAAAABgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=b1128b61b6&ccb=9-4&oh=00_AfdQ19GqLkI0pApB2SfiK1XHYvn0r8q5z_LM841U6p6OxA&oe=68F7EB76&_nc_sid=10d13b",
+          "url": "https://www.instagram.com/p/DPRiKqjDN-P/",
+          "timestamp": "2025-10-01T16:51:59.000Z",
+          "hashtags": [
+            "#artıbir"
+          ],
+          "mentions": [],
+          "hashtag_count": 1,
+          "mention_count": 0,
+          "is_sponsored": false,
+          "location_name": ""
+        },
+        {
+          "post_id": "3738206052417275467",
+          "short_code": "DPgxplLjAZL",
+          "caption": "Tamino ile müziğin keyfini doyasıya yaşamaya +1’iz! 💙 Bu unutulmaz geceye +1 olmak için bilet linki bio’da. 🎫\n\n📍KüçükÇiftlik Park\n🗓️ 8 Ekim\n\n#artıbir",
+          "post_type": "video",
+          "likes_count": 97,
+          "comments_count": 3,
+          "video_view_count": 16461,
+          "owner_username": "artibir",
+          "owner_full_name": "#artıbir",
+          "display_url": "https://instagram.fsac1-1.fna.fbcdn.net/v/t51.2885-15/560527222_1785951945360152_1364732365765136033_n.jpg?stp=dst-jpg_e15_tt6&_nc_ht=instagram.fsac1-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2QEZGxnD-p9vs4LTtwSe-Gg_GR5t3VUWNlxuW5jjImIwvd5KapTPllqSX73ycQD0ABY&_nc_ohc=kzb58nMRFhYQ7kNvwGzFoVH&_nc_gid=PIDDfPpUrTkO2vf8ZNMS1g&edm=APs17CUBAAAA&ccb=7-5&oh=00_Afd4hYsyCyI7LCKzfdIGt_5KIFW6yGApO1P70qp2TMLrCQ&oe=68FBDC65&_nc_sid=10d13b",
+          "video_url": "https://instagram.fsac1-1.fna.fbcdn.net/o1/v/t16/f2/m86/AQMpBBddDlctoXyVD4Sqea3FcT5zVhcpUKRvpd-zW0xS6AV_U7b22YWgAvKutTYorwkEMTdvRxntnog2n0nPbswBqOqOKCZj_f9NBUI.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=104&vs=832023016002046_368311534&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8wNTRERjlGMkVDOUEyQjRBOTEwNzcxMUY2MTBDRTI4Ql92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HSFcwV1NHZGRpQlpTUVFJQUtaaVhycVdNajF3YnFfRUFBQUYVAgLIARIAKAAYABsAFQAAJv7h5IqZ2dc%2FFQIoAkMzLBdALgAAAAAAABgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=a3fcce6352&ccb=9-4&oh=00_AfdMUrhZSV3gF6qRP_nfKkOK4tw8n8MBbbNFLTk_qNCW4w&oe=68F800F4&_nc_sid=10d13b",
+          "url": "https://www.instagram.com/p/DPgxplLjAZL/",
+          "timestamp": "2025-10-07T14:55:49.000Z",
+          "hashtags": [
+            "#artıbir"
+          ],
+          "mentions": [],
+          "hashtag_count": 1,
+          "mention_count": 0,
+          "is_sponsored": false,
+          "location_name": ""
+        }
+      ]
+    }
+  }
+}

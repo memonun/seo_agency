@@ -1,0 +1,16 @@
+{
+  "input": {
+    "type": "query",
+    "value": "Miraclechain",
+    "scraped_at": "2025-10-21T14:27:26.610378"
+  },
+  "metadata": {
+    "max_videos": 20,
+    "scrape_comments": true,
+    "max_comment_pages": 3,
+    "total_videos": 0,
+    "scrape_duration_seconds": 29.29
+  },
+  "videos": [],
+  "comments": {}
+}

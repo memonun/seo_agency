@@ -1,0 +1,39 @@
+# Environment variables (contains sensitive credentials)
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Playwright
+storage_state.json
+tiktok/storage_state.json
+
+# Output directories
+# DB scraper outputs (optional - uncomment if you don't want to track)
+# instagram/outputs/
+# tiktok/outputs/
+
+# Standalone scraper outputs (JSON files - optional)
+# outputs/
+
+# Backup files
+*.bak
+*.backup
+backup_*.csv
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
