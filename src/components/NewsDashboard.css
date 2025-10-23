@@ -1,8 +1,11 @@
 .news-dashboard {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.dashboard-grid {
+.dashboard-top {
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 30px;
@@ -12,11 +15,14 @@
 .search-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .results-section {
   min-height: 400px;
+}
+
+.dashboard-bottom {
+  width: 100%;
 }
 
 .loading-state {
@@ -70,7 +76,11 @@
 }
 
 @media (max-width: 1024px) {
-  .dashboard-grid {
+  .dashboard-top {
     grid-template-columns: 1fr;
+  }
+  
+  .search-section {
+    margin-bottom: 20px;
   }
 }

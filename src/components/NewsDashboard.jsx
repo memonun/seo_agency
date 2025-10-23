@@ -72,18 +72,12 @@ export default function NewsDashboard({ user }) {
 
   return (
     <div className="news-dashboard">
-      <div className="dashboard-grid">
+      <div className="dashboard-top">
         <div className="search-section">
           <NewsSearch 
             onSearch={handleSearch} 
             isLoading={isLoading}
             error={error}
-          />
-          
-          <NewsSearchHistory 
-            user={user}
-            refreshTrigger={refreshHistory}
-            onSelectHistory={handleHistorySelect}
           />
         </div>
         
@@ -112,6 +106,14 @@ export default function NewsDashboard({ user }) {
             </div>
           )}
         </div>
+      </div>
+      
+      <div className="dashboard-bottom">
+        <NewsSearchHistory 
+          user={user}
+          refreshTrigger={refreshHistory}
+          onSelectHistory={handleHistorySelect}
+        />
       </div>
     </div>
   )

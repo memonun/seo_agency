@@ -7,7 +7,7 @@ import { TwitterApi } from '@virtuals-protocol/game-twitter-node';
 // Rate limiting tracker
 const rateLimiter = {
   requests: [],
-  limit: 40,
+  limit: 100, // Increased from 40 to 100 for upgraded SDK tier
   window: 5 * 60 * 1000, // 5 minutes
   
   canMakeRequest() {
@@ -250,7 +250,7 @@ export default async function handler(req, res) {
         default:
           return res.status(400).json({
             error: 'Invalid action',
-            message: 'Supported actions: search, hashtag, combined-search, account-analysis, discover-hashtags, sentiment'
+            message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
           });
       }
       
@@ -306,6 +306,8 @@ export default async function handler(req, res) {
         return await handleHashtagAnalysis(twitterClient, req, res);
       case 'combined-search':
         return await handleCombinedSearch(twitterClient, req, res);
+      case 'separated-search':
+        return await handleSeparatedSearch(twitterClient, req, res);
       case 'account-analysis':
         return await handleAccountAnalysis(twitterClient, req, res);
       case 'discover-hashtags':
@@ -315,7 +317,7 @@ export default async function handler(req, res) {
       default:
         return res.status(400).json({
           error: 'Invalid action',
-          message: 'Supported actions: search, hashtag, combined-search, account-analysis, discover-hashtags, sentiment'
+          message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
         });
     }
     
@@ -372,7 +374,7 @@ async function handleKeywordSearch(client, req, res) {
     
     // Build API parameters with sort order
     const apiParams = {
-      max_results: Math.max(10, Math.min(limit, 100)), // Fix API limit validation
+      max_results: Math.max(10, limit), // Removed 100 cap for upgraded SDK tier
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -641,7 +643,7 @@ function generateAnalytics(tweets, query, includeMentions = false) {
 
 // Advanced reply fetching with multiple fallback methods (from testing framework)
 async function fetchTweetReplies(client, tweetId, limit = 10, originalTweetAuthor = null) {
-  const maxResults = Math.max(10, Math.min(limit * 2, 100));
+  const maxResults = Math.max(10, limit * 2); // Removed 100 cap for upgraded SDK tier
   
   // Method 1: Enhanced conversation_id search with proper field expansion
   try {
@@ -816,7 +818,7 @@ async function handleHashtagDiscovery(client, req, res) {
     const searchQuery = `${keyword.trim()} -is:retweet lang:en`;
     
     const searchResults = await client.v2.search(searchQuery, {
-      max_results: 100, // Get maximum tweets for better hashtag discovery
+      max_results: Math.min(200, limit * 2), // Get more tweets for better hashtag discovery
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1053,7 +1055,7 @@ async function handleAccountAnalysis(client, req, res) {
     
     // Build API parameters
     const apiParams = {
-      max_results: Math.max(10, Math.min(limit, 100)),
+      max_results: Math.max(10, limit), // Removed 100 cap for upgraded SDK tier
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1443,6 +1445,142 @@ async function handleHashtagAnalysis(client, req, res) {
   });
 }
 
+// NEW: Separated search handler that returns structured results for each search type
+async function handleSeparatedSearch(client, req, res) {
+  try {
+    console.log('🎯 Starting separated search with params:', req.body)
+    
+    const { 
+      keyword = '', 
+      hashtags = [], 
+      accountUsername = '',
+      language, 
+      sortOrder = 'recent', 
+      includeMentions = false, 
+      limit = 100,
+      global = false
+    } = req.body
+    
+    // Check if at least one search type is provided
+    const hasKeyword = keyword && keyword.trim().length > 0
+    const hasHashtags = hashtags && hashtags.length > 0
+    const hasAccount = accountUsername && accountUsername.trim().length > 0
+    
+    if (!hasKeyword && !hasHashtags && !hasAccount) {
+      return res.status(400).json({
+        error: 'Missing search criteria',
+        message: 'At least one of keyword, hashtags, or account is required'
+      })
+    }
+    
+    // Prepare promises for parallel execution
+    const searchPromises = []
+    
+    // Account search (ignores most filters)
+    if (hasAccount) {
+      searchPromises.push(
+        searchAccountData(client, {
+          accountUsername: accountUsername.replace(/^@/, ''),
+          includeMentions,
+          limit,
+          sortOrder
+        }).catch(err => {
+          console.error('Account search error:', err)
+          return null
+        })
+      )
+    } else {
+      searchPromises.push(Promise.resolve(null))
+    }
+    
+    // Keyword search (uses all filters)
+    if (hasKeyword) {
+      searchPromises.push(
+        searchKeywordDataSeparated(client, {
+          keyword,
+          language,
+          sortOrder,
+          includeMentions,
+          global,
+          limit
+        }).catch(err => {
+          console.error('Keyword search error:', err)
+          return null
+        })
+      )
+    } else {
+      searchPromises.push(Promise.resolve(null))
+    }
+    
+    // Hashtag search (uses all filters)
+    if (hasHashtags) {
+      searchPromises.push(
+        searchHashtagDataSeparated(client, {
+          hashtags,
+          language,
+          sortOrder,
+          includeMentions,
+          global,
+          limit
+        }).catch(err => {
+          console.error('Hashtag search error:', err)
+          return null
+        })
+      )
+    } else {
+      searchPromises.push(Promise.resolve(null))
+    }
+    
+    // Execute all searches in parallel
+    console.log('🚀 Executing parallel searches')
+    const results = await Promise.all(searchPromises)
+    
+    // Structure the response
+    const [accountResult, keywordResult, hashtagResult] = results
+    
+    // Calculate global analytics
+    const globalAnalytics = calculateGlobalAnalyticsSeparated(accountResult, keywordResult, hashtagResult)
+    
+    // Build the final response
+    const response = {
+      success: true,
+      results: {
+        account: accountResult,
+        keyword: keywordResult,
+        hashtag: hashtagResult
+      },
+      globalAnalytics,
+      searchParams: {
+        keyword: hasKeyword ? keyword : null,
+        hashtags: hasHashtags ? hashtags : null,
+        accountUsername: hasAccount ? accountUsername : null,
+        language,
+        sortOrder,
+        includeMentions,
+        limit,
+        global
+      },
+      timestamp: new Date().toISOString()
+    }
+    
+    console.log('✅ Separated search complete:', {
+      account: accountResult ? `${accountResult.count} tweets` : 'none',
+      keyword: keywordResult ? `${keywordResult.count} tweets` : 'none',
+      hashtag: hashtagResult ? `${hashtagResult.count} tweets` : 'none',
+      total: globalAnalytics.totalTweetsFetched
+    })
+    
+    return res.status(200).json(response)
+    
+  } catch (error) {
+    console.error('❌ Separated search failed:', error)
+    return res.status(500).json({
+      error: 'Separated search failed',
+      message: error.message
+    })
+  }
+}
+
 // Helper functions for combined search
 async function searchByKeyword(client, { keyword, location, sortOrder, includeMentions, global = false, limit }) {
   let searchQuery = keyword.trim();
@@ -1464,7 +1602,7 @@ async function searchByKeyword(client, { keyword, location, sortOrder, includeMe
   }
   
   const apiParams = {
-    max_results: Math.min(limit, 100),
+    max_results: limit, // Removed 100 cap for upgraded SDK tier
     'tweet.fields': [
       'created_at',
       'public_metrics',
@@ -1513,7 +1651,7 @@ async function searchByHashtags(client, { hashtags, location, sortOrder, include
   }
   
   const apiParams = {
-    max_results: Math.min(limit, 100),
+    max_results: limit, // Removed 100 cap for upgraded SDK tier
     'tweet.fields': [
       'created_at',
       'public_metrics',
@@ -1639,4 +1777,402 @@ async function handleSentimentAnalysis(client, req, res) {
     error: 'Not implemented',
     message: 'Sentiment analysis will be implemented in the next step'
   });
+}
+
+// NEW: Helper functions for separated search
+async function searchAccountData(client, params) {
+  const { accountUsername, includeMentions, limit, sortOrder } = params
+  
+  if (!accountUsername) {
+    return null
+  }
+  
+  const cleanUsername = accountUsername.replace(/^@/, '')
+  
+  try {
+    console.log(`👤 Fetching account data for @${cleanUsername}`)
+    
+    let baseQuery = `from:${cleanUsername} -is:retweet`
+    
+    if (!includeMentions) {
+      baseQuery += ' -is:reply'
+    }
+    
+    const apiParams = {
+      max_results: Math.max(10, limit),
+      'tweet.fields': [
+        'created_at',
+        'public_metrics',
+        'context_annotations',
+        'entities',
+        'referenced_tweets',
+        'author_id'
+      ].join(','),
+      'user.fields': [
+        'username',
+        'name',
+        'verified',
+        'public_metrics',
+        'profile_image_url',
+        'description',
+        'created_at'
+      ].join(','),
+      expansions: 'author_id,referenced_tweets.id'
+    }
+    
+    if (sortOrder === 'recent') {
+      apiParams.sort_order = 'recency'
+    } else if (sortOrder === 'popular') {
+      apiParams.sort_order = 'relevancy'
+    }
+    
+    const searchResults = await client.v2.search(baseQuery, apiParams)
+    const tweets = searchResults.data?.data || []
+    const users = searchResults.data?.includes?.users || []
+    
+    if (tweets.length === 0) {
+      return {
+        searchType: 'account',
+        username: `@${cleanUsername}`,
+        tweets: [],
+        count: 0,
+        analytics: {
+          totalTweets: 0,
+          totalEngagement: 0,
+          avgEngagement: 0,
+          message: 'No tweets found for this account'
+        },
+        parametersUsed: {
+          includeMentions,
+          limit,
+          sortOrder
+        }
+      }
+    }
+    
+    const formattedTweets = formatTweetsSeparated(tweets, users)
+    const accountAnalytics = generateAccountSpecificAnalyticsSeparated(formattedTweets, cleanUsername)
+    
+    return {
+      searchType: 'account',
+      username: `@${cleanUsername}`,
+      tweets: formattedTweets,
+      count: formattedTweets.length,
+      analytics: accountAnalytics,
+      parametersUsed: {
+        includeMentions,
+        limit,
+        sortOrder
+      }
+    }
+    
+  } catch (error) {
+    console.error(`Account search error for @${cleanUsername}:`, error)
+    throw error
+  }
+}
+
+async function searchKeywordDataSeparated(client, params) {
+  const { keyword, language, sortOrder, includeMentions, global, limit } = params
+  
+  if (!keyword || !keyword.trim()) {
+    return null
+  }
+  
+  try {
+    console.log(`🔍 Fetching keyword data for "${keyword}"`)
+    
+    let searchQuery = keyword.trim()
+    
+    if (!includeMentions) {
+      searchQuery += ' -is:reply'
+    }
+    
+    searchQuery += ' -is:retweet'
+    
+    if (!global && language) {
+      searchQuery += ` lang:${language}`
+    }
+    
+    const apiParams = {
+      max_results: Math.max(10, limit),
+      'tweet.fields': [
+        'created_at',
+        'public_metrics',
+        'context_annotations',
+        'entities',
+        'referenced_tweets',
+        'author_id'
+      ].join(','),
+      'user.fields': [
+        'username',
+        'name',
+        'verified',
+        'public_metrics',
+        'profile_image_url'
+      ].join(','),
+      expansions: 'author_id,referenced_tweets.id'
+    }
+    
+    if (sortOrder === 'recent') {
+      apiParams.sort_order = 'recency'
+    } else if (sortOrder === 'popular') {
+      apiParams.sort_order = 'relevancy'
+    }
+    
+    const searchResults = await client.v2.search(searchQuery, apiParams)
+    const tweets = searchResults.data?.data || []
+    const users = searchResults.data?.includes?.users || []
+    
+    const formattedTweets = formatTweetsSeparated(tweets, users)
+    const keywordAnalytics = generateKeywordAnalyticsSeparated(formattedTweets, keyword)
+    
+    return {
+      searchType: 'keyword',
+      query: keyword,
+      tweets: formattedTweets,
+      count: formattedTweets.length,
+      analytics: keywordAnalytics,
+      parametersUsed: {
+        language,
+        sortOrder,
+        includeMentions,
+        global,
+        limit
+      }
+    }
+    
+  } catch (error) {
+    console.error(`Keyword search error for "${keyword}":`, error)
+    throw error
+  }
+}
+
+async function searchHashtagDataSeparated(client, params) {
+  const { hashtags, language, sortOrder, includeMentions, global, limit } = params
+  
+  if (!hashtags || hashtags.length === 0) {
+    return null
+  }
+  
+  try {
+    console.log(`#️⃣ Fetching hashtag data for [${hashtags.join(', ')}]`)
+    
+    let searchQuery = hashtags.join(' OR ')
+    
+    if (!includeMentions) {
+      searchQuery += ' -is:reply'
+    }
+    
+    searchQuery += ' -is:retweet'
+    
+    if (!global && language) {
+      searchQuery += ` lang:${language}`
+    }
+    
+    const apiParams = {
+      max_results: Math.max(10, limit),
+      'tweet.fields': [
+        'created_at',
+        'public_metrics',
+        'context_annotations',
+        'entities',
+        'referenced_tweets',
+        'author_id'
+      ].join(','),
+      'user.fields': [
+        'username',
+        'name',
+        'verified',
+        'public_metrics',
+        'profile_image_url'
+      ].join(','),
+      expansions: 'author_id,referenced_tweets.id'
+    }
+    
+    if (sortOrder === 'recent') {
+      apiParams.sort_order = 'recency'
+    } else if (sortOrder === 'popular') {
+      apiParams.sort_order = 'relevancy'
+    }
+    
+    const searchResults = await client.v2.search(searchQuery, apiParams)
+    const tweets = searchResults.data?.data || []
+    const users = searchResults.data?.includes?.users || []
+    
+    const formattedTweets = formatTweetsSeparated(tweets, users)
+    const hashtagAnalytics = generateHashtagAnalyticsSeparated(formattedTweets, hashtags)
+    
+    return {
+      searchType: 'hashtag',
+      tags: hashtags,
+      tweets: formattedTweets,
+      count: formattedTweets.length,
+      analytics: hashtagAnalytics,
+      parametersUsed: {
+        language,
+        sortOrder,
+        includeMentions,
+        global,
+        limit
+      }
+    }
+    
+  } catch (error) {
+    console.error(`Hashtag search error for [${hashtags.join(', ')}]:`, error)
+    throw error
+  }
+}
+
+// Analytics functions for separated search
+function generateAccountSpecificAnalyticsSeparated(tweets, username) {
+  if (tweets.length === 0) {
+    return {
+      totalTweets: 0,
+      totalEngagement: 0,
+      avgEngagement: 0,
+      followerCount: 0,
+      postingFrequency: 0
+    }
+  }
+  
+  const totalEngagement = tweets.reduce((sum, tweet) => 
+    sum + tweet.metrics.likes + tweet.metrics.retweets + tweet.metrics.replies, 0
+  )
+  
+  const avgEngagement = Math.round(totalEngagement / tweets.length)
+  const followerCount = tweets[0]?.author?.followers || 0
+  
+  return {
+    totalTweets: tweets.length,
+    totalEngagement,
+    avgEngagement,
+    followerCount,
+    postingFrequency: 0
+  }
+}
+
+function generateKeywordAnalyticsSeparated(tweets, keyword) {
+  if (tweets.length === 0) {
+    return {
+      totalTweets: 0,
+      totalEngagement: 0,
+      avgEngagement: 0,
+      totalReach: 0,
+      topInfluencers: []
+    }
+  }
+  
+  const totalEngagement = tweets.reduce((sum, tweet) => 
+    sum + tweet.metrics.likes + tweet.metrics.retweets + tweet.metrics.replies, 0
+  )
+  
+  const totalReach = tweets.reduce((sum, tweet) => 
+    sum + (tweet.author?.followers || 0), 0
+  )
+  
+  return {
+    totalTweets: tweets.length,
+    totalEngagement,
+    avgEngagement: Math.round(totalEngagement / tweets.length),
+    totalReach,
+    avgSentiment: 0.5
+  }
+}
+
+function generateHashtagAnalyticsSeparated(tweets, hashtags) {
+  if (tweets.length === 0) {
+    return {
+      totalTweets: 0,
+      totalEngagement: 0,
+      avgEngagement: 0,
+      trending: false,
+      viralPotential: 0
+    }
+  }
+  
+  const totalEngagement = tweets.reduce((sum, tweet) => 
+    sum + tweet.metrics.likes + tweet.metrics.retweets, 0
+  )
+  
+  const avgEngagement = Math.round(totalEngagement / tweets.length)
+  
+  return {
+    totalTweets: tweets.length,
+    totalEngagement,
+    avgEngagement,
+    trending: avgEngagement > 100,
+    viralPotential: 0.1,
+    peakHour: 12
+  }
+}
+
+function calculateGlobalAnalyticsSeparated(accountResult, keywordResult, hashtagResult) {
+  let totalTweetsFetched = 0
+  let uniqueTweetIds = new Set()
+  
+  if (accountResult?.tweets) {
+    totalTweetsFetched += accountResult.tweets.length
+    accountResult.tweets.forEach(t => uniqueTweetIds.add(t.id))
+  }
+  
+  if (keywordResult?.tweets) {
+    totalTweetsFetched += keywordResult.tweets.length
+    keywordResult.tweets.forEach(t => uniqueTweetIds.add(t.id))
+  }
+  
+  if (hashtagResult?.tweets) {
+    totalTweetsFetched += hashtagResult.tweets.length
+    hashtagResult.tweets.forEach(t => uniqueTweetIds.add(t.id))
+  }
+  
+  const uniqueCount = uniqueTweetIds.size
+  const overlapCount = totalTweetsFetched - uniqueCount
+  
+  return {
+    totalTweetsFetched,
+    uniqueTweets: uniqueCount,
+    duplicateCount: overlapCount,
+    overlapPercentage: totalTweetsFetched > 0 ? Number((overlapCount / totalTweetsFetched * 100).toFixed(1)) : 0,
+    searchTypesUsed: [
+      accountResult ? 'account' : null,
+      keywordResult ? 'keyword' : null,
+      hashtagResult ? 'hashtag' : null
+    ].filter(Boolean),
+    overallSentiment: 0.5
+  }
+}
+
+function formatTweetsSeparated(tweets, users) {
+  const userMap = new Map()
+  users.forEach(user => userMap.set(user.id, user))
+  
+  return tweets.map(tweet => {
+    const author = userMap.get(tweet.author_id) || {}
+    
+    return {
+      id: tweet.id,
+      text: tweet.text,
+      created_at: tweet.created_at,
+      author: {
+        username: author.username || 'unknown',
+        name: author.name || 'Unknown User',
+        verified: author.verified || false,
+        followers: author.public_metrics?.followers_count || 0
+      },
+      metrics: {
+        likes: tweet.public_metrics?.like_count || 0,
+        retweets: tweet.public_metrics?.retweet_count || 0,
+        replies: tweet.public_metrics?.reply_count || 0,
+        views: tweet.public_metrics?.impression_count || 0
+      },
+      sentiment: {
+        label: 'neutral',
+        score: 0.5
+      },
+      hashtags: tweet.entities?.hashtags?.map(h => h.tag) || [],
+      url: `https://twitter.com/${author.username}/status/${tweet.id}`,
+      replies: []
+    }
+  })
 }

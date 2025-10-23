@@ -20,8 +20,21 @@
   pointer-events: auto;
 }
 
-/* Navigation buttons container */
-.sidenav-buttons {
+/* Right side wall for output modules */
+.sidenav-wall-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+/* Left navigation buttons container (input modules) */
+.sidenav-buttons.sidenav-left {
   position: absolute;
   top: 50%;
   left: 0;
@@ -32,7 +45,20 @@
   pointer-events: auto;
 }
 
-/* Individual navigation button */
+/* Right navigation buttons container (output modules) */
+.sidenav-buttons.sidenav-right {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+/* Individual navigation button - base styles */
 .sidenav-btn {
   position: relative;
   display: flex;
@@ -43,13 +69,28 @@
   padding: 8px 16px;
   background: #fff;
   border: 1px solid #e5e5e5;
-  border-left: 2px solid #2a2a2a;
-  border-radius: 0 8px 8px 0;
   cursor: pointer;
   overflow: hidden;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.08);
   font-family: 'Inter', sans-serif;
+}
+
+/* Left side buttons */
+.sidenav-left .sidenav-btn {
+  border-left: 2px solid #2a2a2a;
+  border-radius: 0 8px 8px 0;
+  flex-direction: row;
+}
+
+/* Right side buttons */
+.sidenav-right .sidenav-btn {
+  border-right: 2px solid;
+  border-image: linear-gradient(135deg, #667eea, #764ba2) 1;
+  border-radius: 8px 0 0 8px;
+  flex-direction: row-reverse;
+  box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(90deg, #fff 95%, rgba(102, 126, 234, 0.1) 100%);
 }
 
 /* Icon styling */
@@ -84,10 +125,16 @@
 }
 
 /* Hover state - slight pull-out effect */
-.sidenav-btn:hover:not(.active) {
+.sidenav-left .sidenav-btn:hover:not(.active) {
   width: 60px;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.12);
   border-left-width: 3px;
+}
+
+.sidenav-right .sidenav-btn:hover:not(.active) {
+  width: 60px;
+  box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.12);
+  border-right-width: 3px;
 }
 
 .sidenav-btn:hover:not(.active) .sidenav-icon {
@@ -95,12 +142,21 @@
 }
 
 /* Active/Expanded state */
-.sidenav-btn.active {
+.sidenav-left .sidenav-btn.active {
   width: 150px;
   background: #000;
   border-color: #000;
   border-left: 2px solid #000;
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sidenav-right .sidenav-btn.active {
+  width: 150px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  border-right: 2px solid;
+  border-image: linear-gradient(135deg, #667eea, #764ba2) 1;
+  box-shadow: -4px 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .sidenav-btn.active .sidenav-icon {
@@ -126,7 +182,8 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .sidenav-buttons {
+  .sidenav-buttons.sidenav-left,
+  .sidenav-buttons.sidenav-right {
     top: 50%;
     transform: translateY(-50%);
     gap: 8px;
@@ -143,7 +200,8 @@
     height: 20px;
   }
 
-  .sidenav-btn.active {
+  .sidenav-left .sidenav-btn.active,
+  .sidenav-right .sidenav-btn.active {
     width: 130px;
   }
 
@@ -151,18 +209,21 @@
     font-size: 13px;
   }
 
-  .sidenav-btn:hover:not(.active) {
+  .sidenav-left .sidenav-btn:hover:not(.active),
+  .sidenav-right .sidenav-btn:hover:not(.active) {
     width: 52px;
   }
 }
 
 /* Extra small devices */
 @media (max-width: 480px) {
-  .sidenav-wall {
+  .sidenav-wall,
+  .sidenav-wall-right {
     width: 4px;
   }
 
-  .sidenav-buttons {
+  .sidenav-buttons.sidenav-left,
+  .sidenav-buttons.sidenav-right {
     top: 50%;
     transform: translateY(-50%);
   }
@@ -172,7 +233,8 @@
     height: 44px;
   }
 
-  .sidenav-btn.active {
+  .sidenav-left .sidenav-btn.active,
+  .sidenav-right .sidenav-btn.active {
     width: 120px;
   }
 

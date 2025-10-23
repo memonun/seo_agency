@@ -35,16 +35,25 @@ export default async function handler(req, res) {
 
     const { 
       mode = 'serp', // 'serp' or 'url'
-      input, // keywords for SERP, URLs for URL mode
-      limit = 10,
+      input, // URLs for URL mode
+      urls, // URLs array for SERP mode
+      searchId, // Search ID for SERP mode
       context = null
     } = req.body;
 
-    // Validate required parameters
-    if (!input) {
+    // Validate required parameters based on mode
+    if (mode === 'serp' && (!urls || urls.length === 0)) {
+      return res.status(400).json({
+        error: 'Missing required parameter: urls',
+        message: 'Please provide URLs array for SERP mode',
+        headers: corsHeaders
+      });
+    }
+    
+    if (mode === 'url' && !input) {
       return res.status(400).json({
         error: 'Missing required parameter: input',
-        message: 'Please provide keywords (for SERP mode) or URLs (for URL mode)',
+        message: 'Please provide URLs for URL mode',
         headers: corsHeaders
       });
     }
@@ -60,15 +69,14 @@ export default async function handler(req, res) {
 
     // Prepare Python script execution
     const scriptPath = path.join(__dirname, '..', 'web_search');
-    const scriptName = mode === 'serp' ? 'serp_content_analyzer.py' : 'url_sentiment_analyzer.py';
+    // Always use url_sentiment_analyzer.py since we're passing URLs directly
+    const scriptName = 'url_sentiment_analyzer.py';
     const fullScriptPath = path.join(scriptPath, scriptName);
 
     // Build command arguments
-    const args = [fullScriptPath, input];
-    
-    if (mode === 'serp') {
-      args.push(limit.toString());
-    }
+    // For both modes, we're now passing URLs directly
+    const urlsToAnalyze = mode === 'serp' ? urls.join(',') : input;
+    const args = [fullScriptPath, urlsToAnalyze];
     
     if (context) {
       args.push(context);
@@ -124,7 +132,8 @@ export default async function handler(req, res) {
               resolve({
                 success: true,
                 mode,
-                input,
+                input: mode === 'serp' ? urls.join(',') : input,
+                searchId: searchId || null,
                 context,
                 data: jsonResult,
                 outputFile
@@ -139,7 +148,8 @@ export default async function handler(req, res) {
               resolve({
                 success: true,
                 mode,
-                input,
+                input: mode === 'serp' ? urls.join(',') : input,
+                searchId: searchId || null,
                 context,
                 data: {
                   sentiment_text: sentimentMatch ? sentimentMatch[1].trim() : '',

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import TwitterSearch from '../components/TwitterSearch';
 import TwitterResults from '../components/TwitterResults';
+import TwitterResultsSeparated from '../components/TwitterResultsSeparated';
 import TwitterDashboard from '../components/TwitterDashboard';
 import TwitterSearchHistory from '../components/TwitterSearchHistory';
 import { callTwitterApi, isDev } from '../utils/apiConfig';
@@ -23,6 +24,20 @@ export default function TwitterAnalyticsModule({ user }) {
       // Generate user-friendly search description
       const searchDescription = generateSearchDescription(searchData);
       
+      // Prepare the response data - handle both old and new formats
+      let structuredResponse = responseData;
+      
+      // If it's the new separated format, keep the nested structure
+      if (responseData.results) {
+        structuredResponse = {
+          searchType: 'separated',
+          results: responseData.results,
+          globalAnalytics: responseData.globalAnalytics,
+          searchParams: responseData.searchParams,
+          timestamp: responseData.timestamp
+        };
+      }
+      
       // Save to database using client-side Supabase
       const { data, error } = await supabase
         .from('twitter_analytics_sessions')
@@ -31,17 +46,17 @@ export default function TwitterAnalyticsModule({ user }) {
             user_id: user?.id,
             keyword: searchData.keyword || null,
             hashtags: searchData.hashtags || [],
-            account_username: searchData.accountUsername || null, // Added account username
+            account_username: searchData.accountUsername || null,
             search_description: searchDescription,
-            action: searchData.action || 'combined-search',
+            action: searchData.action || 'separated-search',
             language: searchData.language || null,
             sort_order: searchData.sortOrder || 'recent',
             include_mentions: searchData.includeMentions || false,
             global_search: searchData.global || false,
-            search_limit: searchData.limit || 25,
+            search_limit: searchData.limit || 100,
             hashtag_mode: searchData.hashtagMode || 'manual',
             discovered_hashtags: searchData.discoveredHashtags || null,
-            raw_response: responseData,
+            raw_response: structuredResponse,
             is_mock_data: responseData?.mock || false,
             completed: true
           }
@@ -407,18 +422,31 @@ export default function TwitterAnalyticsModule({ user }) {
       {/* Results Display */}
       {results && !loading && (
         <div className="results-wrapper">
-          <TwitterDashboard 
-            analytics={results.analytics} 
-            query={results.query}
-            mock={results.mock}
-          />
-          
-          <TwitterResults 
-            data={results.data} 
-            analytics={results.analytics}
-            onClear={clearResults}
-            searchQuery={results.query}
-          />
+          {/* Check if it's the new separated structure */}
+          {results.results ? (
+            // New separated search results
+            <TwitterResultsSeparated 
+              data={results.results}
+              globalAnalytics={results.globalAnalytics}
+              analytics={null}
+            />
+          ) : (
+            // Legacy combined search results
+            <>
+              <TwitterDashboard 
+                analytics={results.analytics} 
+                query={results.query}
+                mock={results.mock}
+              />
+              
+              <TwitterResults 
+                data={results.data} 
+                analytics={results.analytics}
+                onClear={clearResults}
+                searchQuery={results.query}
+              />
+            </>
+          )}
         </div>
       )}
     </div>

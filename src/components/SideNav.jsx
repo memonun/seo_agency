@@ -58,7 +58,23 @@ const NewsIcon = () => (
   </svg>
 )
 
-const modules = [
+const DashboardIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" />
+    <rect x="14" y="3" width="7" height="7" />
+    <rect x="14" y="14" width="7" height="7" />
+    <rect x="3" y="14" width="7" height="7" />
+  </svg>
+)
+
+const GenerativeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.3"/>
+  </svg>
+)
+
+const inputModules = [
   {
     id: 'seo',
     name: 'SEO',
@@ -91,6 +107,21 @@ const modules = [
   }
 ]
 
+const outputModules = [
+  {
+    id: 'analytics',
+    name: 'Analytics Dashboard',
+    path: '/modules/analytics',
+    icon: DashboardIcon
+  },
+  {
+    id: 'generative',
+    name: 'Generative Playground',
+    path: '/modules/generative',
+    icon: GenerativeIcon
+  }
+]
+
 export default function SideNav() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -100,13 +131,15 @@ export default function SideNav() {
   }
 
   return (
-    <div className="sidenav-container">
-      {/* The vertical wall */}
-      <div className="sidenav-wall"></div>
+    <>
+      {/* Left side container */}
+      <div className="sidenav-container">
+        {/* The vertical wall */}
+        <div className="sidenav-wall"></div>
 
-      {/* Navigation buttons */}
-      <div className="sidenav-buttons">
-        {modules.map((module) => {
+        {/* Input modules - left side */}
+        <div className="sidenav-buttons sidenav-left">
+        {inputModules.map((module) => {
           const isActive = location.pathname === module.path
           const IconComponent = module.icon
 
@@ -125,6 +158,33 @@ export default function SideNav() {
           )
         })}
       </div>
-    </div>
+
+      </div>
+
+      {/* Right side wall */}
+      <div className="sidenav-wall-right"></div>
+
+      {/* Output modules - right side */}
+      <div className="sidenav-buttons sidenav-right">
+        {outputModules.map((module) => {
+          const isActive = location.pathname === module.path
+          const IconComponent = module.icon
+
+          return (
+            <button
+              key={module.id}
+              className={`sidenav-btn ${isActive ? 'active' : ''}`}
+              onClick={() => handleNavClick(module.path)}
+              title={module.name}
+            >
+              <span className="sidenav-icon">
+                <IconComponent />
+              </span>
+              <span className="sidenav-label">{module.name}</span>
+            </button>
+          )
+        })}
+      </div>
+    </>
   )
 }

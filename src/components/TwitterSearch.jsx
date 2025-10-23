@@ -213,15 +213,12 @@ export default function TwitterSearch({
     
     const hasHashtags = finalHashtags.length > 0;
     
-    // Determine search type based on inputs
-    let searchType = 'combined-search';
-    if (hasAccount) {
-      searchType = 'account-analysis';
-    }
+    // Use new separated search for all searches
+    let searchType = 'separated-search';
     
     // Build search data
     const searchData = {
-      action: searchType,  // Changed from 'type' to 'action' for consistency
+      action: searchType,  // Using new separated search
       keyword: hasKeyword ? keyword.trim() : '',
       accountUsername: hasAccount ? accountUsername.trim().replace(/^@/, '') : '',
       hashtags: hasHashtags ? finalHashtags : [],
@@ -869,7 +866,10 @@ export default function TwitterSearch({
             <option value={10}>10 tweets</option>
             <option value={25}>25 tweets</option>
             <option value={50}>50 tweets</option>
+            <option value={75}>75 tweets</option>
             <option value={100}>100 tweets</option>
+            <option value={150}>150 tweets</option>
+            <option value={200}>200 tweets</option>
           </select>
         </div>
       </div>
