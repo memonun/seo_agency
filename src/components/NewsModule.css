@@ -1,0 +1,21 @@
+.news-module {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.module-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.module-header h1 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.module-header p {
+  color: #666;
+  font-size: 1.1rem;
+}

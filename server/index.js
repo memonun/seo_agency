@@ -2760,6 +2760,167 @@ function generateMockAnalytics(tweets, query, includeMentions = false) {
 
 // REMOVED DUPLICATE YOUTUBE ENDPOINT - Only one YouTube endpoint at line 111
 
+// News Analytics Endpoint (Full Feature Parity with Production)
+app.post('/api/news-analytics', async (req, res) => {
+  try {
+    console.log('\n📰 === NEWS ANALYTICS START ===')
+    console.log('🔍 Request body:', JSON.stringify(req.body, null, 2))
+    
+    const { 
+      mode = 'serp', // 'serp' or 'url'
+      input, // keywords for SERP, URLs for URL mode
+      limit = 10,
+      context = null
+    } = req.body
+    
+    // Validate required parameters
+    if (!input) {
+      console.error('❌ Missing input parameter')
+      return res.status(400).json({
+        error: 'Missing required parameter: input',
+        message: 'Please provide keywords (for SERP mode) or URLs (for URL mode)'
+      })
+    }
+    
+    // Validate mode
+    if (!['serp', 'url'].includes(mode)) {
+      console.error('❌ Invalid mode:', mode)
+      return res.status(400).json({
+        error: 'Invalid mode',
+        message: 'Mode must be either "serp" or "url"'
+      })
+    }
+    
+    console.log(`📊 Processing ${mode} analysis for: ${input}`)
+    
+    // Execute Python script
+    const { spawn } = await import('child_process')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+    const fs = await import('fs')
+    
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    
+    const scriptPath = path.join(__dirname, '..', 'web_search')
+    const scriptName = mode === 'serp' ? 'serp_content_analyzer.py' : 'url_sentiment_analyzer.py'
+    const fullScriptPath = path.join(scriptPath, scriptName)
+    
+    // Build command arguments
+    const args = [fullScriptPath, input]
+    
+    if (mode === 'serp') {
+      args.push(limit.toString())
+    }
+    
+    if (context) {
+      args.push(context)
+    }
+    
+    console.log(`🐍 Executing Python script: ${scriptName}`)
+    console.log(`📝 Arguments:`, args)
+    
+    // Execute Python script
+    const pythonProcess = spawn('python3', args, {
+      env: {
+        ...process.env,
+        PYTHONPATH: scriptPath,
+        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY
+      }
+    })
+    
+    let stdout = ''
+    let stderr = ''
+    
+    // Capture stdout
+    pythonProcess.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+    
+    // Capture stderr
+    pythonProcess.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+    
+    // Wait for process to complete
+    const result = await new Promise((resolve, reject) => {
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          reject(new Error(`Python script exited with code ${code}: ${stderr}`))
+        } else {
+          // Try to extract JSON from stdout
+          try {
+            // Look for the output file path in stdout
+            const outputMatch = stdout.match(/Full results saved to: (.+\.json)/)
+            if (outputMatch) {
+              const outputFile = outputMatch[1]
+              console.log(`📁 Output file: ${outputFile}`)
+              
+              // Read the JSON file
+              const fileContent = fs.readFileSync(outputFile, 'utf8')
+              const jsonResult = JSON.parse(fileContent)
+              
+              resolve({
+                success: true,
+                mode,
+                input,
+                context,
+                data: jsonResult,
+                outputFile
+              })
+            } else {
+              // If no file output, try to parse relevant info from stdout
+              const sentimentMatch = stdout.match(/OVERALL SENTIMENT DISTRIBUTION:([\s\S]+?)(?=\n\n|\n📁)/)
+              const summaryMatch = stdout.match(/OVERALL SUMMARY:\n([\s\S]+?)(?=\n\n|\n🎯)/)
+              const findingsMatch = stdout.match(/KEY FINDINGS:\n([\s\S]+?)(?=\n\n|\n📋)/)
+              const executiveMatch = stdout.match(/EXECUTIVE SUMMARY:\n([\s\S]+?)(?=\n\n|\n=|$)/)
+              
+              resolve({
+                success: true,
+                mode,
+                input,
+                context,
+                data: {
+                  sentiment_text: sentimentMatch ? sentimentMatch[1].trim() : '',
+                  overall_summary: summaryMatch ? summaryMatch[1].trim() : '',
+                  key_findings_text: findingsMatch ? findingsMatch[1].trim() : '',
+                  executive_summary: executiveMatch ? executiveMatch[1].trim() : '',
+                  raw_output: stdout
+                }
+              })
+            }
+          } catch (parseError) {
+            console.error('❌ Error parsing Python output:', parseError)
+            resolve({
+              success: false,
+              error: 'Failed to parse Python output',
+              stdout,
+              stderr
+            })
+          }
+        }
+      })
+      
+      pythonProcess.on('error', (error) => {
+        reject(error)
+      })
+    })
+    
+    console.log('✅ News analysis completed successfully')
+    return res.json(result)
+    
+  } catch (error) {
+    console.error('❌ News Analytics API Error:', error)
+    
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    })
+  }
+})
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend server is running' })
@@ -2770,5 +2931,6 @@ app.listen(PORT, () => {
   console.log(`\n🚀 Backend server running on http://localhost:${PORT}`)
   console.log(`📡 YouTube API: http://localhost:${PORT}/api/youtube-search`)
   console.log(`🐦 Twitter API: http://localhost:${PORT}/api/twitter-analytics`)
+  console.log(`📰 News API: http://localhost:${PORT}/api/news-analytics`)
   console.log(`✨ Ready to process requests\n`)
 })
