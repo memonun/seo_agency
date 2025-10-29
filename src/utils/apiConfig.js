@@ -29,11 +29,21 @@ export const getYouTubeApiUrl = () => {
   return `${baseUrl}/api/youtube-search`;
 };
 
+export const getRedditApiUrl = () => {
+  const { baseUrl } = getApiConfig();
+  return `${baseUrl}/api/reddit-analytics`;
+};
+
+export const getDomainAnalyticsApiUrl = () => {
+  const { baseUrl } = getApiConfig();
+  return `${baseUrl}/api/domain-analytics`;
+};
+
 // Environment utilities
 export const isDev = () => import.meta.env.DEV;
 export const isProd = () => import.meta.env.PROD;
 
-// API request wrapper with environment-aware error handling
+// API request wrapper with environment-aware error handling and AbortController support
 export const apiRequest = async (url, options = {}) => {
   const config = getApiConfig();
   
@@ -54,6 +64,14 @@ export const apiRequest = async (url, options = {}) => {
     
     return data;
   } catch (error) {
+    // Handle AbortError specifically
+    if (error.name === 'AbortError') {
+      if (isDev()) {
+        console.log('🚫 API Request Aborted:', { url });
+      }
+      throw new Error('Request was cancelled');
+    }
+    
     // Enhanced error handling for development
     if (isDev()) {
       console.error('🚨 API Request Error:', {
@@ -113,13 +131,46 @@ export const callYouTubeApi = async (data) => {
   });
 };
 
+// Reddit API wrapper with AbortController support
+export const callRedditApi = async (data, abortSignal = null) => {
+  const url = getRedditApiUrl();
+  
+  if (isDev()) {
+    console.log('🔍 Reddit API Call:', { url, data, hasAbortSignal: !!abortSignal });
+  }
+  
+  return apiRequest(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    signal: abortSignal
+  });
+};
+
+// Domain Analytics API wrapper
+export const callDomainAnalyticsApi = async (data) => {
+  const url = getDomainAnalyticsApiUrl();
+  
+  if (isDev()) {
+    console.log('🏢 Domain Analytics API Call:', { url, data });
+  }
+  
+  return apiRequest(url, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+};
+
 export default {
   getApiConfig,
   getTwitterApiUrl,
   getYouTubeApiUrl,
+  getRedditApiUrl,
+  getDomainAnalyticsApiUrl,
   isDev,
   isProd,
   apiRequest,
   callTwitterApi,
-  callYouTubeApi
+  callYouTubeApi,
+  callRedditApi,
+  callDomainAnalyticsApi
 };

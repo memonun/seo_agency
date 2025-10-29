@@ -259,3 +259,231 @@ export const clearTwitterResults = (userId) => {
     return false
   }
 }
+
+// Reddit Search Cache
+const REDDIT_CACHE_PREFIX = 'reddit_search_params_'
+
+const getRedditCacheKey = (userId) => {
+  return `${REDDIT_CACHE_PREFIX}${userId}`
+}
+
+/**
+ * Save Reddit search parameters to localStorage
+ */
+export const saveRedditSearchParams = (userId, params) => {
+  try {
+    const cacheData = {
+      ...params,
+      timestamp: Date.now()
+    }
+    localStorage.setItem(getRedditCacheKey(userId), JSON.stringify(cacheData))
+    return true
+  } catch (error) {
+    console.error('Error saving Reddit search params:', error)
+    return false
+  }
+}
+
+/**
+ * Load Reddit search parameters from localStorage
+ */
+export const loadRedditSearchParams = (userId) => {
+  try {
+    const cached = localStorage.getItem(getRedditCacheKey(userId))
+    if (!cached) return null
+
+    const parsedCache = JSON.parse(cached)
+
+    if (!isCacheValid(parsedCache)) {
+      clearRedditSearchParams(userId)
+      return null
+    }
+
+    return parsedCache
+  } catch (error) {
+    console.error('Error loading Reddit search params:', error)
+    return null
+  }
+}
+
+/**
+ * Clear Reddit search parameters from localStorage
+ */
+export const clearRedditSearchParams = (userId) => {
+  try {
+    localStorage.removeItem(getRedditCacheKey(userId))
+    return true
+  } catch (error) {
+    console.error('Error clearing Reddit search params:', error)
+    return false
+  }
+}
+
+// Reddit Results Cache
+const REDDIT_RESULTS_PREFIX = 'reddit_results_'
+
+const getRedditResultsCacheKey = (userId) => {
+  return `${REDDIT_RESULTS_PREFIX}${userId}`
+}
+
+/**
+ * Save Reddit search results to localStorage
+ */
+export const saveRedditResults = (userId, data) => {
+  try {
+    const cacheData = {
+      ...data,
+      timestamp: Date.now()
+    }
+    localStorage.setItem(getRedditResultsCacheKey(userId), JSON.stringify(cacheData))
+    return true
+  } catch (error) {
+    console.error('Error saving Reddit results:', error)
+    return false
+  }
+}
+
+/**
+ * Load Reddit search results from localStorage
+ */
+export const loadRedditResults = (userId) => {
+  try {
+    const cached = localStorage.getItem(getRedditResultsCacheKey(userId))
+    if (!cached) return null
+
+    const parsedCache = JSON.parse(cached)
+
+    if (!isCacheValid(parsedCache)) {
+      clearRedditResults(userId)
+      return null
+    }
+
+    return parsedCache
+  } catch (error) {
+    console.error('Error loading Reddit results:', error)
+    return null
+  }
+}
+
+/**
+ * Clear Reddit search results from localStorage
+ */
+export const clearRedditResults = (userId) => {
+  try {
+    localStorage.removeItem(getRedditResultsCacheKey(userId))
+    return true
+  } catch (error) {
+    console.error('Error clearing Reddit results:', error)
+    return false
+  }
+}
+
+// Reddit Search Progress State Management
+const REDDIT_PROGRESS_PREFIX = 'reddit_progress_'
+
+const getRedditProgressKey = (userId) => {
+  return `${REDDIT_PROGRESS_PREFIX}${userId}`
+}
+
+/**
+ * Search progress states
+ */
+export const SEARCH_STATES = {
+  IDLE: 'idle',
+  SEARCHING: 'searching', 
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled',
+  ERROR: 'error'
+}
+
+/**
+ * Save Reddit search progress state
+ */
+export const saveRedditSearchProgress = (userId, progressData) => {
+  try {
+    const progressState = {
+      ...progressData,
+      timestamp: Date.now(),
+      lastUpdated: Date.now()
+    }
+    localStorage.setItem(getRedditProgressKey(userId), JSON.stringify(progressState))
+    return true
+  } catch (error) {
+    console.error('Error saving Reddit search progress:', error)
+    return false
+  }
+}
+
+/**
+ * Load Reddit search progress state
+ */
+export const loadRedditSearchProgress = (userId) => {
+  try {
+    const cached = localStorage.getItem(getRedditProgressKey(userId))
+    if (!cached) return null
+
+    const parsedProgress = JSON.parse(cached)
+    
+    // Check if progress is stale (older than 1 hour)
+    const PROGRESS_TIMEOUT = 60 * 60 * 1000 // 1 hour
+    if (Date.now() - parsedProgress.lastUpdated > PROGRESS_TIMEOUT) {
+      clearRedditSearchProgress(userId)
+      return null
+    }
+
+    return parsedProgress
+  } catch (error) {
+    console.error('Error loading Reddit search progress:', error)
+    return null
+  }
+}
+
+/**
+ * Update Reddit search progress state
+ */
+export const updateRedditSearchProgress = (userId, updates) => {
+  try {
+    const existing = loadRedditSearchProgress(userId)
+    if (!existing) return false
+
+    const updatedProgress = {
+      ...existing,
+      ...updates,
+      lastUpdated: Date.now()
+    }
+    
+    return saveRedditSearchProgress(userId, updatedProgress)
+  } catch (error) {
+    console.error('Error updating Reddit search progress:', error)
+    return false
+  }
+}
+
+/**
+ * Clear Reddit search progress state
+ */
+export const clearRedditSearchProgress = (userId) => {
+  try {
+    localStorage.removeItem(getRedditProgressKey(userId))
+    return true
+  } catch (error) {
+    console.error('Error clearing Reddit search progress:', error)
+    return false
+  }
+}
+
+/**
+ * Check if there's an ongoing Reddit search
+ */
+export const hasOngoingRedditSearch = (userId) => {
+  const progress = loadRedditSearchProgress(userId)
+  return progress && progress.state === SEARCH_STATES.SEARCHING
+}
+
+/**
+ * Get Reddit search status
+ */
+export const getRedditSearchStatus = (userId) => {
+  const progress = loadRedditSearchProgress(userId)
+  return progress ? progress.state : SEARCH_STATES.IDLE
+}

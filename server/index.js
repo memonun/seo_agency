@@ -5,6 +5,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import crypto from 'crypto'
+// Using built-in fetch (Node.js 18+)
 import { TwitterApi } from '@virtuals-protocol/game-twitter-node'
 import { createClient } from '@supabase/supabase-js'
 
@@ -109,7 +110,7 @@ app.use((error, req, res, next) => {
 
 // YouTube Search + Summarization Endpoint (Enhanced with Comments and Database Storage)
 app.post('/api/youtube-search', async (req, res) => {
-  const { keyword, user_id, search_id, email } = req.body
+  const { keyword, user_id, search_id, email, filters = {} } = req.body
 
   if (!keyword) {
     return res.status(400).json({ error: 'Keyword is required' })
@@ -121,8 +122,8 @@ app.post('/api/youtube-search', async (req, res) => {
   try {
     console.log(`\n🔍 Processing YouTube search for: "${keyword}"`)
 
-    // Step 1: Fetch 10 YouTube videos from RapidAPI YouTube138
-    const youtubeVideos = await fetchYouTubeVideos(keyword)
+    // Step 1: Fetch 10 YouTube videos from YT-API (consolidated) with filters
+    const youtubeVideos = await fetchYouTubeVideosYTAPI(keyword, filters)
 
     if (youtubeVideos.length === 0) {
       return res.status(404).json({ error: 'No videos found' })
@@ -149,7 +150,7 @@ app.post('/api/youtube-search', async (req, res) => {
         
         try {
           console.log(`   [${i + 1}/${youtubeVideos.length}] Fetching transcript...`)
-          transcript = await fetchTranscriptWithRetry(video.video_id, 3)
+          transcript = await fetchTranscriptYTAPI(video.video_id)
           console.log(`   ✓ [${i + 1}/${youtubeVideos.length}] Transcript fetched`)
         } catch (transcriptError) {
           console.warn(`   ⚠ [${i + 1}/${youtubeVideos.length}] Transcript error: ${transcriptError.message}`)
@@ -157,7 +158,7 @@ app.post('/api/youtube-search', async (req, res) => {
 
         try {
           console.log(`   [${i + 1}/${youtubeVideos.length}] Fetching comments...`)
-          comments = await fetchVideoComments(video.video_id)
+          comments = await fetchVideoCommentsYTAPI(video.video_id)
           console.log(`   ✓ [${i + 1}/${youtubeVideos.length}] Comments fetched: ${comments.items.length} comments`)
           
           // Store raw comments data for database
@@ -256,7 +257,8 @@ app.post('/api/youtube-search', async (req, res) => {
         rawYouTubeData, 
         rawCommentsData, 
         videosWithSummaries, 
-        overallSummary
+        overallSummary,
+        filters
       )
       if (databaseId) {
         console.log(`💾 Analysis saved to database with ID: ${databaseId}`)
@@ -285,13 +287,223 @@ app.post('/api/youtube-search', async (req, res) => {
   }
 })
 
+// YouTube Channel Search + Summarization Endpoint
+app.post('/api/youtube-channel-search', async (req, res) => {
+  const { keyword: channelInput, user_id, search_id, email } = req.body
+
+  if (!channelInput) {
+    return res.status(400).json({ error: 'Channel input is required' })
+  }
+
+  try {
+    console.log(`\n🔍 Processing YouTube channel search for: "${channelInput}"`)
+
+    // Step 1: Extract and validate channel ID
+    const channelId = extractChannelId(channelInput)
+    if (!channelId) {
+      return res.status(400).json({ error: 'Invalid channel URL, handle, or ID' })
+    }
+
+    console.log(`   📺 Extracted channel ID: ${channelId}`)
+
+    // Step 2: Fetch channel videos from YT-API
+    const channelVideos = await fetchChannelVideos(channelId)
+
+    if (channelVideos.length === 0) {
+      return res.status(404).json({ error: 'No videos found for this channel' })
+    }
+
+    console.log(`✅ Found ${channelVideos.length} videos from channel`)
+
+    // Step 3: Store raw channel data for reproducibility
+    const rawChannelData = [...channelVideos]
+    const rawCommentsData = {}
+
+    // Step 4: Process videos sequentially (same as video search)
+    const videosWithSummaries = []
+    const maxVideos = Math.min(channelVideos.length, 10) // Limit to 10 videos
+
+    for (let i = 0; i < maxVideos; i++) {
+      const video = channelVideos[i]
+      
+      try {
+        console.log(`   [${i + 1}/${maxVideos}] Processing: ${video.title.substring(0, 50)}...`)
+        
+        // Fetch transcript and comments
+        let transcript = null
+        let comments = null
+        
+        try {
+          console.log(`   [${i + 1}/${maxVideos}] Fetching transcript...`)
+          transcript = await fetchTranscriptYTAPI(video.video_id)
+          console.log(`   ✓ [${i + 1}/${maxVideos}] Transcript fetched`)
+        } catch (transcriptError) {
+          console.warn(`   ⚠ [${i + 1}/${maxVideos}] Transcript error: ${transcriptError.message}`)
+        }
+
+        try {
+          console.log(`   [${i + 1}/${maxVideos}] Fetching comments...`)
+          comments = await fetchVideoCommentsYTAPI(video.video_id)
+          console.log(`   ✓ [${i + 1}/${maxVideos}] Comments fetched: ${comments.items.length} comments`)
+          
+          rawCommentsData[video.video_id] = {
+            totalCount: comments.totalCount,
+            items: comments.items,
+            fetchedAt: new Date().toISOString()
+          }
+        } catch (commentError) {
+          console.warn(`   ⚠ [${i + 1}/${maxVideos}] Comments error: ${commentError.message}`)
+          comments = {
+            totalCount: 0,
+            items: [],
+            error: 'Comments not available for this video'
+          }
+          
+          rawCommentsData[video.video_id] = {
+            totalCount: 0,
+            items: [],
+            error: commentError.message,
+            fetchedAt: new Date().toISOString()
+          }
+        }
+
+        // Generate AI summary
+        let summary = '⚠️ Unable to analyze this video.'
+        if (transcript || (comments && comments.items.length > 0)) {
+          try {
+            console.log(`   [${i + 1}/${maxVideos}] Generating AI summary...`)
+            
+            const processedTranscript = transcript ? processTimestamps(transcript) : null
+            summary = await summarizeWithAI(processedTranscript, comments, video.title)
+            console.log(`   ✓ [${i + 1}/${maxVideos}] AI summary complete`)
+          } catch (summaryError) {
+            console.error(`   ✗ [${i + 1}/${maxVideos}] Summary error: ${summaryError.message}`)
+            summary = '⚠️ Unable to generate summary for this video.'
+          }
+        }
+
+        videosWithSummaries.push({
+          ...video,
+          summary: summary,
+          comments: comments || {
+            totalCount: 0,
+            items: [],
+            error: 'Comments not available for this video'
+          },
+          position: i + 1
+        })
+
+        console.log(`   ✓ [${i + 1}/${maxVideos}] Processing complete`)
+        
+        // Add delay between requests
+        if (i < maxVideos - 1) {
+          await sleep(1200)
+        }
+        
+      } catch (error) {
+        console.error(`   ✗ [${i + 1}/${maxVideos}] Error: ${error.message}`)
+        videosWithSummaries.push({
+          ...video,
+          summary: '⚠️ Unable to process this video.',
+          comments: {
+            totalCount: 0,
+            items: [],
+            error: 'Comments not available for this video'
+          },
+          position: i + 1
+        })
+      }
+    }
+
+    // Step 5: Generate overall channel summary
+    let overallSummary = null
+    try {
+      console.log(`📊 Generating overall channel summary...`)
+      overallSummary = await generateChannelSummary(videosWithSummaries, channelInput, channelId)
+      console.log(`✅ Channel summary complete`)
+    } catch (overallError) {
+      console.error(`❌ Channel summary error:`, overallError.message)
+      overallSummary = 'Unable to generate channel analysis at this time.'
+    }
+
+    // Step 6: Save to database
+    let databaseId = null
+    let databaseSaveStatus = 'pending'
+    let databaseError = null
+    
+    try {
+      console.log('🗄️ === DATABASE SAVE ATTEMPT ===')
+      databaseId = await saveChannelAnalytics(
+        user_id, 
+        search_id, 
+        channelInput,
+        channelId, 
+        email, 
+        rawChannelData, 
+        rawCommentsData, 
+        videosWithSummaries, 
+        overallSummary
+      )
+      
+      if (databaseId) {
+        console.log(`💾 Channel analysis saved to database with ID: ${databaseId}`)
+        databaseSaveStatus = 'success'
+      } else {
+        console.log('⚠️ Database save returned null - check logs for details')
+        databaseSaveStatus = 'failed'
+        databaseError = 'Database save failed - check server logs for details'
+      }
+    } catch (saveError) {
+      console.error(`❌ Database save error:`, saveError.message)
+      databaseSaveStatus = 'error'
+      databaseError = saveError.message
+    }
+
+    // Return response in same format as video search but with database save status
+    return res.status(200).json({
+      status: 'success',
+      keyword: channelInput,
+      overallSummary,
+      videos: videosWithSummaries,
+      channelId,
+      databaseId,
+      databaseSave: {
+        status: databaseSaveStatus,
+        sessionId: databaseId,
+        error: databaseError
+      }
+    })
+  } catch (error) {
+    console.error('Error in youtube-channel-search:', error)
+    return res.status(500).json({
+      error: 'Failed to process channel search',
+      message: error.message
+    })
+  }
+})
+
 // Helper Functions
 
-async function fetchYouTubeVideos(keyword) {
-  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
-  const RAPIDAPI_HOST = 'youtube138.p.rapidapi.com'
+// YT-API CONSOLIDATED FUNCTIONS
 
-  const url = `https://${RAPIDAPI_HOST}/search/?q=${encodeURIComponent(keyword)}&hl=en&gl=US`
+async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
+  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
+
+  // Build URL with filter parameters
+  const params = new URLSearchParams({
+    query: keyword,
+    type: filters.content_type_filter || 'video'
+  })
+
+  // Add optional filter parameters
+  if (filters.upload_date_filter) params.append('upload_date', filters.upload_date_filter)
+  if (filters.sort_by_filter) params.append('sort_by', filters.sort_by_filter)
+  if (filters.geo_filter) params.append('geo', filters.geo_filter)
+
+  const url = `https://${RAPIDAPI_HOST}/search?${params.toString()}`
+
+  console.log(`🔍 YT-API Video Search: ${url}`)
 
   const response = await fetch(url, {
     method: 'GET',
@@ -302,116 +514,187 @@ async function fetchYouTubeVideos(keyword) {
   })
 
   if (!response.ok) {
-    throw new Error(`YouTube API failed: ${response.status}`)
+    throw new Error(`YT-API video search failed: ${response.status}`)
   }
 
   const data = await response.json()
-  const videos = data?.contents || []
 
-  return videos
-    .filter(item => item.video)
-    .slice(0, 10)
-    .map(item => {
-      const video = item.video
-      const thumbnail = video.thumbnails?.[0]?.url ||
-                       `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
+  // Extract videos from YT-API response format - CONFIRMED WORKING
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No videos found in YT-API response')
+  }
 
-      const likes = video.stats?.likes || null
-      const subscribers = video.author?.stats?.subscribers || video.author?.stats?.subscribersText || null
-      const isVerified = video.author?.badges?.some(badge =>
-        badge?.type === 'VERIFIED_CHANNEL' || badge?.text === 'Verified'
-      ) || false
-      const badges = video.badges || []
-      const isLive = video.isLiveNow || video.isLive || badges.some(b => b?.type === 'LIVE') || false
+  // Filter valid videos with videoId before processing
+  const validVideos = data.data.filter(video => {
+    const hasValidVideoId = video.videoId && typeof video.videoId === 'string' && video.videoId.trim() !== ''
+    if (!hasValidVideoId) {
+      console.log(`🚫 Filtered out invalid video: ${video.title || 'Unknown'} - Missing videoId`)
+    }
+    return hasValidVideoId
+  })
 
-      return {
-        url: `https://www.youtube.com/watch?v=${video.videoId}`,
-        title: video.title || 'Untitled Video',
-        description: video.descriptionSnippet || video.description || '',
-        video_id: video.videoId,
-        thumbnail: thumbnail,
-        channel: video.channelTitle || video.author?.title || 'Unknown Channel',
-        views: video.viewCountText || video.stats?.views || 'N/A',
-        publishedTime: video.publishedTimeText || 'N/A',
-        duration: video.lengthText || 'N/A',
-        channelThumbnail: video.channelThumbnail?.thumbnails?.[0]?.url || '',
-        likes: likes,
-        subscribers: subscribers,
-        isVerified: isVerified,
-        badges: badges,
-        isLive: isLive
-      }
-    })
+  if (validVideos.length === 0) {
+    throw new Error('No valid videos found after filtering')
+  }
+
+  console.log(`✅ Found ${validVideos.length} valid videos out of ${data.data.length} total results`)
+  
+  const videos = validVideos.slice(0, 10)
+
+  return videos.map(video => {
+    // Handle thumbnail arrays from YT-API
+    let thumbnail = `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
+    if (video.thumbnail && Array.isArray(video.thumbnail) && video.thumbnail.length > 0) {
+      thumbnail = video.thumbnail[0].url
+    }
+
+    // Handle channel avatar arrays
+    let channelThumbnail = ''
+    if (video.channelAvatar && Array.isArray(video.channelAvatar) && video.channelAvatar.length > 0) {
+      channelThumbnail = video.channelAvatar[0].url
+    } else if (video.channelThumbnail && Array.isArray(video.channelThumbnail) && video.channelThumbnail.length > 0) {
+      channelThumbnail = video.channelThumbnail[0].url
+    }
+
+    // Detect actual content type from response
+    const detectedContentType = detectContentType(video)
+
+    return {
+      url: `https://www.youtube.com/watch?v=${video.videoId}`,
+      title: video.title || 'Untitled Video',
+      description: video.description || '',
+      video_id: video.videoId,
+      thumbnail: thumbnail,
+      channel: video.channelTitle || 'Unknown Channel',
+      views: video.viewCountText || video.viewCount || 'N/A',
+      publishedTime: video.publishedTimeText || 'N/A',
+      duration: video.lengthText || 'N/A',
+      channelThumbnail: channelThumbnail,
+      likes: video.likeCount || null,
+      subscribers: video.subscriberCount || null,
+      isVerified: video.isVerified || false,
+      badges: video.badges || [],
+      isLive: video.isLive || video.badges?.includes('LIVE') || false,
+      contentType: detectedContentType // Add detected content type
+    }
+  })
 }
 
-async function fetchTranscript(videoId) {
+async function fetchVideoCommentsYTAPI(videoId) {
   const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
 
-  const url = `https://youtube-transcript3.p.rapidapi.com/api/transcript?videoId=${videoId}`
+  const url = `https://${RAPIDAPI_HOST}/comments?id=${videoId}`
+  console.log(`🔍 YT-API Comments: ${url}`)
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Host': 'youtube-transcript3.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
     }
   })
 
   if (!response.ok) {
-    throw new Error(`Transcript API failed: ${response.status}`)
+    throw new Error(`YT-API comments failed: ${response.status}`)
   }
 
   const data = await response.json()
 
-  // Check if transcript is valid
-  if (!data.transcript || !Array.isArray(data.transcript) || data.transcript.length === 0) {
-    throw new Error('No valid transcript found')
+  // YT-API comments response structure: { commentsCount, data: [] }
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No comments found in YT-API response')
   }
 
-  return data.transcript
-}
-
-async function fetchVideoComments(videoId) {
-  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
-
-  const url = `https://youtube-v31.p.rapidapi.com/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&order=relevance`
-
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
-    }
-  })
-
-  if (!response.ok) {
-    throw new Error(`Comments API failed: ${response.status}`)
-  }
-
-  const data = await response.json()
-
-  // Check if comments are valid
-  if (!data.items || !Array.isArray(data.items)) {
-    throw new Error('No valid comments found')
-  }
+  const totalCount = parseInt(data.commentsCount) || data.data.length
 
   return {
-    totalCount: data.pageInfo?.totalResults || data.items.length,
-    items: data.items.map(item => {
-      const snippet = item.snippet?.topLevelComment?.snippet
-      return {
-        id: item.id,
-        authorDisplayName: snippet?.authorDisplayName || 'Unknown',
-        authorProfileImageUrl: snippet?.authorProfileImageUrl || '',
-        textDisplay: snippet?.textDisplay || '',
-        likeCount: snippet?.likeCount || 0,
-        publishedAt: snippet?.publishedAt || '',
-        updatedAt: snippet?.updatedAt || snippet?.publishedAt || '',
-        isChannelOwner: snippet?.authorChannelId === item.snippet?.channelId || false,
-        replies: item.snippet?.totalReplyCount || 0
-      }
-    })
+    totalCount: totalCount,
+    items: data.data.slice(0, 20).map(comment => ({
+      id: comment.commentId || `comment_${Date.now()}`,
+      authorDisplayName: comment.authorText || 'Unknown',
+      authorProfileImageUrl: comment.authorThumbnail?.[0]?.url || '',
+      textDisplay: comment.textDisplay || '',
+      likeCount: parseYouTubeNumber(comment.likesCount) || 0,
+      publishedAt: comment.publishedTimeText || '',
+      updatedAt: comment.publishedTimeText || '',
+      isChannelOwner: comment.authorIsChannelOwner || false,
+      replies: parseInt(comment.replyCount) || 0
+    }))
   }
+}
+
+async function fetchTranscriptYTAPI(videoId) {
+  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
+
+  const url = `https://${RAPIDAPI_HOST}/get_transcript?id=${videoId}`
+  console.log(`🔍 YT-API Transcript: ${url}`)
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error(`YT-API transcript failed: ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  // YT-API transcript response structure: { id, transcript: [] }
+  if (!data.transcript || !Array.isArray(data.transcript)) {
+    throw new Error('No transcript found in YT-API response')
+  }
+
+  if (data.transcript.length === 0) {
+    throw new Error('Empty transcript returned')
+  }
+
+  // Convert YT-API transcript format to our expected format
+  return data.transcript.map(item => ({
+    text: item.text || '',
+    offset: parseInt(item.startMs) / 1000 || 0 // Convert milliseconds to seconds
+  }))
+}
+
+// OLD API FUNCTIONS REMOVED - REPLACED WITH YT-API CONSOLIDATED FUNCTIONS
+
+// Helper function to detect content type from video data
+function detectContentType(video) {
+  // Check for live streams first
+  if (video.isLive || video.badges?.includes('LIVE')) {
+    return 'live'
+  }
+  
+  // Check for shorts based on duration (typically under 60 seconds)
+  if (video.lengthText) {
+    const duration = parseDurationToSeconds(video.lengthText)
+    if (duration > 0 && duration <= 60) {
+      return 'shorts'
+    }
+  }
+  
+  // Default to video
+  return 'video'
+}
+
+// Helper function to parse duration text to seconds
+function parseDurationToSeconds(durationText) {
+  if (!durationText || durationText === 'N/A') return 0
+  
+  // Parse formats like "1:23", "12:34", "1:23:45"
+  const parts = durationText.split(':').map(Number).reverse()
+  let seconds = 0
+  
+  if (parts[0]) seconds += parts[0] // seconds
+  if (parts[1]) seconds += parts[1] * 60 // minutes
+  if (parts[2]) seconds += parts[2] * 3600 // hours
+  
+  return seconds
 }
 
 // Helper function to add delays
@@ -419,24 +702,34 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// Retry wrapper for fetchTranscript to handle rate limiting
-async function fetchTranscriptWithRetry(videoId, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await fetchTranscript(videoId)
-    } catch (error) {
-      // If it's a 429 (rate limit) and we have retries left, wait and try again
-      if (error.message.includes('429') && attempt < maxRetries) {
-        const waitTime = attempt * 2000 // Progressive backoff: 2s, 4s, 6s
-        console.log(`   ⏳ Rate limited, waiting ${waitTime/1000}s before retry ${attempt}/${maxRetries}...`)
-        await sleep(waitTime)
-        continue
-      }
-      
-      // If it's not rate limiting or we're out of retries, throw the error
-      throw error
-    }
+// Helper function to parse YouTube numbers (e.g., "125K" -> 125000, "48K" -> 48000)
+function parseYouTubeNumber(numberStr) {
+  if (!numberStr || typeof numberStr !== 'string') return 0
+  
+  const cleanStr = numberStr.trim().toUpperCase()
+  
+  // Handle "K" suffix (thousands)
+  if (cleanStr.endsWith('K')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000)
   }
+  
+  // Handle "M" suffix (millions)
+  if (cleanStr.endsWith('M')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000)
+  }
+  
+  // Handle "B" suffix (billions)
+  if (cleanStr.endsWith('B')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000000)
+  }
+  
+  // Handle regular numbers (remove commas)
+  const cleanNumber = cleanStr.replace(/,/g, '')
+  const parsed = parseInt(cleanNumber)
+  return isNaN(parsed) ? 0 : parsed
 }
 
 function processTimestamps(transcript) {
@@ -562,7 +855,7 @@ Provide a comprehensive summary that includes both content analysis and communit
   return summary
 }
 
-async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTubeData, rawCommentsData, videosWithSummaries, overallSummary) {
+async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTubeData, rawCommentsData, videosWithSummaries, overallSummary, filters = {}) {
   try {
     if (!supabase) {
       console.log('⏭️ Skipping database save - Supabase not configured')
@@ -580,7 +873,7 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
         processingTimestamp: new Date().toISOString(),
         apiVersion: '1.0',
         aiModel: 'google/gemini-2.0-flash-001',
-        apisUsed: ['youtube138', 'youtube-v31', 'youtube-transcript3']
+        apisUsed: ['yt-api-consolidated']
       },
       rawData: {
         searchQuery: keyword,
@@ -627,7 +920,7 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
       }
     }
 
-    // Insert into database
+    // Insert into database with filter columns
     const { data, error } = await supabase
       .from('youtube_analytics_sessions')
       .insert([
@@ -635,7 +928,11 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
           user_id: userId,
           search_id: searchId,
           keyword,
-          analysis_data: analysisData
+          analysis_data: analysisData,
+          upload_date_filter: filters.upload_date_filter || null,
+          sort_by_filter: filters.sort_by_filter || 'relevance',
+          geo_filter: filters.geo_filter || 'US',
+          content_type_filter: filters.content_type_filter || 'video'
         }
       ])
       .select('id')
@@ -745,6 +1042,348 @@ Provide a concise, insightful overview of what's trending and how the community 
   return data.choices?.[0]?.message?.content || 'Unable to generate overall summary.'
 }
 
+// Channel Helper Functions
+
+function extractChannelId(input) {
+  if (!input || typeof input !== 'string') return null
+
+  try {
+    const cleanInput = input.trim()
+
+    // Direct channel ID (UC...)
+    if (/^UC[a-zA-Z0-9_-]{22}$/.test(cleanInput)) {
+      return cleanInput
+    }
+
+    // @username format
+    const handleMatch = cleanInput.match(/^@([a-zA-Z0-9_.-]+)$/)
+    if (handleMatch) {
+      return `@${handleMatch[1]}`
+    }
+
+    // youtube.com/channel/CHANNEL_ID
+    const channelPattern = /(?:youtube\.com\/channel\/)([a-zA-Z0-9_-]+)/
+    const channelMatch = cleanInput.match(channelPattern)
+    if (channelMatch) return channelMatch[1]
+
+    // youtube.com/c/CUSTOM_NAME
+    const customPattern = /(?:youtube\.com\/c\/)([a-zA-Z0-9_-]+)/
+    const customMatch = cleanInput.match(customPattern)
+    if (customMatch) return `@${customMatch[1]}`
+
+    // youtube.com/user/USERNAME  
+    const userPattern = /(?:youtube\.com\/user\/)([a-zA-Z0-9_-]+)/
+    const userMatch = cleanInput.match(userPattern)
+    if (userMatch) return `@${userMatch[1]}`
+
+    // youtube.com/@username
+    const atPattern = /(?:youtube\.com\/@)([a-zA-Z0-9_.-]+)/
+    const atMatch = cleanInput.match(atPattern)
+    if (atMatch) return `@${atMatch[1]}`
+
+    return null
+  } catch (error) {
+    console.error('Error extracting channel ID:', error)
+    return null
+  }
+}
+
+async function fetchChannelVideos(channelId) {
+  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
+
+  let actualChannelId = channelId
+
+  // For @handle format, we need to search first to get the channel ID
+  if (channelId.startsWith('@')) {
+    console.log(`   🔍 Searching for channel handle: ${channelId}`)
+    
+    const searchUrl = `https://${RAPIDAPI_HOST}/search?query=${encodeURIComponent(channelId)}&type=channel`
+    const searchResponse = await fetch(searchUrl, {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': RAPIDAPI_HOST
+      }
+    })
+
+    if (!searchResponse.ok) {
+      throw new Error(`YT-API search failed: ${searchResponse.status}`)
+    }
+
+    const searchData = await searchResponse.json()
+    
+    if (!searchData.data || searchData.data.length === 0) {
+      throw new Error(`No channel found for handle: ${channelId}`)
+    }
+
+    // Get the first matching channel
+    const channel = searchData.data[0]
+    actualChannelId = channel.channelId || channel.id
+    console.log(`   ✅ Found channel ID: ${actualChannelId}`)
+  }
+
+  // Now fetch the channel videos using the resolved channel ID
+  const url = `https://${RAPIDAPI_HOST}/channel/videos?id=${encodeURIComponent(actualChannelId)}`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error(`YT-API failed: ${response.status}`)
+  }
+
+  const data = await response.json()
+  
+  // Extract videos from YT-API response format
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No videos found in channel')
+  }
+
+  return data.data.slice(0, 10).map(video => ({
+    url: `https://www.youtube.com/watch?v=${video.videoId}`,
+    title: video.title || 'Untitled Video',
+    description: video.description || '',
+    video_id: video.videoId,
+    thumbnail: video.thumbnail?.url || `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`,
+    channel: data.meta?.channelTitle || data.channelTitle || 'Unknown Channel',
+    views: video.viewCount || 'N/A',
+    publishedTime: video.publishedText || 'N/A',
+    duration: video.lengthText || 'N/A',
+    channelThumbnail: data.meta?.avatar?.[0]?.url || '',
+    likes: video.likeCount || null,
+    subscribers: data.meta?.subscriberCount || null,
+    isVerified: data.meta?.isVerified || false,
+    badges: [],
+    isLive: video.isLive || false
+  }))
+}
+
+async function generateChannelSummary(videosWithSummaries, channelInput, channelId) {
+  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
+
+  if (!OPENROUTER_API_KEY) {
+    throw new Error('OpenRouter API key not configured')
+  }
+
+  const videoSummaries = videosWithSummaries
+    .filter(video => video.summary && !video.summary.startsWith('⚠️'))
+    .map(video => ({
+      title: video.title,
+      summary: video.summary,
+      views: video.views,
+      likes: video.likes,
+      commentCount: video.comments?.totalCount || 0,
+      topComments: video.comments?.items?.slice(0, 3)?.map(c => c.textDisplay) || []
+    }))
+
+  if (videoSummaries.length === 0) {
+    return `No videos could be analyzed for channel "${channelInput}".`
+  }
+
+  const analysisData = {
+    channelInput,
+    channelId,
+    totalVideos: videosWithSummaries.length,
+    successfulAnalysis: videoSummaries.length,
+    videoSummaries,
+    totalComments: videosWithSummaries.reduce((sum, video) => sum + (video.comments?.totalCount || 0), 0)
+  }
+
+  const systemMessage = `You are a professional YouTube channel analyst. Given analysis data from multiple videos from a specific YouTube channel, provide a comprehensive overview that identifies:
+
+1. Channel content themes and consistency
+2. Audience engagement patterns across videos
+3. Content strategy insights
+4. Overall channel performance and sentiment
+
+Format your response as a natural, engaging summary that captures the channel's content landscape and audience response.
+
+Example style: "This channel focuses on tech reviews with consistent high-quality production. The audience is highly engaged with technical discussions in comments, and there's strong positive sentiment around the creator's expertise and presentation style."
+
+Guidelines:
+- Write in a conversational, insightful tone
+- Synthesize patterns across multiple videos
+- Include engagement observations from comments
+- Focus on channel-level insights, not individual video details
+- Maximum 800 characters for conciseness`
+
+  const userPrompt = `Analyze this YouTube channel based on recent video data:
+
+${JSON.stringify(analysisData, null, 2)}
+
+Provide a concise, insightful overview of the channel's content strategy, themes, and audience engagement patterns.`
+
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.0-flash-001',
+      messages: [
+        { role: 'system', content: systemMessage },
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: 400
+    })
+  })
+
+  if (!response.ok) {
+    throw new Error(`OpenRouter API failed: ${response.status}`)
+  }
+
+  const data = await response.json()
+  return data.choices?.[0]?.message?.content || 'Unable to generate channel summary.'
+}
+
+async function saveChannelAnalytics(userId, searchId, channelInput, channelId, email, rawChannelData, rawCommentsData, videosWithSummaries, overallSummary) {
+  try {
+    console.log('🔧 === CHANNEL ANALYTICS DATABASE SAVE DEBUG ===')
+    console.log('📥 Input parameters:')
+    console.log('   userId:', userId)
+    console.log('   searchId:', searchId)
+    console.log('   channelInput:', channelInput)
+    console.log('   channelId:', channelId)
+    console.log('   email:', email)
+    console.log('   rawChannelData length:', rawChannelData?.length || 0)
+    console.log('   videosWithSummaries length:', videosWithSummaries?.length || 0)
+    console.log('   overallSummary length:', overallSummary?.length || 0)
+
+    if (!supabase) {
+      console.error('❌ CRITICAL: Supabase client not configured!')
+      console.log('⏭️ Skipping database save - Supabase not configured')
+      return null
+    }
+
+    console.log('✅ Supabase client is configured')
+    console.log('💾 Saving channel analytics to database...')
+
+    // Prepare analysis data for channel session
+    const analysisData = {
+      metadata: {
+        totalVideos: rawChannelData.length,
+        successfulAnalysis: videosWithSummaries.filter(v => !v.summary.startsWith('⚠️')).length,
+        processingTimestamp: new Date().toISOString(),
+        apiVersion: '1.0',
+        aiModel: 'google/gemini-2.0-flash-001',
+        apisUsed: ['yt-api-consolidated'],
+        searchType: 'channel'
+      }
+    }
+
+    console.log('📊 Analysis data prepared:', JSON.stringify(analysisData, null, 2))
+
+    // Prepare session record
+    const sessionRecord = {
+      user_id: userId,
+      search_id: searchId,
+      channel_input: channelInput,
+      channel_id: channelId,
+      email: email,
+      overall_summary: overallSummary,
+      analysis_data: analysisData,
+      raw_channel_data: rawChannelData,
+      raw_comments_data: rawCommentsData
+    }
+
+    console.log('📝 Session record to insert:', JSON.stringify({
+      ...sessionRecord,
+      raw_channel_data: `[${rawChannelData?.length || 0} items]`,
+      raw_comments_data: `[${Object.keys(rawCommentsData || {}).length} video comments]`
+    }, null, 2))
+
+    // Insert main channel session
+    console.log('🚀 Attempting to insert channel session...')
+    const { data: sessionData, error: sessionError } = await supabase
+      .from('youtube_channel_sessions')
+      .insert([sessionRecord])
+      .select('id')
+
+    if (sessionError) {
+      console.error('❌ CHANNEL SESSION SAVE FAILED!')
+      console.error('   Error code:', sessionError.code)
+      console.error('   Error message:', sessionError.message)
+      console.error('   Error details:', sessionError.details)
+      console.error('   Error hint:', sessionError.hint)
+      console.error('   Full error object:', JSON.stringify(sessionError, null, 2))
+      return null
+    }
+
+    const sessionId = sessionData[0]?.id
+    console.log('✅ Channel session saved successfully!')
+    console.log('   Session ID:', sessionId)
+    console.log('   Session data:', JSON.stringify(sessionData, null, 2))
+
+    // Insert individual videos
+    if (videosWithSummaries.length > 0) {
+      console.log(`📹 Preparing to save ${videosWithSummaries.length} videos...`)
+      
+      const videoRecords = videosWithSummaries.map(video => ({
+        session_id: sessionId,
+        video_id: video.video_id,
+        title: video.title,
+        description: video.description,
+        url: video.url,
+        thumbnail: video.thumbnail,
+        channel: video.channel,
+        views: video.views,
+        published_time: video.publishedTime,
+        duration: video.duration,
+        likes: video.likes,
+        position: video.position,
+        summary: video.summary,
+        comments_total_count: video.comments?.totalCount || 0,
+        comments_data: video.comments?.items || []
+      }))
+
+      console.log('📝 Sample video record:', JSON.stringify({
+        ...videoRecords[0],
+        description: videoRecords[0].description?.substring(0, 100) + '...',
+        summary: videoRecords[0].summary?.substring(0, 100) + '...',
+        comments_data: `[${videoRecords[0].comments_data?.length || 0} comments]`
+      }, null, 2))
+
+      console.log('🚀 Attempting to insert channel videos...')
+      const { error: videosError } = await supabase
+        .from('youtube_channel_videos')
+        .insert(videoRecords)
+
+      if (videosError) {
+        console.error('❌ CHANNEL VIDEOS SAVE FAILED!')
+        console.error('   Error code:', videosError.code)
+        console.error('   Error message:', videosError.message)
+        console.error('   Error details:', videosError.details)
+        console.error('   Error hint:', videosError.hint)
+        console.error('   Full error object:', JSON.stringify(videosError, null, 2))
+        // Continue anyway since main session was saved
+      } else {
+        console.log(`✅ Successfully saved ${videoRecords.length} channel videos`)
+      }
+    } else {
+      console.log('⚠️ No videos to save')
+    }
+
+    console.log('🎉 Channel analytics save process completed')
+    console.log('📊 Final session ID:', sessionId)
+    return sessionId
+
+  } catch (error) {
+    console.error('❌ CRITICAL: Database save exception!')
+    console.error('   Error name:', error.name)
+    console.error('   Error message:', error.message)
+    console.error('   Error stack:', error.stack)
+    console.error('   Full error object:', JSON.stringify(error, null, 2))
+    return null
+  }
+}
+
 // Twitter Analytics Endpoint (Full Feature Parity with Production)
 app.post('/api/twitter-analytics', async (req, res) => {
   try {
@@ -848,17 +1487,6 @@ async function handleMockTwitterRequest(action, params, req, res) {
       mockData = generateMockTweets(keyword, limit, { language, sortOrder, includeMentions, global })
       break
       
-    case 'hashtag':
-      if (!hashtags || !Array.isArray(hashtags)) {
-        return res.status(400).json({
-          error: 'Invalid hashtags',
-          message: 'Hashtags array is required for hashtag action'
-        })
-      }
-      mockData = hashtags.flatMap(hashtag => 
-        generateMockTweets(hashtag, Math.floor(limit / hashtags.length), { language, sortOrder, includeMentions, global })
-      )
-      break
       
     case 'combined-search':
       const hasKeyword = keyword.trim().length > 0
@@ -977,16 +1605,11 @@ async function handleMockTwitterRequest(action, params, req, res) {
       searchQuery = accountQuery
       break
       
-    case 'sentiment':
-      return res.status(501).json({
-        error: 'Not implemented',
-        message: 'Sentiment analysis will be implemented in future version'
-      })
       
     default:
       return res.status(400).json({
         error: 'Invalid action',
-        message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
+        message: 'Supported actions: search, combined-search, separated-search, account-analysis, discover-hashtags'
       })
   }
   
@@ -1036,8 +1659,6 @@ async function handleRealTwitterRequest(action, params, req, res) {
     switch (action) {
       case 'search':
         return await handleKeywordSearch(twitterClient, params, req, res)
-      case 'hashtag':
-        return await handleHashtagAnalysis(twitterClient, params, req, res)
       case 'combined-search':
         return await handleCombinedSearch(twitterClient, params, req, res)
       case 'separated-search':
@@ -1046,12 +1667,12 @@ async function handleRealTwitterRequest(action, params, req, res) {
         return await handleAccountAnalysis(twitterClient, params, req, res)
       case 'discover-hashtags':
         return await handleHashtagDiscovery(twitterClient, params, req, res)
-      case 'sentiment':
-        return await handleSentimentAnalysis(twitterClient, params, req, res)
+      case 'save-account-specific':
+        return await handleSaveAccountSpecific(req, res)
       default:
         return res.status(400).json({
           error: 'Invalid action',
-          message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
+          message: 'Supported actions: search, combined-search, separated-search, account-analysis, discover-hashtags, save-account-specific'
         })
     }
   } catch (error) {
@@ -1239,6 +1860,7 @@ async function handleKeywordSearch(client, params, req, res) {
           confidence: sentiment.confidence
         },
         hashtags,
+        mentions: tweet.entities?.mentions?.map(mention => `@${mention.username}`) || [],
         url: `https://twitter.com/${author?.username}/status/${tweet.id}`,
         replies: [] // Will be populated if mentions is enabled
       }
@@ -1370,6 +1992,23 @@ async function handleSeparatedSearch(client, params, req, res) {
     // Calculate global analytics
     const globalAnalytics = calculateGlobalAnalytics(accountResult, keywordResult, hashtagResult)
     
+    // NEW: Add account-specific saving for separated searches with account data
+    let accountSpecific = null
+    if (hasAccount && accountResult && accountResult.tweets && accountResult.tweets.length > 0) {
+      console.log(`🎯 Account found in separated search for @${accountUsername} - preparing account-specific data`)
+      
+      const cleanUsername = accountUsername.replace(/^@/, '')
+      accountSpecific = await saveAccountSpecificTweets(
+        cleanUsername,
+        accountResult.tweets,
+        { keyword, hashtags, includeMentions, limit, sortOrder }
+      )
+      
+      if (accountSpecific) {
+        console.log(`✅ Account-specific data prepared for @${cleanUsername}`)
+      }
+    }
+    
     // Build the final response
     const response = {
       success: true,
@@ -1389,7 +2028,9 @@ async function handleSeparatedSearch(client, params, req, res) {
         limit,
         global
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // NEW: Include account-specific data if available (for frontend database saving)
+      ...(accountSpecific && { accountSpecific })
     }
     
     console.log('✅ Separated search complete:', {
@@ -1571,6 +2212,17 @@ async function searchAccountData(client, params) {
     
     // Format tweets
     const formattedTweets = formatTweets(tweets, users)
+    
+    // FIXED: Add missing reply fetching logic for separated search (was only in standalone account analysis)
+    if (includeMentions) {
+      console.log('📱 Fetching replies for account tweets in separated search...')
+      const tweetsToFetchReplies = formattedTweets.slice(0, 3)
+      
+      for (const tweet of tweetsToFetchReplies) {
+        const replies = await fetchTweetReplies(client, tweet.id, 5, cleanUsername)
+        tweet.replies = replies
+      }
+    }
     
     // Calculate account-specific analytics
     const accountAnalytics = generateAccountSpecificAnalytics(formattedTweets, cleanUsername)
@@ -1957,6 +2609,13 @@ async function handleAccountAnalysis(client, params, req, res) {
       // Continue without AI - not critical
     }
     
+    // NEW: Add account-specific saving data to response (Dev Server)
+    const accountSavingData = await saveAccountSpecificTweets(
+      cleanUsername, 
+      formattedTweets, 
+      { keyword, hashtags, includeMentions, limit, sortOrder }
+    );
+    
     return res.status(200).json({
       success: true,
       data: formattedTweets,
@@ -1967,7 +2626,9 @@ async function handleAccountAnalysis(client, params, req, res) {
         hashtags: hashtags || []
       },
       total: tweets.length,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // NEW: Account-specific data for frontend database insertion
+      accountSpecific: accountSavingData
     })
     
   } catch (error) {
@@ -2054,19 +2715,7 @@ async function handleHashtagDiscovery(client, params, req, res) {
 }
 
 // Placeholder handlers
-async function handleHashtagAnalysis(client, params, req, res) {
-  return res.status(501).json({
-    error: 'Not implemented',
-    message: 'Hashtag analysis will be implemented in future version'
-  })
-}
 
-async function handleSentimentAnalysis(client, params, req, res) {
-  return res.status(501).json({
-    error: 'Not implemented',
-    message: 'Sentiment analysis will be implemented in future version'
-  })
-}
 
 // Utility functions for real Twitter API
 
@@ -2682,6 +3331,7 @@ function formatTweets(tweets, users) {
         confidence: sentiment.confidence
       },
       hashtags,
+      mentions: tweet.entities?.mentions?.map(mention => `@${mention.username}`) || [],
       url: `https://twitter.com/${author?.username}/status/${tweet.id}`,
       replies: [] // Initialize replies array - will be populated if mentions is enabled
     };
@@ -3246,6 +3896,7 @@ function generateMockTweets(query, limit = 10, options = {}) {
         confidence: Number((Math.random() * 0.4 + 0.6).toFixed(2))
       },
       hashtags,
+      mentions: [`@user${Math.floor(Math.random() * 5) + 1}`, '@influencer', '@expert'].slice(0, Math.floor(Math.random() * 2) + 1),
       url: `https://twitter.com/${user.username}/status/mock_${Date.now()}_${i}`,
       replies: includeMentions ? generateMockReplies(user.username, query, Math.floor(Math.random() * 8) + 2) : []
     }
@@ -3611,16 +4262,2088 @@ app.post('/api/news-analytics', async (req, res) => {
   }
 })
 
+// Reddit Analytics API - Development Environment
+app.post('/api/reddit-analytics', async (req, res) => {
+  try {
+    console.log('\n🔍 === REDDIT ANALYTICS START ===')
+    console.log('📝 Raw request body:', JSON.stringify(req.body, null, 2))
+    
+    // DIAGNOSTIC: Log environment variables
+    console.log('🔧 ENVIRONMENT DIAGNOSTICS:')
+    console.log('  NODE_ENV:', process.env.NODE_ENV)
+    console.log('  REDDIT_MOCK_MODE:', process.env.REDDIT_MOCK_MODE)
+    console.log('  APIFY_API_KEY present:', !!(process.env.APIFY_API_KEY || process.env.APIFY_API_TOKEN || process.env.apify_api_key))
+    console.log('  APIFY_API_KEY value:', process.env.APIFY_API_KEY ? `${process.env.APIFY_API_KEY.substring(0, 8)}...` : 'NOT SET')
+    console.log('  All env vars for Reddit:', {
+      REDDIT_MOCK_MODE: process.env.REDDIT_MOCK_MODE,
+      APIFY_API_KEY: process.env.APIFY_API_KEY ? 'SET' : 'NOT SET',
+      APIFY_API_TOKEN: process.env.APIFY_API_TOKEN ? 'SET' : 'NOT SET',
+      apify_api_key: process.env.apify_api_key ? 'SET' : 'NOT SET'
+    })
+    
+    const { 
+      action, 
+      searchType, 
+      query, 
+      subreddit, 
+      username, 
+      sortOrder = 'hot', 
+      timeRange, 
+      maxItems = 25, 
+      includeComments = false,
+      includeCommunityInfo = true,
+      user_id 
+    } = req.body
+    
+    console.log(`🔍 Parsed parameters:`, { 
+      action, searchType, query, subreddit, username, sortOrder, timeRange, maxItems, includeComments, includeCommunityInfo
+    })
+    
+    // Validate required parameters
+    if (!action || action !== 'search') {
+      console.error('❌ Missing or invalid action parameter')
+      return res.status(400).json({
+        error: 'Missing required field',
+        message: 'Action must be "search"'
+      })
+    }
+    
+    if (!searchType) {
+      console.error('❌ Missing searchType parameter')
+      return res.status(400).json({
+        error: 'Missing search type',
+        message: 'searchType is required (subreddit, search, user)'
+      })
+    }
+    
+    console.log(`🎯 Processing searchType: ${searchType}`)
+    
+    // DIAGNOSTIC: Check mock mode decision
+    console.log('🎯 MOCK MODE DECISION:')
+    console.log('  process.env.REDDIT_MOCK_MODE:', JSON.stringify(process.env.REDDIT_MOCK_MODE))
+    console.log('  typeof process.env.REDDIT_MOCK_MODE:', typeof process.env.REDDIT_MOCK_MODE)
+    console.log('  process.env.REDDIT_MOCK_MODE === "true":', process.env.REDDIT_MOCK_MODE === 'true')
+    
+    // Check if we should use mock mode
+    const mockMode = process.env.REDDIT_MOCK_MODE === 'true'
+    console.log(`🎯 Final mockMode decision: ${mockMode}`)
+    
+    if (mockMode) {
+      console.log('🔧 ENTERING MOCK MODE - Will return mock data')
+      console.log('🔧 Reason: REDDIT_MOCK_MODE environment variable is set to "true"')
+      
+      let mockQuery = ''
+      switch (searchType) {
+        case 'subreddit':
+          if (!subreddit) {
+            return res.status(400).json({
+              error: 'Missing subreddit',
+              message: 'Subreddit is required for subreddit search'
+            })
+          }
+          mockQuery = subreddit
+          break
+        case 'search':
+          if (!query) {
+            return res.status(400).json({
+              error: 'Missing query',
+              message: 'Query is required for search'
+            })
+          }
+          mockQuery = query
+          break
+        case 'user':
+          if (!username) {
+            return res.status(400).json({
+              error: 'Missing username',
+              message: 'Username is required for user search'
+            })
+          }
+          mockQuery = username
+          break
+        default:
+          return res.status(400).json({
+            error: 'Invalid search type',
+            message: 'searchType must be: subreddit, search, or user'
+          })
+      }
+      
+      const mockData = generateMockRedditPosts(mockQuery, maxItems, searchType)
+      const analytics = generateRedditAnalytics(mockData, mockQuery, searchType)
+      
+      console.log(`✅ Mock Reddit search completed: ${mockData.length} posts`)
+      console.log('📤 FINAL RESPONSE ANALYTICS:', JSON.stringify(analytics, null, 2))
+      console.log('=== END REDDIT ANALYTICS ===\n')
+      
+      return res.status(200).json({
+        success: true,
+        mock: true,
+        data: mockData,
+        analytics,
+        searchQuery: mockQuery,
+        searchType,
+        total: mockData.length,
+        timestamp: new Date().toISOString()
+      })
+    }
+    
+    // DIAGNOSTIC: Entering production mode
+    console.log('🚀 ENTERING PRODUCTION MODE - Will use real Apify API')
+    console.log('🚀 Reason: REDDIT_MOCK_MODE is not "true", proceeding with real API calls')
+    
+    // DIAGNOSTIC: Test API key availability before proceeding
+    const testApiKey = process.env.APIFY_API_KEY || process.env.APIFY_API_TOKEN || process.env.apify_api_key;
+    console.log('🔑 API KEY CHECK:')
+    console.log('  API key found:', !!testApiKey)
+    console.log('  API key source:', 
+      process.env.APIFY_API_KEY ? 'APIFY_API_KEY' : 
+      process.env.APIFY_API_TOKEN ? 'APIFY_API_TOKEN' : 
+      process.env.apify_api_key ? 'apify_api_key' : 'NONE')
+    console.log('  API key preview:', testApiKey ? `${testApiKey.substring(0, 8)}...${testApiKey.substring(testApiKey.length - 4)}` : 'NOT FOUND')
+    
+    // Check rate limiting
+    if (!apifyRateLimiter.canMakeRequest()) {
+      return res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Too many requests. Please wait before trying again.',
+        retryAfter: apifyRateLimiter.getTimeUntilReset()
+      });
+    }
+    
+    // DIAGNOSTIC: Initialize Apify client with detailed logging
+    console.log('🔌 INITIALIZING APIFY CLIENT...')
+    let apifyClient;
+    try {
+      apifyClient = getApifyClient();
+      console.log('✅ Apify client initialized successfully')
+      console.log('  Client baseUrl:', apifyClient.baseUrl)
+      console.log('  Client token preview:', apifyClient.token ? `${apifyClient.token.substring(0, 8)}...` : 'MISSING')
+    } catch (clientError) {
+      console.error('❌ FAILED TO INITIALIZE APIFY CLIENT:', clientError.message)
+      console.error('❌ Full error:', clientError)
+      throw clientError;
+    }
+    
+    // DIAGNOSTIC: Route to appropriate Reddit handler
+    console.log(`🛤️ ROUTING TO REDDIT HANDLER: ${searchType}`)
+    switch (searchType) {
+      case 'subreddit':
+        console.log('➡️ CALLING handleSubredditSearch (Reddit)')
+        return await handleSubredditSearch(apifyClient, req, res);
+      case 'search':
+        console.log('➡️ CALLING handleRedditKeywordSearch (Reddit)')
+        return await handleRedditKeywordSearch(apifyClient, req, res);
+      case 'user':
+        console.log('➡️ CALLING handleRedditUserSearch (Reddit)')
+        return await handleRedditUserSearch(apifyClient, req, res);
+      default:
+        console.log('❌ INVALID SEARCH TYPE:', searchType)
+        return res.status(400).json({
+          error: 'Invalid search type',
+          message: 'Supported search types: subreddit, search, user'
+        });
+    }
+    
+  } catch (error) {
+    console.error('❌ Reddit Analytics API Error:', error)
+    console.error('=== END REDDIT ERROR ===\n')
+    
+    // Enhanced error handling
+    if (error.message?.includes('Apify API token not found')) {
+      return res.status(401).json({
+        error: 'Authentication failed',
+        message: 'Apify API token not found. Please set APIFY_API_KEY in your .env file',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    if (error.message?.includes('rate limit')) {
+      return res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Please wait before making another request',
+        retryAfter: apifyRateLimiter.getTimeUntilReset(),
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    if (error.message?.includes('Apify API error')) {
+      return res.status(502).json({
+        error: 'External API error',
+        message: 'Apify Reddit Scraper API is currently unavailable',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    return res.status(500).json({
+      error: 'Reddit analytics failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+})
+
+// Apify Reddit Client Functions (ported from serverless function)
+const getApifyClient = () => {
+  // Support both naming conventions for environment variables
+  const apiToken = process.env.APIFY_API_TOKEN || process.env.APIFY_API_KEY || process.env.apify_api_key;
+  
+  if (!apiToken) {
+    throw new Error('Apify API token not found. Please set APIFY_API_KEY in your .env file');
+  }
+  
+  return {
+    token: apiToken,
+    baseUrl: 'https://api.apify.com/v2'
+  };
+};
+
+// Rate limiting tracker for Apify API
+const apifyRateLimiter = {
+  requests: [],
+  limit: 50, // Conservative limit for Apify API
+  window: 5 * 60 * 1000, // 5 minutes
+  
+  canMakeRequest() {
+    const now = Date.now();
+    this.requests = this.requests.filter(time => now - time < this.window);
+    
+    if (this.requests.length >= this.limit) {
+      return false;
+    }
+    
+    this.requests.push(now);
+    return true;
+  },
+  
+  getTimeUntilReset() {
+    if (this.requests.length === 0) return 0;
+    const oldest = Math.min(...this.requests);
+    return Math.max(0, this.window - (Date.now() - oldest));
+  }
+};
+
+// Helper function to wait for Apify run completion
+async function waitForApifyCompletion(client, runId, timeout = 60000) {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeout) {
+    try {
+      // Check run status
+      const statusResponse = await fetch(
+        `${client.baseUrl}/actor-runs/${runId}?token=${client.token}`
+      );
+      
+      if (!statusResponse.ok) {
+        throw new Error(`Status check failed: ${statusResponse.status}`);
+      }
+      
+      const statusData = await statusResponse.json();
+      const status = statusData.data.status;
+      
+      if (status === 'SUCCEEDED') {
+        // Get results
+        const resultsResponse = await fetch(
+          `${client.baseUrl}/actor-runs/${runId}/dataset/items?token=${client.token}`
+        );
+        
+        if (!resultsResponse.ok) {
+          throw new Error(`Results fetch failed: ${resultsResponse.status}`);
+        }
+        
+        return await resultsResponse.json();
+      } else if (status === 'FAILED' || status === 'TIMED-OUT' || status === 'ABORTED') {
+        throw new Error(`Apify run failed with status: ${status}`);
+      }
+      
+      // Wait before next check
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+    } catch (error) {
+      console.error('Error checking Apify run status:', error);
+      throw error;
+    }
+  }
+  
+  throw new Error('Apify run timed out');
+}
+
+// Mock data generator for Reddit development
+function generateMockRedditPosts(query, limit = 10, searchType = 'subreddit') {
+  const mockAuthors = ['user1', 'user2', 'user3', 'poweruser', 'expert_redditor']
+  const mockSubreddits = ['technology', 'science', 'AskReddit', 'worldnews', 'funny']
+  
+  return Array(limit).fill(null).map((_, i) => ({
+    id: `mock_${Date.now()}_${i}`,
+    title: `Mock post about ${query} - Discussion ${i + 1}`,
+    selftext: `This is mock content for post ${i + 1} about ${query}. Lorem ipsum dolor sit amet.`,
+    author: mockAuthors[i % mockAuthors.length],
+    subreddit: searchType === 'subreddit' ? query : mockSubreddits[i % mockSubreddits.length],
+    subreddit_prefixed: searchType === 'subreddit' ? `r/${query}` : `r/${mockSubreddits[i % mockSubreddits.length]}`,
+    score: Math.floor(Math.random() * 10000) + 10,
+    upvote_ratio: (Math.random() * 0.4 + 0.6).toFixed(2), // 0.6 to 1.0
+    num_comments: Math.floor(Math.random() * 500) + 5,
+    created_utc: Math.floor((Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) / 1000),
+    url: `https://reddit.com/r/${query}/comments/mock${i}`,
+    permalink: `/r/${query}/comments/mock${i}/mock_post_${i}/`,
+    is_video: Math.random() > 0.8,
+    is_original_content: Math.random() > 0.9,
+    over_18: false,
+    spoiler: Math.random() > 0.95,
+    locked: false,
+    gilded: Math.floor(Math.random() * 3),
+    total_awards_received: Math.floor(Math.random() * 10),
+    post_hint: Math.random() > 0.7 ? 'image' : null,
+    domain: Math.random() > 0.5 ? 'self.' + query : 'example.com',
+    sentiment: {
+      label: ['positive', 'negative', 'neutral'][i % 3],
+      score: (Math.random() * 2 - 1).toFixed(2) // -1 to 1
+    }
+  }))
+}
+
+// Generate analytics from Reddit posts
+function generateRedditAnalytics(posts, searchQuery, searchType) {
+  console.log('\n📈 === REDDIT ANALYTICS CALCULATION START ===')
+  console.log('📊 Input data:', {
+    postsCount: posts.length,
+    searchQuery,
+    searchType
+  })
+  
+  // Log sample of input data structure for debugging
+  if (posts.length > 0) {
+    console.log('📝 Sample post structure:', {
+      id: posts[0].id,
+      score: posts[0].score,
+      num_comments: posts[0].num_comments,
+      author: posts[0].author,
+      subreddit: posts[0].subreddit,
+      created_utc: posts[0].created_utc,
+      sentiment: posts[0].sentiment,
+      availableFields: Object.keys(posts[0])
+    })
+  }
+  
+  if (posts.length === 0) {
+    console.log('⚠️ No posts provided - returning zero analytics')
+    return {
+      totalPosts: 0,
+      totalComments: 0,
+      totalScore: 0,
+      avgScore: 0,
+      avgCommentsPerPost: 0,
+      topPostScore: 0,
+      viralPotential: 0,
+      avgSentiment: 0,
+      sentimentBreakdown: { positive: 0, negative: 0, neutral: 0 },
+      topAuthors: [],
+      topSubreddits: [],
+      peakHour: null
+    }
+  }
+  
+  // Basic metrics with detailed logging
+  console.log('🔢 Calculating basic metrics...')
+  // Map both old and new field names for compatibility
+  const totalScore = posts.reduce((sum, post) => sum + (post.score || post.upVotes || 0), 0)
+  const totalComments = posts.reduce((sum, post) => sum + (post.num_comments || post.numberOfComments || 0), 0)
+  const avgScore = Math.floor(totalScore / posts.length)
+  const avgCommentsPerPost = Math.floor(totalComments / posts.length)
+  const topPostScore = Math.max(...posts.map(post => post.score || post.upVotes || 0))
+  
+  console.log('📊 Basic metrics calculated:', {
+    totalScore,
+    totalComments,
+    avgScore,
+    avgCommentsPerPost,
+    topPostScore
+  })
+  
+  // Sentiment analysis
+  console.log('😊 Calculating sentiment analysis...')
+  const sentimentCounts = posts.reduce((acc, post) => {
+    const label = post.sentiment?.label || 'neutral'
+    acc[label] = (acc[label] || 0) + 1
+    return acc
+  }, { positive: 0, negative: 0, neutral: 0 })
+  
+  const avgSentiment = posts.length > 0 
+    ? posts.reduce((sum, post) => sum + parseFloat(post.sentiment?.score || 0), 0) / posts.length 
+    : 0
+    
+  console.log('😊 Sentiment analysis:', {
+    sentimentCounts,
+    avgSentiment
+  })
+  
+  // Top authors
+  console.log('👤 Calculating top authors...')
+  const authorCounts = {}
+  posts.forEach(post => {
+    const author = post.author || post.username || '[deleted]'
+    if (author && author !== '[deleted]') {
+      authorCounts[author] = (authorCounts[author] || 0) + 1
+    }
+  })
+  
+  const topAuthors = Object.entries(authorCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 5)
+    .map(([author, count]) => ({ username: author, posts: count }))
+    
+  console.log('👤 Top authors calculated:', topAuthors)
+  
+  // Top subreddits
+  console.log('🏠 Calculating top subreddits...')
+  const subredditCounts = {}
+  posts.forEach(post => {
+    const subreddit = post.subreddit || post.parsedCommunityName
+    if (subreddit) {
+      subredditCounts[subreddit] = (subredditCounts[subreddit] || 0) + 1
+    }
+  })
+  
+  const topSubreddits = Object.entries(subredditCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 5)
+    .map(([subreddit, count]) => ({ name: subreddit, posts: count }))
+    
+  console.log('🏠 Top subreddits calculated:', topSubreddits)
+  
+  // Peak posting hour analysis
+  console.log('⏰ Calculating peak posting hour...')
+  const hourCounts = {}
+  posts.forEach(post => {
+    if (post.created_utc) {
+      const hour = new Date(post.created_utc * 1000).getHours()
+      hourCounts[hour] = (hourCounts[hour] || 0) + 1
+    }
+  })
+  
+  const peakHour = Object.entries(hourCounts)
+    .sort(([,a], [,b]) => b - a)[0]?.[0] || null
+    
+  console.log('⏰ Peak hour analysis:', {
+    hourCounts,
+    peakHour
+  })
+  
+  // Viral potential
+  console.log('🚀 Calculating viral potential...')
+  const viralPotential = Math.min(100, Math.floor((avgScore + avgCommentsPerPost) / 100 * 10))
+  console.log('🚀 Viral potential calculated:', viralPotential)
+  
+  const finalAnalytics = {
+    totalPosts: posts.length,
+    totalComments,
+    totalScore,
+    avgScore,
+    avgCommentsPerPost,
+    topPostScore,
+    viralPotential,
+    avgSentiment: Number(avgSentiment.toFixed(2)),
+    sentimentBreakdown: sentimentCounts,
+    topAuthors,
+    topSubreddits,
+    peakHour: peakHour ? parseInt(peakHour) : null
+  }
+  
+  console.log('✅ Final analytics calculated:', finalAnalytics)
+  console.log('=== REDDIT ANALYTICS CALCULATION END ===\n')
+  
+  return finalAnalytics
+}
+
+// Subreddit search handler (ported from serverless function)
+async function handleSubredditSearch(client, req, res) {
+  try {
+    console.log('🏠 === SUBREDDIT SEARCH HANDLER START ===')
+    
+    const { 
+      subreddit, 
+      sortOrder = 'hot', 
+      timeRange, 
+      maxItems = 25,
+      includeComments = false,
+      includeCommunityInfo = true
+    } = req.body;
+    
+    console.log('🏠 SUBREDDIT SEARCH PARAMS:', {
+      subreddit, sortOrder, timeRange, maxItems, includeComments, includeCommunityInfo
+    })
+    
+    if (!subreddit) {
+      console.log('❌ SUBREDDIT SEARCH ERROR: Missing subreddit parameter')
+      return res.status(400).json({
+        error: 'Missing subreddit',
+        message: 'Subreddit name is required'
+      });
+    }
+    
+    console.log(`🔍 Subreddit search: r/${subreddit} | Sort: ${sortOrder} | Items: ${maxItems}`);
+    
+    // Build simple Apify input for subreddit search (RESTORED WORKING FORMAT)
+    console.log('🏗️ BUILDING SIMPLE SUBREDDIT APIFY INPUT...')
+    
+    // Clean subreddit name: remove r/ prefix and spaces
+    const cleanSubreddit = subreddit.replace(/^r\//, '').replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+    
+    // Ultra simple working Apify input format with comment control
+    const input = {
+      searches: [`subreddit:${cleanSubreddit}`],
+      maxItems: parseInt(maxItems)
+    };
+    
+    // Add sort parameters if provided
+    if (sortOrder && sortOrder !== 'hot') {
+      input.sort = sortOrder;
+    }
+    if (sortOrder === 'top' && timeRange) {
+      input.time = timeRange; 
+    }
+    
+    // CRITICAL: Backend filtering strategy (Apify always returns mixed posts+comments)
+    if (includeComments) {
+      console.log('💬 Comments ENABLED: Will return posts with comments');
+      // Request normal amount - return mixed posts+comments as-is
+      input.maxItems = parseInt(maxItems);
+    } else {
+      console.log('📝 Posts ONLY: Will filter out comments, requesting extra items');
+      // Request 4x more items to ensure we get enough posts after filtering
+      input.maxItems = Math.max(parseInt(maxItems) * 4, 100);
+    }
+    
+    console.log('📋 SIMPLE APIFY INPUT:', JSON.stringify(input, null, 2))
+    console.log('✅ Using original working format with sort parameters included')
+    console.log('🔗 APIFY API ENDPOINT:', `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs`)
+    console.log('🔑 APIFY TOKEN PREVIEW:', client.token ? `${client.token.substring(0, 8)}...${client.token.substring(client.token.length - 4)}` : 'MISSING')
+    
+    // Make simple Apify API call
+    const runResponse = await fetch(
+      `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs?token=${client.token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input)
+      }
+    );
+    
+    console.log('📡 APIFY RESPONSE STATUS:', runResponse.status, runResponse.statusText)
+    console.log('📡 APIFY RESPONSE HEADERS:', Object.fromEntries(runResponse.headers.entries()))
+    
+    if (!runResponse.ok) {
+      const errorText = await runResponse.text();
+      console.error('❌ APIFY API ERROR:', errorText)
+      throw new Error(`Apify API error: ${runResponse.status} ${runResponse.statusText} - ${errorText}`);
+    }
+    
+    const runData = await runResponse.json();
+    console.log('📋 APIFY RUN DATA:', JSON.stringify(runData, null, 2))
+    const runId = runData.data.id;
+    console.log('🆔 APIFY RUN ID:', runId)
+    
+    // DIAGNOSTIC: Wait for completion with detailed logging
+    console.log('⏳ WAITING FOR APIFY COMPLETION...')
+    const results = await waitForApifyCompletion(client, runId, 60000); // 60 second timeout
+    console.log('✅ APIFY COMPLETION RESULTS:')
+    console.log('  Results type:', typeof results)
+    console.log('  Results is array:', Array.isArray(results))
+    console.log('  Results length:', results?.length || 'N/A')
+    console.log('  First result sample:', results?.[0] ? JSON.stringify(results[0], null, 2) : 'No results')
+    
+    // CRITICAL: Process and filter results based on user preference
+    console.log('🔄 PROCESSING RESULTS...')
+    console.log(`🎯 User preference: includeComments = ${includeComments}`)
+    
+    // Separate posts and comments using correct field name
+    const allPosts = results.filter(item => item.dataType === 'post');
+    const allComments = results.filter(item => item.dataType === 'comment');
+    
+    console.log('📊 Raw results breakdown:', {
+      totalItems: results.length,
+      posts: allPosts.length,
+      comments: allComments.length,
+      requestedPosts: parseInt(maxItems)
+    })
+    
+    let finalResults = [];
+    
+    if (includeComments) {
+      // Comments enabled: return all posts and comments (natural mix)
+      console.log('💬 Including all posts and comments');
+      finalResults = results; // Return everything as-is
+    } else {
+      // Comments disabled: return only posts up to requested limit
+      console.log(`📝 Posts only: Taking first ${maxItems} posts from ${allPosts.length} available`);
+      finalResults = allPosts.slice(0, parseInt(maxItems));
+    }
+    
+    const posts = finalResults.filter(item => item.dataType === 'post');
+    console.log('📊 FINAL FILTERED RESULTS:', {
+      totalItems: finalResults.length,
+      posts: posts.length,
+      comments: finalResults.filter(item => item.dataType === 'comment').length
+    })
+    
+    // Format all final results with sentiment analysis (posts and comments if included)
+    const formattedResults = finalResults.map(item => ({
+      ...item,
+      sentiment: item.dataType === 'post' 
+        ? calculateBasicSentiment(item.title + ' ' + (item.body || ''))
+        : calculateBasicSentiment(item.body || '')
+    }));
+    console.log('✨ FORMATTED RESULTS:', formattedResults.length, 'items with sentiment analysis')
+    
+    // Generate analytics based on posts only (even if comments included)
+    console.log('📈 GENERATING ANALYTICS...')
+    const analytics = generateRedditAnalytics(posts, subreddit, 'subreddit');
+    console.log('📈 ANALYTICS GENERATED:', Object.keys(analytics))
+    console.log('📤 FINAL SUBREDDIT RESPONSE ANALYTICS:', JSON.stringify(analytics, null, 2))
+    
+    console.log('✅ SUBREDDIT SEARCH COMPLETED SUCCESSFULLY')
+    console.log('=== END SUBREDDIT SEARCH ===\n')
+    
+    return res.status(200).json({
+      success: true,
+      mock: false,
+      data: formattedResults,
+      analytics,
+      searchQuery: subreddit,
+      searchType: 'subreddit',
+      total: formattedResults.length,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Subreddit search error:', error);
+    return res.status(500).json({
+      error: 'Search failed',
+      message: 'Failed to search subreddit. Please try again.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
+
+// Helper function to build Reddit URLs with sort parameters
+function buildRedditSearchUrl(query, searchType, params = {}) {
+  const { sortOrder = 'hot', timeRange = null, subreddit = null, username = null } = params;
+  
+  let baseUrl = 'https://www.reddit.com';
+  
+  switch (searchType) {
+    case 'search':
+      // Global search across all Reddit
+      baseUrl += `/search/?q=${encodeURIComponent(query)}`;
+      break;
+      
+    case 'subreddit':
+      // Subreddit-specific search or browse
+      // Clean subreddit name: remove spaces, special chars, and r/ prefix
+      const cleanSubreddit = subreddit.replace(/^r\//, '').replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+      
+      if (query && query.trim()) {
+        // Search within specific subreddit
+        baseUrl += `/r/${cleanSubreddit}/search/?q=${encodeURIComponent(query)}&restrict_sr=1`;
+      } else {
+        // Browse subreddit (no search query)
+        baseUrl += `/r/${cleanSubreddit}/`;
+      }
+      break;
+      
+    case 'user':
+      // User's submitted posts
+      // Clean username: remove u/ prefix and encode
+      const cleanUsername = username.replace(/^u\//, '');
+      baseUrl += `/user/${encodeURIComponent(cleanUsername)}/submitted/`;
+      break;
+      
+    default:
+      throw new Error(`Unsupported search type: ${searchType}`);
+  }
+  
+  // Add sort parameter
+  if (sortOrder && sortOrder !== 'hot') {
+    const sortParam = baseUrl.includes('?') ? '&' : '?';
+    baseUrl += `${sortParam}sort=${sortOrder}`;
+  }
+  
+  // Add time range for "top" sort
+  if (sortOrder === 'top' && timeRange) {
+    baseUrl += `&t=${timeRange}`;
+  }
+  
+  return baseUrl;
+}
+
+// Reddit keyword search handler (for searchType: "search")
+async function handleRedditKeywordSearch(client, req, res) {
+  try {
+    console.log('🔍 === REDDIT KEYWORD SEARCH HANDLER START ===')
+    
+    const { 
+      query, 
+      sortOrder = 'relevance', 
+      timeRange, 
+      maxItems = 25,
+      includeComments = false
+    } = req.body;
+    
+    console.log('🔍 REDDIT KEYWORD SEARCH PARAMS:', {
+      query, sortOrder, timeRange, maxItems, includeComments
+    })
+    
+    if (!query) {
+      console.log('❌ REDDIT KEYWORD SEARCH ERROR: Missing query parameter')
+      return res.status(400).json({
+        error: 'Missing query',
+        message: 'Search query is required'
+      });
+    }
+    
+    console.log(`🔍 Reddit keyword search: "${query}" | Sort: ${sortOrder} | Items: ${maxItems}`);
+    
+    // Build simple Apify input for Reddit keyword search (RESTORED WORKING FORMAT)
+    console.log('🏗️ BUILDING SIMPLE REDDIT KEYWORD SEARCH INPUT...')
+    
+    // Ultra simple working Apify input format 
+    const input = {
+      searches: [query],
+      maxItems: parseInt(maxItems)
+    };
+    
+    // Add sort parameters if provided
+    if (sortOrder && sortOrder !== 'relevance') {
+      input.sort = sortOrder;
+    }
+    if (sortOrder === 'top' && timeRange) {
+      input.time = timeRange; 
+    }
+    
+    // CRITICAL: Backend filtering strategy (Apify always returns mixed posts+comments)
+    if (includeComments) {
+      console.log('💬 Comments ENABLED: Will return posts with comments');
+      // Request normal amount - return mixed posts+comments as-is
+      input.maxItems = parseInt(maxItems);
+    } else {
+      console.log('📝 Posts ONLY: Will filter out comments, requesting extra items');
+      // Request 4x more items to ensure we get enough posts after filtering
+      input.maxItems = Math.max(parseInt(maxItems) * 4, 100);
+    }
+    
+    console.log('📋 SIMPLE SEARCH INPUT:', JSON.stringify(input, null, 2))
+    console.log('✅ Using original working format with sort parameters included')
+    console.log('🔗 APIFY API ENDPOINT:', `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs`)
+    console.log('🔑 APIFY TOKEN PREVIEW:', client.token ? `${client.token.substring(0, 8)}...${client.token.substring(client.token.length - 4)}` : 'MISSING')
+    
+    // Make simple Apify API call
+    const runResponse = await fetch(
+      `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs?token=${client.token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input)
+      }
+    );
+    
+    console.log('📡 REDDIT SEARCH RESPONSE STATUS:', runResponse.status, runResponse.statusText)
+    console.log('📡 REDDIT SEARCH RESPONSE HEADERS:', Object.fromEntries(runResponse.headers.entries()))
+    
+    if (!runResponse.ok) {
+      const errorText = await runResponse.text();
+      console.error('❌ REDDIT SEARCH API ERROR:', errorText)
+      throw new Error(`Apify API error: ${runResponse.status} ${runResponse.statusText} - ${errorText}`);
+    }
+    
+    const runData = await runResponse.json();
+    console.log('📋 REDDIT SEARCH RUN DATA:', JSON.stringify(runData, null, 2))
+    const runId = runData.data.id;
+    console.log('🆔 REDDIT SEARCH RUN ID:', runId)
+    
+    // DIAGNOSTIC: Wait for completion with detailed logging
+    console.log('⏳ WAITING FOR REDDIT SEARCH COMPLETION...')
+    const results = await waitForApifyCompletion(client, runId, 60000); // 60 second timeout
+    console.log('✅ REDDIT SEARCH COMPLETION RESULTS:')
+    console.log('  Results type:', typeof results)
+    console.log('  Results is array:', Array.isArray(results))
+    console.log('  Results length:', results?.length || 'N/A')
+    console.log('  First result sample:', results?.[0] ? JSON.stringify(results[0], null, 2) : 'No results')
+    
+    // CRITICAL: Process and filter results based on user preference
+    console.log('🔄 PROCESSING REDDIT SEARCH RESULTS...')
+    console.log(`🎯 User preference: includeComments = ${includeComments}`)
+    
+    // Separate posts and comments using correct field name
+    const allPosts = results.filter(item => item.dataType === 'post');
+    const allComments = results.filter(item => item.dataType === 'comment');
+    
+    console.log('📊 Raw search results breakdown:', {
+      totalItems: results.length,
+      posts: allPosts.length,
+      comments: allComments.length,
+      requestedPosts: parseInt(maxItems)
+    })
+    
+    let finalResults = [];
+    
+    if (includeComments) {
+      // Comments enabled: return all posts and comments (natural mix)
+      console.log('💬 Including all posts and comments');
+      finalResults = results; // Return everything as-is
+    } else {
+      // Comments disabled: return only posts up to requested limit
+      console.log(`📝 Posts only: Taking first ${maxItems} posts from ${allPosts.length} available`);
+      finalResults = allPosts.slice(0, parseInt(maxItems));
+    }
+    
+    const posts = finalResults.filter(item => item.dataType === 'post');
+    console.log('📊 FINAL SEARCH RESULTS:', {
+      totalItems: finalResults.length,
+      posts: posts.length,
+      comments: finalResults.filter(item => item.dataType === 'comment').length
+    })
+    
+    // Format all final results with sentiment analysis (posts and comments if included)
+    const formattedResults = finalResults.map(item => ({
+      ...item,
+      sentiment: item.dataType === 'post' 
+        ? calculateBasicSentiment(item.title + ' ' + (item.body || ''))
+        : calculateBasicSentiment(item.body || '')
+    }));
+    console.log('✨ FORMATTED SEARCH RESULTS:', formattedResults.length, 'items with sentiment analysis')
+    
+    // Generate analytics based on posts only (even if comments included)
+    console.log('📈 GENERATING SEARCH ANALYTICS...')
+    const analytics = generateRedditAnalytics(posts, query, 'search');
+    console.log('📈 SEARCH ANALYTICS GENERATED:', Object.keys(analytics))
+    
+    console.log('✅ REDDIT KEYWORD SEARCH COMPLETED SUCCESSFULLY')
+    console.log('=== END REDDIT KEYWORD SEARCH ===\n')
+    
+    return res.status(200).json({
+      success: true,
+      mock: false,
+      data: formattedResults,
+      analytics,
+      searchQuery: query,
+      searchType: 'search',
+      total: formattedResults.length,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('❌ Reddit keyword search error:', error);
+    return res.status(500).json({
+      error: 'Search failed',
+      message: 'Failed to search Reddit. Please try again.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
+
+// Reddit user search handler (for searchType: "user")
+async function handleRedditUserSearch(client, req, res) {
+  try {
+    console.log('👤 === REDDIT USER SEARCH HANDLER START ===')
+    
+    const { 
+      username, 
+      sortOrder = 'new', 
+      maxItems = 25,
+      includeComments = false
+    } = req.body;
+    
+    console.log('👤 REDDIT USER SEARCH PARAMS:', {
+      username, sortOrder, maxItems, includeComments
+    })
+    
+    if (!username) {
+      console.log('❌ REDDIT USER SEARCH ERROR: Missing username parameter')
+      return res.status(400).json({
+        error: 'Missing username',
+        message: 'Username is required for user search'
+      });
+    }
+    
+    // Clean username (remove u/ prefix if present)
+    const cleanUsername = username.replace(/^u\//, '');
+    console.log(`👤 Reddit user search: u/${cleanUsername} | Sort: ${sortOrder} | Items: ${maxItems}`);
+    
+    // DIAGNOSTIC: Build Apify input for Reddit user search with URL-based sort
+    console.log('🏗️ BUILDING REDDIT USER SEARCH INPUT...')
+    
+    // Build Reddit URL with sort parameters for user
+    const userUrl = buildRedditSearchUrl('', 'user', { sortOrder, timeRange, username: cleanUsername });
+    console.log('🔗 BUILT USER URL:', userUrl);
+    
+    // Use startUrls parameter to get properly sorted user results
+    const input = {
+      startUrls: [userUrl],
+      maxItems: parseInt(maxItems)
+    };
+    
+    console.log('✅ Using URL-based search to apply sortOrder for user posts')
+    
+    console.log('📋 FINAL REDDIT USER SEARCH INPUT:', JSON.stringify(input, null, 2))
+    console.log('🔗 APIFY API ENDPOINT:', `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs`)
+    console.log('🔑 APIFY TOKEN PREVIEW:', client.token ? `${client.token.substring(0, 8)}...${client.token.substring(client.token.length - 4)}` : 'MISSING')
+    
+    // DIAGNOSTIC: Making Apify API call for Reddit user search
+    console.log('📡 MAKING REDDIT USER SEARCH API CALL...')
+    const runResponse = await fetch(
+      `${client.baseUrl}/acts/trudax~reddit-scraper-lite/runs?token=${client.token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input)
+      }
+    );
+    
+    console.log('📡 REDDIT USER SEARCH RESPONSE STATUS:', runResponse.status, runResponse.statusText)
+    console.log('📡 REDDIT USER SEARCH RESPONSE HEADERS:', Object.fromEntries(runResponse.headers.entries()))
+    
+    if (!runResponse.ok) {
+      const errorText = await runResponse.text();
+      console.error('❌ REDDIT USER SEARCH API ERROR:', errorText)
+      throw new Error(`Apify API error: ${runResponse.status} ${runResponse.statusText} - ${errorText}`);
+    }
+    
+    const runData = await runResponse.json();
+    console.log('📋 REDDIT USER SEARCH RUN DATA:', JSON.stringify(runData, null, 2))
+    const runId = runData.data.id;
+    console.log('🆔 REDDIT USER SEARCH RUN ID:', runId)
+    
+    // DIAGNOSTIC: Wait for completion with detailed logging
+    console.log('⏳ WAITING FOR REDDIT USER SEARCH COMPLETION...')
+    const results = await waitForApifyCompletion(client, runId, 60000); // 60 second timeout
+    console.log('✅ REDDIT USER SEARCH COMPLETION RESULTS:')
+    console.log('  Results type:', typeof results)
+    console.log('  Results is array:', Array.isArray(results))
+    console.log('  Results length:', results?.length || 'N/A')
+    console.log('  First result sample:', results?.[0] ? JSON.stringify(results[0], null, 2) : 'No results')
+    
+    // CRITICAL: Process and filter results based on user preference
+    console.log('🔄 PROCESSING REDDIT USER SEARCH RESULTS...')
+    console.log(`🎯 User preference: includeComments = ${includeComments}`)
+    
+    // Separate posts and comments using correct field name
+    const allPosts = results.filter(item => item.dataType === 'post');
+    const allComments = results.filter(item => item.dataType === 'comment');
+    
+    console.log('📊 Raw user results breakdown:', {
+      totalItems: results.length,
+      posts: allPosts.length,
+      comments: allComments.length,
+      requestedPosts: parseInt(maxItems)
+    })
+    
+    let finalResults = [];
+    
+    if (includeComments) {
+      // Comments enabled: return all posts and comments (natural mix)
+      console.log('💬 Including all posts and comments');
+      finalResults = results; // Return everything as-is
+    } else {
+      // Comments disabled: return only posts up to requested limit
+      console.log(`📝 Posts only: Taking first ${maxItems} posts from ${allPosts.length} available`);
+      finalResults = allPosts.slice(0, parseInt(maxItems));
+    }
+    
+    const posts = finalResults.filter(item => item.dataType === 'post');
+    console.log('📊 FINAL USER RESULTS:', {
+      totalItems: finalResults.length,
+      posts: posts.length,
+      comments: finalResults.filter(item => item.dataType === 'comment').length
+    })
+    
+    // Format all final results with sentiment analysis (posts and comments if included)
+    const formattedResults = finalResults.map(item => ({
+      ...item,
+      sentiment: item.dataType === 'post' 
+        ? calculateBasicSentiment(item.title + ' ' + (item.body || ''))
+        : calculateBasicSentiment(item.body || '')
+    }));
+    console.log('✨ FORMATTED USER RESULTS:', formattedResults.length, 'items with sentiment analysis')
+    
+    // Generate analytics based on posts only (even if comments included)
+    console.log('📈 GENERATING USER ANALYTICS...')
+    const analytics = generateRedditAnalytics(posts, cleanUsername, 'user');
+    console.log('📈 USER ANALYTICS GENERATED:', Object.keys(analytics))
+    
+    console.log('✅ REDDIT USER SEARCH COMPLETED SUCCESSFULLY')
+    console.log('=== END REDDIT USER SEARCH ===\n')
+    
+    return res.status(200).json({
+      success: true,
+      mock: false,
+      data: formattedResults,
+      analytics,
+      searchQuery: cleanUsername,
+      searchType: 'user',
+      total: formattedResults.length,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('❌ Reddit user search error:', error);
+    return res.status(500).json({
+      error: 'User search failed',
+      message: 'Failed to search user. Please try again.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
+
+// Domain Analytics endpoint - Replicates /api/domain-analytics.js serverless function
+app.post('/api/domain-analytics', async (req, res) => {
+  const { 
+    domainPattern, 
+    limit = 10, 
+    filterType = 'all', 
+    customFilters = null,
+    user_id,
+    session_id 
+  } = req.body
+
+  if (!domainPattern) {
+    return res.status(400).json({ error: 'Domain pattern is required' });
+  }
+
+  try {
+    console.log(`🔍 Domain Analytics Request: ${domainPattern} (${filterType}, limit: ${limit})`)
+
+    // Get DataForSEO credentials from environment (server-side uses non-VITE prefixed vars)
+    const DATAFORSEO_LOGIN = process.env.DATAFORSEO_LOGIN || process.env.VITE_DATAFORSEO_LOGIN
+    const DATAFORSEO_PASSWORD = process.env.DATAFORSEO_PASSWORD || process.env.VITE_DATAFORSEO_PASSWORD
+
+    // Debug credential loading
+    console.log('🔧 DataForSEO Credential Debug:')
+    console.log('  All env vars:', Object.keys(process.env).filter(key => key.includes('DATAFORSEO')))
+    console.log('  DATAFORSEO_LOGIN exists:', !!DATAFORSEO_LOGIN)
+    console.log('  DATAFORSEO_LOGIN value:', DATAFORSEO_LOGIN)
+    console.log('  DATAFORSEO_PASSWORD exists:', !!DATAFORSEO_PASSWORD)
+    console.log('  DATAFORSEO_PASSWORD value:', DATAFORSEO_PASSWORD)
+
+    if (!DATAFORSEO_LOGIN || !DATAFORSEO_PASSWORD) {
+      console.log('❌ Credentials not configured - throwing error')
+      throw new Error('DataForSEO credentials not configured')
+    }
+    
+    console.log('✅ Credentials loaded successfully')
+
+    // Create auth header
+    const credentials = Buffer.from(`${DATAFORSEO_LOGIN}:${DATAFORSEO_PASSWORD}`).toString('base64')
+    const authHeader = `Basic ${credentials}`
+    
+    // Debug auth header
+    console.log('🔒 Auth Header Debug:')
+    console.log('  Credentials (base64) length:', credentials.length)
+    console.log('  Auth header format:', authHeader.substring(0, 20) + '...')
+    console.log('  Auth header starts with "Basic ":', authHeader.startsWith('Basic '))
+
+    // Step 1: PRIMARY - Get domain analytics (WHOIS overview)
+    const primaryResults = await getDomainAnalytics({
+      domainPattern,
+      limit: parseInt(limit),
+      filterType,
+      customFilters,
+      authHeader
+    })
+
+    // Step 2: ENHANCED - Get additional data for comprehensive analysis
+    const domain = domainPattern
+    const cleanDomain = sanitizeDomainForBulkTraffic(domain)
+
+    console.log(`🚀 Starting enhanced analysis for: ${domain}`)
+
+    const [
+      bulkTrafficResponse,
+      competitorsResponse,
+      relevantPagesResponse,
+      backlinksResponse,
+      domainMetricsResponse
+    ] = await Promise.allSettled([
+      // Use sanitized domain for bulk traffic API (skip if invalid)
+      cleanDomain.length > 0 ? getBulkTrafficEstimation({
+        targets: [cleanDomain],
+        authHeader
+      }) : Promise.reject(new Error('Invalid domain after sanitization')),
+      getCompetitorsDomain({
+        target: domain,
+        authHeader
+      }),
+      getRelevantPages({
+        target: domain,
+        authHeader
+      }),
+      getBacklinksSummary({
+        target: domain,
+        authHeader
+      }),
+      getKeywordsForSite({
+        target: domain,
+        authHeader
+      })
+    ])
+
+    // Format primary results
+    const formattedPrimary = formatDomainResults(primaryResults)
+
+    // Build enhanced data object
+    const enhancedData = {
+      domain: domain,
+      trafficEstimation: bulkTrafficResponse.status === 'fulfilled' ? formatBulkTrafficResults(bulkTrafficResponse.value) : [],
+      competitors: competitorsResponse.status === 'fulfilled' ? formatCompetitorsResults(competitorsResponse.value) : [],
+      relevantPages: relevantPagesResponse.status === 'fulfilled' ? formatRelevantPagesResults(relevantPagesResponse.value) : [],
+      backlinks: backlinksResponse.status === 'fulfilled' ? formatBacklinksResults(backlinksResponse.value) : {},
+      domainMetrics: domainMetricsResponse.status === 'fulfilled' ? formatKeywordsForSiteResults(domainMetricsResponse.value) : [],
+      endpointStatus: {
+        bulkTraffic: bulkTrafficResponse.status,
+        competitors: competitorsResponse.status,
+        relevantPages: relevantPagesResponse.status,
+        backlinks: backlinksResponse.status,
+        domainMetrics: domainMetricsResponse.status
+      },
+      errors: {
+        bulkTraffic: bulkTrafficResponse.status === 'rejected' ? bulkTrafficResponse.reason?.message : null,
+        competitors: competitorsResponse.status === 'rejected' ? competitorsResponse.reason?.message : null,
+        relevantPages: relevantPagesResponse.status === 'rejected' ? relevantPagesResponse.reason?.message : null,
+        backlinks: backlinksResponse.status === 'rejected' ? backlinksResponse.reason?.message : null,
+        domainMetrics: domainMetricsResponse.status === 'rejected' ? domainMetricsResponse.reason?.message : null
+      }
+    }
+
+    // Count successful endpoints and total data points
+    const successfulEndpoints = 1 + Object.values(enhancedData.endpointStatus).filter(status => status === 'fulfilled').length
+    const totalDataPoints = (
+      formattedPrimary.length +
+      enhancedData.trafficEstimation.length +
+      enhancedData.competitors.length +
+      enhancedData.relevantPages.length +
+      (Object.keys(enhancedData.backlinks).length > 0 ? 1 : 0) +
+      enhancedData.domainMetrics.length
+    )
+
+    console.log(`✅ Domain analysis complete: ${successfulEndpoints}/5 endpoints successful, ${totalDataPoints} data points`)
+
+    // Return comprehensive results (same format as serverless function)
+    return res.status(200).json({
+      success: true,
+      results: {
+        primary: formattedPrimary,
+        enhanced: enhancedData
+      },
+      meta: {
+        endpointsSuccessful: successfulEndpoints,
+        totalEndpoints: 5,
+        totalDataPoints,
+        domain,
+        cleanDomain,
+        filterType,
+        limit: parseInt(limit)
+      }
+    })
+
+  } catch (error) {
+    console.error('❌ Domain Analytics Error:', error)
+    return res.status(500).json({ 
+      error: error.message || 'Failed to retrieve domain analytics',
+      details: error.stack
+    })
+  }
+})
+
+// Helper functions for domain analytics (server-side implementation)
+function sanitizeDomainForBulkTraffic(domainInput) {
+  if (!domainInput || typeof domainInput !== 'string') {
+    return ''
+  }
+
+  let cleanDomain = domainInput.trim()
+
+  // Remove wildcards (%) that work in WHOIS API but not bulk traffic API
+  cleanDomain = cleanDomain.replace(/%/g, '')
+
+  // Remove protocols
+  cleanDomain = cleanDomain.replace(/^https?:\/\//, '')
+  cleanDomain = cleanDomain.replace(/^ftp:\/\//, '')
+
+  // Remove www. prefix if present
+  cleanDomain = cleanDomain.replace(/^www\./, '')
+
+  // Remove trailing slashes and paths
+  cleanDomain = cleanDomain.split('/')[0]
+  cleanDomain = cleanDomain.split('?')[0]
+  cleanDomain = cleanDomain.split('#')[0]
+
+  // Remove port numbers
+  cleanDomain = cleanDomain.split(':')[0]
+
+  // Basic domain validation - should contain at least one dot
+  if (!cleanDomain.includes('.') || cleanDomain.length < 3) {
+    return ''
+  }
+
+  return cleanDomain
+}
+
+async function getDomainAnalytics({
+  domainPattern,
+  limit = 10,
+  filterType = 'all',
+  customFilters = null,
+  authHeader
+}) {
+  // Build filters based on filter type
+  let filters = []
+
+  if (filterType === 'expiring') {
+    // Domains expiring in next 90 days
+    const futureDate = new Date()
+    futureDate.setDate(futureDate.getDate() + 90)
+    filters = [
+      ["expiration_datetime", "<", futureDate.toISOString().split('.')[0] + " +00:00"],
+      "and",
+      ["domain", "like", domainPattern]
+    ]
+  } else if (filterType === 'high_traffic') {
+    // Domains with high organic traffic
+    filters = [
+      ["domain", "like", domainPattern],
+      "and",
+      ["metrics.organic.etv", ">", 1000]
+    ]
+  } else if (filterType === 'high_backlinks') {
+    // Domains with high backlinks
+    filters = [
+      ["domain", "like", domainPattern],
+      "and",
+      ["backlinks_info.referring_domains", ">", 100]
+    ]
+  } else if (filterType === 'custom' && customFilters) {
+    // Use custom filters provided
+    filters = customFilters
+  } else {
+    // Default: just domain pattern
+    filters = [["domain", "like", domainPattern]]
+  }
+
+  const requestBody = [
+    {
+      limit: limit,
+      filters: filters,
+      order_by: ["metrics.organic.etv,desc"]
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/domain_analytics/whois/overview/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  // Check for API-level errors
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+async function getBulkTrafficEstimation({
+  targets,
+  languageCode = 'en',
+  locationCode = 2840,
+  authHeader
+}) {
+  const requestBody = [
+    {
+      targets,
+      language_code: languageCode,
+      location_code: locationCode
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/dataforseo_labs/google/bulk_traffic_estimation/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+async function getCompetitorsDomain({
+  target,
+  languageCode = 'en',
+  locationCode = 2840,
+  limit = 100,
+  authHeader
+}) {
+  const requestBody = [
+    {
+      target,
+      language_code: languageCode,
+      location_code: locationCode,
+      limit
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/dataforseo_labs/google/competitors_domain/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+async function getRelevantPages({
+  target,
+  languageCode = 'en',
+  locationCode = 2840,
+  limit = 100,
+  authHeader
+}) {
+  const requestBody = [
+    {
+      target,
+      language_code: languageCode,
+      location_code: locationCode,
+      limit
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/dataforseo_labs/google/relevant_pages/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+async function getBacklinksSummary({
+  target,
+  filters = null,
+  authHeader
+}) {
+  const requestBody = [
+    {
+      target,
+      ...(filters && { filters })
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/backlinks/summary/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+async function getKeywordsForSite({
+  target,
+  languageCode = 'en',
+  locationCode = 2840,
+  limit = 100,
+  authHeader
+}) {
+  const requestBody = [
+    {
+      target,
+      language_code: languageCode,
+      location_code: locationCode,
+      limit,
+      order_by: ["search_volume,desc"]
+    }
+  ]
+
+  const response = await fetch('https://api.dataforseo.com/v3/dataforseo_labs/google/keywords_for_site/live', {
+    method: 'POST',
+    headers: {
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.status_message || `API request failed with status ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  if (data.status_code !== 20000) {
+    throw new Error(data.status_message || 'API returned an error')
+  }
+
+  return data
+}
+
+function formatDomainResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return []
+  }
+
+  const results = apiResponse.tasks[0].result[0]
+
+  if (!results || !results.items) {
+    return []
+  }
+
+  return results.items.map(item => ({
+    domain: item.domain,
+    created: item.created_datetime,
+    expires: item.expiration_datetime,
+    updated: item.updated_datetime,
+    firstSeen: item.first_seen,
+    backlinks: {
+      total: item.backlinks_info?.backlinks || 0,
+      referringDomains: item.backlinks_info?.referring_domains || 0,
+      referringIps: item.backlinks_info?.referring_ips || 0
+    },
+    organic: {
+      pos1: item.metrics?.organic?.pos_1 || 0,
+      pos2_3: item.metrics?.organic?.pos_2_3 || 0,
+      pos4_10: item.metrics?.organic?.pos_4_10 || 0,
+      pos11_20: item.metrics?.organic?.pos_11_20 || 0,
+      etv: item.metrics?.organic?.etv || 0,
+      count: item.metrics?.organic?.count || 0
+    },
+    paid: {
+      pos1: item.metrics?.paid?.pos_1 || 0,
+      pos2_3: item.metrics?.paid?.pos_2_3 || 0,
+      pos4_10: item.metrics?.paid?.pos_4_10 || 0,
+      etv: item.metrics?.paid?.etv || 0,
+      count: item.metrics?.paid?.count || 0
+    }
+  }))
+}
+
+function formatBulkTrafficResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return []
+  }
+
+  const results = apiResponse.tasks[0].result
+
+  if (!results || !results.items) {
+    return []
+  }
+
+  return results.items.map(item => ({
+    target: item.target,
+    trafficEstimation: {
+      organicEtv: item.metrics?.organic?.etv || 0,
+      organicTraffic: item.metrics?.organic?.count || 0,
+      organicClicks: item.metrics?.organic?.estimated_paid_traffic_cost || 0,
+      monthlyVisits: item.metrics?.organic?.estimated_paid_traffic_cost || 0,
+      monthlyClicks: item.metrics?.organic?.count || 0,
+      paidEtv: item.metrics?.paid?.etv || 0
+    }
+  }))
+}
+
+function formatCompetitorsResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return []
+  }
+
+  const results = apiResponse.tasks[0].result
+
+  if (!results || !results.items) {
+    return []
+  }
+
+  return results.items.map(item => ({
+    domain: item.domain,
+    avgPosition: item.avg_position,
+    overlapScore: item.metrics?.intersections_count || 0,
+    intersections: item.metrics?.intersections_count || 0,
+    fullDomainMetrics: {
+      organicKeywords: item.full_domain_metrics?.organic?.count || 0,
+      organicCost: item.full_domain_metrics?.organic?.etv || 0
+    }
+  }))
+}
+
+function formatRelevantPagesResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return []
+  }
+
+  const results = apiResponse.tasks[0].result
+
+  if (!results || !results.items) {
+    return []
+  }
+
+  return results.items.map(item => ({
+    page: item.page,
+    title: item.page_title || 'N/A',
+    metrics: {
+      organicKeywords: item.metrics?.organic?.count || 0,
+      organicTraffic: item.metrics?.organic?.count || 0,
+      organicCost: item.metrics?.organic?.etv || 0
+    }
+  }))
+}
+
+function formatBacklinksResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return {}
+  }
+
+  const results = apiResponse.tasks[0].result
+
+  if (!results || !results.items || results.items.length === 0) {
+    return {}
+  }
+
+  const item = results.items[0]
+
+  return {
+    totalBacklinks: item.backlinks || 0,
+    totalReferringDomains: item.referring_domains || 0,
+    authorityScore: item.rank || 0,
+    trustFlow: item.trust || 0,
+    backlinkGrowth: {
+      monthlyGrowth: item.new_backlinks || 0
+    }
+  }
+}
+
+function formatKeywordsForSiteResults(apiResponse) {
+  if (!apiResponse.tasks || !apiResponse.tasks[0] || !apiResponse.tasks[0].result) {
+    return []
+  }
+
+  const results = apiResponse.tasks[0].result
+
+  if (!results || !results.items) {
+    return []
+  }
+
+  return results.items.map(item => ({
+    keyword: item.keyword_data?.keyword || '',
+    searchVolume: item.keyword_data?.keyword_info?.search_volume || 0,
+    cpc: item.keyword_data?.keyword_info?.cpc || 0,
+    competitionLevel: item.keyword_data?.keyword_info?.competition || 'N/A',
+    searchIntent: item.keyword_data?.search_intent_info?.main_intent || 'N/A',
+    detectedLanguage: item.keyword_data?.language_code || 'en',
+    difficulty: item.keyword_data?.keyword_info?.difficulty || 0
+  }))
+}
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend server is running' })
 })
 
+// Apify API Test Endpoint - For debugging Reddit integration
+app.get('/api/test-apify', async (req, res) => {
+  try {
+    console.log('\n🧪 === APIFY API TEST START ===')
+    
+    // Check environment variables
+    const apiKey = process.env.APIFY_API_KEY || process.env.APIFY_API_TOKEN || process.env.apify_api_key;
+    console.log('🔑 API Key available:', !!apiKey)
+    console.log('🔑 API Key preview:', apiKey ? `${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}` : 'NOT FOUND')
+    
+    if (!apiKey) {
+      return res.status(401).json({
+        error: 'No Apify API key found',
+        message: 'Please set APIFY_API_KEY in your .env file',
+        checkedVars: ['APIFY_API_KEY', 'APIFY_API_TOKEN', 'apify_api_key']
+      });
+    }
+    
+    // Test basic API connectivity
+    console.log('📡 Testing Apify API connectivity...')
+    const testUrl = `https://api.apify.com/v2/acts/trudax~reddit-scraper-lite?token=${apiKey}`;
+    console.log('📡 Test URL:', testUrl.replace(apiKey, `${apiKey.substring(0, 8)}...`))
+    
+    const response = await fetch(testUrl);
+    console.log('📡 Response status:', response.status, response.statusText)
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ API test failed:', errorText)
+      return res.status(response.status).json({
+        error: 'Apify API test failed',
+        status: response.status,
+        statusText: response.statusText,
+        message: errorText
+      });
+    }
+    
+    const data = await response.json();
+    console.log('✅ API test successful')
+    console.log('🔗 Actor info:', data.data?.name || 'Unknown')
+    console.log('📊 Full API response:', JSON.stringify(data, null, 2))
+    
+    // Test actual Reddit scraping with simple URL
+    console.log('📡 Testing actual Reddit scraping...')
+    console.log('📡 About to test Reddit scraping functionality')
+    const testInput = {
+      startUrls: ["https://www.reddit.com/"],
+      maxItems: 1,
+      skipComments: true,
+      skipCommunityInfo: true
+    };
+    
+    console.log('📋 Test input:', JSON.stringify(testInput, null, 2))
+    
+    const runResponse = await fetch(
+      `https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/runs?token=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testInput)
+      }
+    );
+    
+    console.log('📡 Run response status:', runResponse.status, runResponse.statusText)
+    
+    if (!runResponse.ok) {
+      const errorText = await runResponse.text();
+      console.error('❌ Reddit scraping test failed:', errorText)
+      return res.status(200).json({
+        success: true,
+        message: 'Apify API is accessible but Reddit scraping failed',
+        actor: {
+          name: data.data?.name,
+          username: data.data?.username,
+          id: data.data?.id
+        },
+        apiKeyStatus: 'Valid',
+        scrapingTest: {
+          success: false,
+          error: errorText
+        }
+      });
+    }
+    
+    const runData = await runResponse.json();
+    console.log('✅ Reddit scraping test successful')
+    console.log('🆔 Run ID:', runData.data?.id)
+    console.log('=== END APIFY TEST ===\n')
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Apify API is accessible and Reddit scraping works',
+      actor: {
+        name: data.data?.name,
+        username: data.data?.username,
+        id: data.data?.id
+      },
+      apiKeyStatus: 'Valid',
+      scrapingTest: {
+        success: true,
+        runId: runData.data?.id
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Apify test error:', error)
+    console.log('=== END APIFY TEST ERROR ===\n')
+    
+    return res.status(500).json({
+      error: 'Apify test failed',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+})
+
+// NEW: Account-specific tweet saving functionality (Dev Server)
+// This function handles saving tweets to the database when account searches are performed
+async function saveAccountSpecificTweets(accountUsername, tweets, searchData) {
+  // Development server has direct Supabase access with service role key
+  console.log(`📊 Account-specific saving requested for @${accountUsername} with ${tweets.length} tweets`)
+  
+  if (!supabase) {
+    console.warn('⚠️ Supabase client not available - returning frontend-compatible data structure')
+    return {
+      accountData: {
+        username: accountUsername.replace(/^@/, ''),
+        shouldSave: true,
+        tweetCount: tweets.length,
+        searchTimestamp: new Date().toISOString()
+      },
+      formattedTweets: tweets.map(tweet => ({
+        ...tweet,
+        isAccountSpecific: true,
+        accountUsername: accountUsername.replace(/^@/, ''),
+        collectedAt: new Date().toISOString()
+      })),
+      searchMetadata: {
+        searchType: 'account-specific',
+        filters: searchData || {},
+        timestamp: new Date().toISOString()
+      }
+    }
+  }
+  
+  try {
+    // Extract account metadata from tweets
+    const accountMetadata = extractAccountMetadata(tweets, accountUsername)
+    
+    // Upsert account information
+    const { data: accountData, error: accountError } = await supabase
+      .from('twitter_accounts')
+      .upsert({
+        ...accountMetadata,
+        last_updated_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString()
+      }, {
+        onConflict: 'username'
+      })
+      .select()
+      .single()
+    
+    if (accountError) {
+      console.error('❌ Account upsert error:', accountError)
+      throw accountError
+    }
+    
+    console.log(`✅ Account data upserted for @${accountUsername}`)
+    
+    // Prepare tweets for insertion with account linkage
+    const formattedTweets = tweets.map(tweet => {
+      const engagementRate = calculateEngagementRate(tweet)
+      
+      // DEBUG: Log tweet structure to understand reply data
+      console.log(`🔍 DEBUG Tweet structure for ${tweet.id}:`, {
+        hasRepliesArray: !!tweet.replies,
+        repliesType: typeof tweet.replies,
+        repliesValue: Array.isArray(tweet.replies) ? `array[${tweet.replies.length}]` : tweet.replies,
+        hasMetricsReplies: !!tweet.metrics?.replies,
+        metricsRepliesValue: tweet.metrics?.replies,
+        includeMentions: !!tweet.replies // This should be true when replies are fetched
+      })
+      
+      return {
+        session_id: null, // Will be set by frontend when session is created
+        tweet_id: tweet.id,
+        tweet_text: tweet.text,
+        created_at: tweet.created_at,
+        author_username: tweet.author?.username || accountUsername.replace(/^@/, ''),
+        author_name: tweet.author?.name,
+        author_verified: tweet.author?.verified || false,
+        author_followers: tweet.author?.followers || 0,
+        author_profile_image: tweet.author?.profile_image,
+        likes: tweet.metrics?.likes || 0,
+        retweets: tweet.metrics?.retweets || 0,
+        replies: tweet.replies || [], // FIXED: Store actual reply objects array, not count
+        quotes: tweet.metrics?.quotes || 0,
+        views: tweet.metrics?.views || 0,
+        sentiment_label: tweet.sentiment?.label,
+        sentiment_score: tweet.sentiment?.score,
+        sentiment_confidence: tweet.sentiment?.confidence,
+        hashtags: tweet.hashtags || [],
+        mentions: tweet.mentions || [],
+        urls: tweet.urls || [],
+        media_type: tweet.media_type,
+        tweet_url: tweet.url,
+        search_type: 'account',
+        matched_keywords: tweet.matched_keywords || [],
+        // Account-specific fields
+        account_id: accountData.id,
+        is_account_specific: true,
+        account_followers_at_time: tweet.author?.followers || 0,
+        account_following_at_time: tweet.author?.following || 0,
+        engagement_rate: parseFloat(engagementRate),
+        is_reply_to_account: tweet.text?.includes(`@${accountUsername.replace(/^@/, '')}`) || false,
+        conversation_starter_id: tweet.conversation_id || null,
+        thread_position: 1
+      }
+    })
+    
+    // Insert tweets to database using UPSERT to handle duplicates
+    // FIXED: Explicitly update replies, mentions, and other fields on conflict
+    const { data: insertedTweets, error: tweetsError } = await supabase
+      .from('twitter_tweets')
+      .upsert(formattedTweets, {
+        onConflict: 'tweet_id,account_id',
+        ignoreDuplicates: false,
+        defaultToNull: false
+      })
+      .select('id, tweet_id')
+    
+    if (tweetsError) {
+      console.error('❌ Tweet insertion error:', tweetsError)
+      throw tweetsError
+    }
+    
+    console.log(`✅ Successfully saved ${insertedTweets?.length || 0} account-specific tweets for @${accountUsername}`)
+    
+    // Return frontend-compatible format for existing callers
+    return {
+      accountData: {
+        username: accountUsername.replace(/^@/, ''),
+        shouldSave: true,
+        tweetCount: insertedTweets?.length || 0,
+        searchTimestamp: new Date().toISOString(),
+        metadata: {
+          username: accountUsername.replace(/^@/, ''),
+          display_name: accountData.display_name,
+          followers_count: accountData.followers_count,
+          verified: accountData.verified,
+          profile_image_url: accountData.profile_image_url
+        }
+      },
+      formattedTweets: tweets.map(tweet => ({
+        ...tweet,
+        isAccountSpecific: true,
+        accountUsername: accountUsername.replace(/^@/, ''),
+        collectedAt: new Date().toISOString()
+      })),
+      searchMetadata: {
+        searchType: 'account-specific',
+        filters: searchData || {},
+        timestamp: new Date().toISOString(),
+        savedToDatabase: true,
+        accountId: accountData.id,
+        avgEngagement: formattedTweets.length > 0 ? 
+          (formattedTweets.reduce((sum, tweet) => sum + tweet.engagement_rate, 0) / formattedTweets.length).toFixed(4) : '0.0000'
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Account-specific saving error:', error)
+    // Return frontend-compatible format even on error
+    return {
+      accountData: {
+        username: accountUsername.replace(/^@/, ''),
+        shouldSave: false,
+        tweetCount: 0,
+        searchTimestamp: new Date().toISOString(),
+        error: error.message
+      },
+      formattedTweets: [],
+      searchMetadata: {
+        searchType: 'account-specific-error',
+        filters: searchData || {},
+        timestamp: new Date().toISOString(),
+        savedToDatabase: false,
+        error: error.message
+      }
+    }
+  }
+}
+
+// API-compatible wrapper for account-specific saving (Dev Server)
+// This function returns { success, data, error } format for API endpoints
+async function saveAccountSpecificTweetsForAPI(accountUsername, tweets, searchData) {
+  try {
+    console.log(`🌐 API wrapper: Calling saveAccountSpecificTweets for @${accountUsername}`)
+    
+    // Call the original function that returns frontend-compatible format
+    const result = await saveAccountSpecificTweets(accountUsername, tweets, searchData)
+    
+    // Check if saving was successful based on accountData.shouldSave
+    if (!result || !result.accountData || result.accountData.shouldSave === false) {
+      return {
+        success: false,
+        error: result?.accountData?.error || 'Failed to save account-specific tweets',
+        data: null
+      }
+    }
+    
+    // Convert to API format
+    return {
+      success: true,
+      data: {
+        accountId: result.searchMetadata?.accountId || null,
+        username: result.accountData.username,
+        tweetsCount: result.accountData.tweetCount || 0,
+        avgEngagement: result.searchMetadata?.avgEngagement || '0.0000',
+        timestamp: result.accountData.searchTimestamp
+      },
+      message: `Successfully saved ${result.accountData.tweetCount || 0} account-specific tweets`
+    }
+    
+  } catch (error) {
+    console.error('❌ API wrapper error:', error)
+    return {
+      success: false,
+      error: error.message,
+      data: null
+    }
+  }
+}
+
+// Helper function to extract account metadata from tweets (Dev Server)
+function extractAccountMetadata(tweets, accountUsername) {
+  if (!tweets || tweets.length === 0) {
+    return {
+      username: accountUsername.replace(/^@/, ''),
+      display_name: null,
+      followers_count: 0,
+      verified: false,
+      profile_image_url: null,
+      bio: null
+    }
+  }
+  
+  // Get account info from the first tweet's author data
+  const firstTweet = tweets[0]
+  const author = firstTweet.author || {}
+  
+  return {
+    username: accountUsername.replace(/^@/, ''),
+    display_name: author.name || null,
+    followers_count: author.followers || 0,
+    following_count: author.following || 0,
+    verified: author.verified || false,
+    profile_image_url: author.profile_image || null,
+    bio: author.bio || null,
+    tweet_count: author.tweet_count || 0
+  }
+}
+
+// Function to calculate engagement rate for a tweet (Dev Server)
+function calculateEngagementRate(tweet) {
+  if (!tweet.metrics || !tweet.author?.followers) {
+    return 0
+  }
+  
+  const totalEngagement = (tweet.metrics.likes || 0) + 
+                         (tweet.metrics.retweets || 0) + 
+                         (tweet.metrics.replies || 0)
+  
+  if (tweet.author.followers === 0) return 0
+  
+  return (totalEngagement / tweet.author.followers).toFixed(4)
+}
+
+// Handler for save-account-specific action - bypasses RLS issues (development server)
+async function handleSaveAccountSpecific(req, res) {
+  try {
+    const { username, tweets, searchParams, accountMetadata } = req.body;
+
+    if (!username || !tweets || !Array.isArray(tweets)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request',
+        message: 'Missing required fields: username, tweets array'
+      });
+    }
+
+    console.log(`🎯 Development Server: Saving account-specific tweets for @${username}`, {
+      tweetCount: tweets.length,
+      sessionId: searchParams?.sessionId
+    });
+
+    // Call the API-compatible wrapper function
+    const result = await saveAccountSpecificTweetsForAPI(username, tweets, searchParams);
+
+    if (!result || !result.success) {
+      throw new Error(result?.error || 'Failed to save account-specific tweets');
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: result.data,
+      message: result.message || `Successfully saved ${tweets.length} account-specific tweets for @${username}`
+    });
+
+  } catch (error) {
+    console.error('❌ Development server save-account-specific error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to save account-specific tweets'
+    });
+  }
+}
+
 // Start server
 app.listen(PORT, () => {
   console.log(`\n🚀 Backend server running on http://localhost:${PORT}`)
   console.log(`📡 YouTube API: http://localhost:${PORT}/api/youtube-search`)
+  console.log(`📺 YouTube Channel API: http://localhost:${PORT}/api/youtube-channel-search`)
   console.log(`🐦 Twitter API: http://localhost:${PORT}/api/twitter-analytics`)
+  console.log(`🔍 Reddit API: http://localhost:${PORT}/api/reddit-analytics`)
   console.log(`📰 News API: http://localhost:${PORT}/api/news-analytics`)
+  console.log(`🏢 Domain Analytics API: http://localhost:${PORT}/api/domain-analytics`)
   console.log(`✨ Ready to process requests\n`)
 })

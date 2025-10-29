@@ -1,21 +1,30 @@
 // Vercel Serverless Function
 // Replicates n8n workflow: YouTube search + transcript + AI summarization
 
+import { createClient } from '@supabase/supabase-js'
+
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabase = supabaseUrl && supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null
+
 export default async function handler(req, res) {
   // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { keyword, user_id, search_id, email } = req.body
+  const { keyword, user_id, search_id, email, filters = {} } = req.body
 
   if (!keyword) {
     return res.status(400).json({ error: 'Keyword is required' })
   }
 
   try {
-    // Step 1: Fetch 10 YouTube videos from RapidAPI YouTube138
-    const youtubeVideos = await fetchYouTubeVideos(keyword)
+    // Step 1: Fetch 10 YouTube videos from YT-API (consolidated) with filters
+    const youtubeVideos = await fetchYouTubeVideosYTAPI(keyword, filters)
 
     if (youtubeVideos.length === 0) {
       return res.status(404).json({ error: 'No videos found' })
@@ -40,7 +49,7 @@ export default async function handler(req, res) {
         
         try {
           console.log(`   [${i + 1}/${youtubeVideos.length}] Fetching transcript...`)
-          transcript = await fetchTranscriptWithRetry(video.video_id, 3)
+          transcript = await fetchTranscriptYTAPI(video.video_id)
           console.log(`   ✓ [${i + 1}/${youtubeVideos.length}] Transcript fetched`)
         } catch (transcriptError) {
           console.warn(`   ⚠ [${i + 1}/${youtubeVideos.length}] Transcript error: ${transcriptError.message}`)
@@ -48,7 +57,7 @@ export default async function handler(req, res) {
 
         try {
           console.log(`   [${i + 1}/${youtubeVideos.length}] Fetching comments...`)
-          comments = await fetchVideoComments(video.video_id)
+          comments = await fetchVideoCommentsYTAPI(video.video_id)
           console.log(`   ✓ [${i + 1}/${youtubeVideos.length}] Comments fetched: ${comments.items.length} comments`)
           
           // Store raw comments data for database
@@ -147,7 +156,8 @@ export default async function handler(req, res) {
         rawYouTubeData, 
         rawCommentsData, 
         videosWithSummaries, 
-        overallSummary
+        overallSummary,
+        filters
       )
       if (databaseId) {
         console.log(`💾 Analysis saved to database with ID: ${databaseId}`)
@@ -176,11 +186,28 @@ export default async function handler(req, res) {
 
 // Helper Functions
 
-async function fetchYouTubeVideos(keyword) {
-  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
-  const RAPIDAPI_HOST = 'youtube138.p.rapidapi.com'
+// OLD YOUTUBE138 FUNCTION REMOVED - REPLACED WITH YT-API
 
-  const url = `https://${RAPIDAPI_HOST}/search/?q=${encodeURIComponent(keyword)}&hl=en&gl=US`
+// NEW YT-API FUNCTIONS - Testing consolidated API endpoints
+
+async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
+  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
+
+  // Build URL with filter parameters
+  const params = new URLSearchParams({
+    query: keyword,
+    type: filters.content_type_filter || 'video'
+  })
+
+  // Add optional filter parameters
+  if (filters.upload_date_filter) params.append('upload_date', filters.upload_date_filter)
+  if (filters.sort_by_filter) params.append('sort_by', filters.sort_by_filter)
+  if (filters.geo_filter) params.append('lang', filters.geo_filter) // Use lang parameter for language filtering
+
+  const url = `https://${RAPIDAPI_HOST}/search?${params.toString()}`
+
+  console.log(`🔍 YT-API Video Search: ${url}`)
 
   const response = await fetch(url, {
     method: 'GET',
@@ -191,116 +218,189 @@ async function fetchYouTubeVideos(keyword) {
   })
 
   if (!response.ok) {
-    throw new Error(`YouTube API failed: ${response.status}`)
+    throw new Error(`YT-API video search failed: ${response.status}`)
   }
 
   const data = await response.json()
-  const videos = data?.contents || []
 
-  return videos
-    .filter(item => item.video)
-    .slice(0, 10)
-    .map(item => {
-      const video = item.video
-      const thumbnail = video.thumbnails?.[0]?.url ||
-                       `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
+  // Extract videos from YT-API response format - CONFIRMED WORKING
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No videos found in YT-API response')
+  }
 
-      const likes = video.stats?.likes || null
-      const subscribers = video.author?.stats?.subscribers || video.author?.stats?.subscribersText || null
-      const isVerified = video.author?.badges?.some(badge =>
-        badge?.type === 'VERIFIED_CHANNEL' || badge?.text === 'Verified'
-      ) || false
-      const badges = video.badges || []
-      const isLive = video.isLiveNow || video.isLive || badges.some(b => b?.type === 'LIVE') || false
+  // Filter valid videos with videoId before processing
+  const validVideos = data.data.filter(video => {
+    const hasValidVideoId = video.videoId && typeof video.videoId === 'string' && video.videoId.trim() !== ''
+    if (!hasValidVideoId) {
+      console.log(`🚫 Filtered out invalid video: ${video.title || 'Unknown'} - Missing videoId`)
+    }
+    return hasValidVideoId
+  })
 
-      return {
-        url: `https://www.youtube.com/watch?v=${video.videoId}`,
-        title: video.title || 'Untitled Video',
-        description: video.descriptionSnippet || video.description || '',
-        video_id: video.videoId,
-        thumbnail: thumbnail,
-        channel: video.channelTitle || video.author?.title || 'Unknown Channel',
-        views: video.viewCountText || video.stats?.views || 'N/A',
-        publishedTime: video.publishedTimeText || 'N/A',
-        duration: video.lengthText || 'N/A',
-        channelThumbnail: video.channelThumbnail?.thumbnails?.[0]?.url || '',
-        likes: likes,
-        subscribers: subscribers,
-        isVerified: isVerified,
-        badges: badges,
-        isLive: isLive
-      }
-    })
+  if (validVideos.length === 0) {
+    throw new Error('No valid videos found after filtering')
+  }
+
+  console.log(`✅ Found ${validVideos.length} valid videos out of ${data.data.length} total results`)
+  
+  const videos = validVideos.slice(0, 10)
+
+  return videos.map(video => {
+    // Handle thumbnail arrays from YT-API
+    let thumbnail = `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
+    if (video.thumbnail && Array.isArray(video.thumbnail) && video.thumbnail.length > 0) {
+      thumbnail = video.thumbnail[0].url
+    }
+
+    // Handle channel avatar arrays
+    let channelThumbnail = ''
+    if (video.channelAvatar && Array.isArray(video.channelAvatar) && video.channelAvatar.length > 0) {
+      channelThumbnail = video.channelAvatar[0].url
+    } else if (video.channelThumbnail && Array.isArray(video.channelThumbnail) && video.channelThumbnail.length > 0) {
+      channelThumbnail = video.channelThumbnail[0].url
+    }
+
+    // Detect actual content type from response
+    const detectedContentType = detectContentType(video)
+
+    return {
+      url: `https://www.youtube.com/watch?v=${video.videoId}`,
+      title: video.title || 'Untitled Video',
+      description: video.description || '',
+      video_id: video.videoId,
+      thumbnail: thumbnail,
+      channel: video.channelTitle || 'Unknown Channel',
+      views: video.viewCountText || video.viewCount || 'N/A',
+      publishedTime: video.publishedTimeText || 'N/A',
+      duration: video.lengthText || 'N/A',
+      channelThumbnail: channelThumbnail,
+      likes: video.likeCount || null,
+      subscribers: video.subscriberCount || null,
+      isVerified: video.isVerified || false,
+      badges: video.badges || [],
+      isLive: video.isLive || video.badges?.includes('LIVE') || false,
+      contentType: detectedContentType // Add detected content type
+    }
+  })
 }
 
-async function fetchTranscript(videoId) {
+async function fetchVideoCommentsYTAPI(videoId) {
   const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
 
-  const url = `https://youtube-transcript3.p.rapidapi.com/api/transcript?videoId=${videoId}`
+  const url = `https://${RAPIDAPI_HOST}/comments?id=${videoId}`
+  console.log(`🔍 YT-API Comments: ${url}`)
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Host': 'youtube-transcript3.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
     }
   })
 
   if (!response.ok) {
-    throw new Error(`Transcript API failed: ${response.status}`)
+    throw new Error(`YT-API comments failed: ${response.status}`)
   }
 
   const data = await response.json()
 
-  // Check if transcript is valid
-  if (!data.transcript || !Array.isArray(data.transcript) || data.transcript.length === 0) {
-    throw new Error('No valid transcript found')
+  // YT-API comments response structure: { commentsCount, data: [] }
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No comments found in YT-API response')
   }
 
-  return data.transcript
-}
-
-async function fetchVideoComments(videoId) {
-  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
-
-  const url = `https://youtube-v31.p.rapidapi.com/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&order=relevance`
-
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
-    }
-  })
-
-  if (!response.ok) {
-    throw new Error(`Comments API failed: ${response.status}`)
-  }
-
-  const data = await response.json()
-
-  // Check if comments are valid
-  if (!data.items || !Array.isArray(data.items)) {
-    throw new Error('No valid comments found')
-  }
+  const totalCount = parseInt(data.commentsCount) || data.data.length
 
   return {
-    totalCount: data.pageInfo?.totalResults || data.items.length,
-    items: data.items.map(item => {
-      const snippet = item.snippet?.topLevelComment?.snippet
-      return {
-        id: item.id,
-        authorDisplayName: snippet?.authorDisplayName || 'Unknown',
-        authorProfileImageUrl: snippet?.authorProfileImageUrl || '',
-        textDisplay: snippet?.textDisplay || '',
-        likeCount: snippet?.likeCount || 0,
-        publishedAt: snippet?.publishedAt || '',
-        updatedAt: snippet?.updatedAt || snippet?.publishedAt || '',
-        isChannelOwner: snippet?.authorChannelId === item.snippet?.channelId || false,
-        replies: item.snippet?.totalReplyCount || 0
-      }
-    })
+    totalCount: totalCount,
+    items: data.data.slice(0, 20).map(comment => ({
+      id: comment.commentId || `comment_${Date.now()}`,
+      authorDisplayName: comment.authorText || 'Unknown',
+      authorProfileImageUrl: comment.authorThumbnail?.[0]?.url || '',
+      textDisplay: comment.textDisplay || '',
+      likeCount: parseYouTubeNumber(comment.likesCount) || 0,
+      publishedAt: comment.publishedTimeText || '',
+      updatedAt: comment.publishedTimeText || '',
+      isChannelOwner: comment.authorIsChannelOwner || false,
+      replies: parseInt(comment.replyCount) || 0
+    }))
   }
+}
+
+async function fetchTranscriptYTAPI(videoId) {
+  const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
+
+  const url = `https://${RAPIDAPI_HOST}/get_transcript?id=${videoId}`
+  console.log(`🔍 YT-API Transcript: ${url}`)
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error(`YT-API transcript failed: ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  // YT-API transcript response structure: { id, transcript: [] }
+  if (!data.transcript || !Array.isArray(data.transcript)) {
+    throw new Error('No transcript found in YT-API response')
+  }
+
+  if (data.transcript.length === 0) {
+    throw new Error('Empty transcript returned')
+  }
+
+  // Convert YT-API transcript format to our expected format
+  return data.transcript.map(item => ({
+    text: item.text || '',
+    offset: parseInt(item.startMs) / 1000 || 0 // Convert milliseconds to seconds
+  }))
+}
+
+// YT-API CONSOLIDATION COMPLETE - REMOVED OLD APIS
+
+// OLD API FUNCTIONS REMOVED - REPLACED WITH YT-API CONSOLIDATED FUNCTIONS
+
+// Helper function to detect content type from video data
+function detectContentType(video) {
+  // Check for live streams first
+  if (video.isLive || video.badges?.includes('LIVE')) {
+    return 'live'
+  }
+  
+  // Check for shorts based on duration (typically under 60 seconds)
+  if (video.lengthText) {
+    const duration = parseDurationToSeconds(video.lengthText)
+    if (duration > 0 && duration <= 60) {
+      return 'shorts'
+    }
+  }
+  
+  // Default to video
+  return 'video'
+}
+
+// Helper function to parse duration text to seconds
+function parseDurationToSeconds(durationText) {
+  if (!durationText || durationText === 'N/A') return 0
+  
+  // Parse formats like "1:23", "12:34", "1:23:45"
+  const parts = durationText.split(':').map(Number).reverse()
+  let seconds = 0
+  
+  if (parts[0]) seconds += parts[0] // seconds
+  if (parts[1]) seconds += parts[1] * 60 // minutes
+  if (parts[2]) seconds += parts[2] * 3600 // hours
+  
+  return seconds
 }
 
 // Helper function to add delays
@@ -308,25 +408,37 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// Retry wrapper for fetchTranscript to handle rate limiting
-async function fetchTranscriptWithRetry(videoId, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await fetchTranscript(videoId)
-    } catch (error) {
-      // If it's a 429 (rate limit) and we have retries left, wait and try again
-      if (error.message.includes('429') && attempt < maxRetries) {
-        const waitTime = attempt * 2000 // Progressive backoff: 2s, 4s, 6s
-        console.log(`   ⏳ Rate limited, waiting ${waitTime/1000}s before retry ${attempt}/${maxRetries}...`)
-        await sleep(waitTime)
-        continue
-      }
-      
-      // If it's not rate limiting or we're out of retries, throw the error
-      throw error
-    }
+// Helper function to parse YouTube numbers (e.g., "125K" -> 125000, "48K" -> 48000)
+function parseYouTubeNumber(numberStr) {
+  if (!numberStr || typeof numberStr !== 'string') return 0
+  
+  const cleanStr = numberStr.trim().toUpperCase()
+  
+  // Handle "K" suffix (thousands)
+  if (cleanStr.endsWith('K')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000)
   }
+  
+  // Handle "M" suffix (millions)
+  if (cleanStr.endsWith('M')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000)
+  }
+  
+  // Handle "B" suffix (billions)
+  if (cleanStr.endsWith('B')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000000)
+  }
+  
+  // Handle regular numbers (remove commas)
+  const cleanNumber = cleanStr.replace(/,/g, '')
+  const parsed = parseInt(cleanNumber)
+  return isNaN(parsed) ? 0 : parsed
 }
+
+// REMOVED - No longer needed with YT-API consolidation
 
 function processTimestamps(transcript) {
   // Replicate n8n Code node logic
@@ -451,7 +563,7 @@ Provide a comprehensive summary that includes both content analysis and communit
   return summary
 }
 
-async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTubeData, rawCommentsData, videosWithSummaries, overallSummary) {
+async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTubeData, rawCommentsData, videosWithSummaries, overallSummary, filters = {}) {
   try {
     // Skip if Supabase client is not available
     if (!supabase) {
@@ -470,7 +582,7 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
         processingTimestamp: new Date().toISOString(),
         apiVersion: '1.0',
         aiModel: 'google/gemini-2.0-flash-001',
-        apisUsed: ['youtube138', 'youtube-v31', 'youtube-transcript3']
+        apisUsed: ['yt-api-consolidated']
       },
       rawData: {
         searchQuery: keyword,
@@ -517,7 +629,7 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
       }
     }
 
-    // Insert into database
+    // Insert into database with filter columns
     const { data, error } = await supabase
       .from('youtube_analytics_sessions')
       .insert([
@@ -525,7 +637,11 @@ async function saveYouTubeAnalytics(userId, searchId, keyword, email, rawYouTube
           user_id: userId,
           search_id: searchId,
           keyword,
-          analysis_data: analysisData
+          analysis_data: analysisData,
+          upload_date_filter: filters.upload_date_filter || null,
+          sort_by_filter: filters.sort_by_filter || 'relevance',
+          geo_filter: filters.geo_filter || 'US',
+          content_type_filter: filters.content_type_filter || 'video'
         }
       ])
       .select('id')

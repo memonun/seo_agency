@@ -8,6 +8,83 @@ import { callTwitterApi, isDev } from '../utils/apiConfig';
 import { loadTwitterSearchParams, saveTwitterSearchParams, clearTwitterSearchParams, saveTwitterResults, loadTwitterResults, clearTwitterResults } from '../utils/searchCache';
 import { supabase } from '../lib/supabase';
 
+// Helper function to aggregate analytics from separated search results
+const aggregateSeparatedAnalytics = (results) => {
+  const analytics = {
+    total_tweets: 0,
+    unique_tweets: 0,
+    avg_sentiment: 0,
+    sentiment_distribution: { positive: 0, negative: 0, neutral: 0 },
+    engagement_stats: { total_engagement: 0, avg_likes: 0, avg_retweets: 0 },
+    top_hashtags: [],
+    top_influencers: []
+  };
+  
+  let totalSentimentScore = 0;
+  let sentimentCount = 0;
+  let totalLikes = 0;
+  let totalRetweets = 0;
+  let tweetCount = 0;
+  
+  // Aggregate from each search type
+  ['account', 'keyword', 'hashtag'].forEach(searchType => {
+    const searchResult = results[searchType];
+    if (searchResult && searchResult.analytics) {
+      const searchAnalytics = searchResult.analytics;
+      
+      // Add tweet counts
+      analytics.total_tweets += searchAnalytics.total_tweets || 0;
+      
+      // Aggregate sentiment
+      if (searchAnalytics.avg_sentiment && searchAnalytics.total_tweets > 0) {
+        totalSentimentScore += searchAnalytics.avg_sentiment * searchAnalytics.total_tweets;
+        sentimentCount += searchAnalytics.total_tweets;
+      }
+      
+      // Aggregate sentiment distribution
+      if (searchAnalytics.sentiment_distribution) {
+        analytics.sentiment_distribution.positive += searchAnalytics.sentiment_distribution.positive || 0;
+        analytics.sentiment_distribution.negative += searchAnalytics.sentiment_distribution.negative || 0;
+        analytics.sentiment_distribution.neutral += searchAnalytics.sentiment_distribution.neutral || 0;
+      }
+      
+      // Aggregate engagement
+      if (searchAnalytics.engagement_stats) {
+        analytics.engagement_stats.total_engagement += searchAnalytics.engagement_stats.total_engagement || 0;
+        if (searchAnalytics.engagement_stats.avg_likes && searchAnalytics.total_tweets > 0) {
+          totalLikes += searchAnalytics.engagement_stats.avg_likes * searchAnalytics.total_tweets;
+          tweetCount += searchAnalytics.total_tweets;
+        }
+        if (searchAnalytics.engagement_stats.avg_retweets && searchAnalytics.total_tweets > 0) {
+          totalRetweets += searchAnalytics.engagement_stats.avg_retweets * searchAnalytics.total_tweets;
+        }
+      }
+      
+      // Combine hashtags (deduplicate)
+      if (searchAnalytics.top_hashtags) {
+        analytics.top_hashtags = [...new Set([...analytics.top_hashtags, ...searchAnalytics.top_hashtags])];
+      }
+      
+      // Combine influencers (deduplicate)
+      if (searchAnalytics.top_influencers) {
+        analytics.top_influencers = [...new Set([...analytics.top_influencers, ...searchAnalytics.top_influencers])];
+      }
+    }
+  });
+  
+  // Calculate averages
+  if (sentimentCount > 0) {
+    analytics.avg_sentiment = totalSentimentScore / sentimentCount;
+  }
+  
+  if (tweetCount > 0) {
+    analytics.engagement_stats.avg_likes = totalLikes / tweetCount;
+    analytics.engagement_stats.avg_retweets = totalRetweets / tweetCount;
+  }
+  
+  return analytics;
+};
+
 export default function TwitterAnalyticsModule({ user }) {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,6 +98,9 @@ export default function TwitterAnalyticsModule({ user }) {
   // Client-side database saving function (like SEO module)
   const saveTwitterSearchToDatabase = async (searchData, responseData) => {
     try {
+      // Generate search_id (UUID) for this search session
+      const searchId = crypto.randomUUID();
+      
       // Generate user-friendly search description
       const searchDescription = generateSearchDescription(searchData);
       
@@ -38,18 +118,47 @@ export default function TwitterAnalyticsModule({ user }) {
         };
       }
       
+      // Extract analytics metrics from the response
+      const globalAnalytics = responseData.globalAnalytics || {};
+      let analytics = responseData.analytics || {};
+      
+      // For separated searches, aggregate analytics from individual search types
+      if (responseData.results && !responseData.analytics) {
+        analytics = aggregateSeparatedAnalytics(responseData.results);
+      }
+      
+      // Calculate date range from tweets if available
+      let dateRangeStart = null;
+      let dateRangeEnd = null;
+      
+      if (responseData.results) {
+        const allTweets = [];
+        if (responseData.results.account?.tweets) allTweets.push(...responseData.results.account.tweets);
+        if (responseData.results.keyword?.tweets) allTweets.push(...responseData.results.keyword.tweets);
+        if (responseData.results.hashtag?.tweets) allTweets.push(...responseData.results.hashtag.tweets);
+        
+        if (allTweets.length > 0) {
+          const dates = allTweets.map(t => new Date(t.created_at)).filter(d => !isNaN(d));
+          if (dates.length > 0) {
+            dateRangeStart = new Date(Math.min(...dates)).toISOString();
+            dateRangeEnd = new Date(Math.max(...dates)).toISOString();
+          }
+        }
+      }
+      
       // Save to database using client-side Supabase
       const { data, error } = await supabase
         .from('twitter_analytics_sessions')
         .insert([
           {
             user_id: user?.id,
+            search_id: searchId,
             keyword: searchData.keyword || null,
             hashtags: searchData.hashtags || [],
             account_username: searchData.accountUsername || null,
             search_description: searchDescription,
             action: searchData.action || 'separated-search',
-            language: searchData.language || null,
+            language: searchData.global ? 'global' : (searchData.language || null),
             sort_order: searchData.sortOrder || 'recent',
             include_mentions: searchData.includeMentions || false,
             global_search: searchData.global || false,
@@ -58,7 +167,22 @@ export default function TwitterAnalyticsModule({ user }) {
             discovered_hashtags: searchData.discoveredHashtags || null,
             raw_response: structuredResponse,
             is_mock_data: responseData?.mock || false,
-            completed: true
+            completed: true,
+            // New analytics columns - Fixed field mapping
+            total_tweets: globalAnalytics.totalTweetsFetched || analytics.total_tweets || 0,
+            unique_tweets: globalAnalytics.uniqueTweets || analytics.unique_tweets || 0,
+            total_engagement: analytics.engagement_stats?.total_engagement || 0,
+            avg_engagement_rate: analytics.engagement_stats?.avg_engagement_rate || analytics.avg_engagement_rate || 0,
+            viral_potential: analytics.viral_potential || 0,
+            avg_sentiment_score: analytics.avg_sentiment || globalAnalytics.overallSentiment || 0,
+            positive_tweets: analytics.sentiment_distribution?.positive || 0,
+            negative_tweets: analytics.sentiment_distribution?.negative || 0,
+            neutral_tweets: analytics.sentiment_distribution?.neutral || 0,
+            peak_hour: analytics.peak_hour || null,
+            date_range_start: dateRangeStart,
+            date_range_end: dateRangeEnd,
+            top_influencers: analytics.top_influencers || null,
+            top_hashtags: analytics.top_hashtags || null
           }
         ])
         .select();
@@ -69,9 +193,147 @@ export default function TwitterAnalyticsModule({ user }) {
       }
 
       console.log('✅ Twitter search saved to database:', data[0]?.id);
+      
+      // Note: Individual tweets are stored in raw_response for now
+      // Future enhancement: Move tweet extraction to backend with service role key
+      console.log('✅ Session saved. Tweets are stored in raw_response field.');
+      
       return data[0];
     } catch (error) {
       console.error('❌ Failed to save Twitter search:', error);
+      return null;
+    }
+  };
+  
+  // Helper function to save individual tweets
+  const saveIndividualTweets = async (sessionId, results) => {
+    try {
+      const tweetsToSave = [];
+      
+      // Collect tweets from all search types
+      const searchTypes = [
+        { type: 'account', data: results.account },
+        { type: 'keyword', data: results.keyword },
+        { type: 'hashtag', data: results.hashtag }
+      ];
+      
+      for (const { type, data } of searchTypes) {
+        if (data?.tweets && Array.isArray(data.tweets)) {
+          for (const tweet of data.tweets) {
+            tweetsToSave.push({
+              session_id: sessionId,
+              tweet_id: tweet.id,
+              tweet_text: tweet.text,
+              created_at: tweet.created_at,
+              author_username: tweet.author?.username,
+              author_name: tweet.author?.name,
+              author_verified: tweet.author?.verified || false,
+              author_followers: tweet.author?.followers || 0,
+              author_profile_image: tweet.author?.profile_image,
+              likes: tweet.metrics?.likes || 0,
+              retweets: tweet.metrics?.retweets || 0,
+              replies: tweet.replies || [], // FIXED: Store actual reply objects array, not count
+              quotes: tweet.metrics?.quotes || 0,
+              views: tweet.metrics?.views || 0,
+              sentiment_label: tweet.sentiment?.label,
+              sentiment_score: tweet.sentiment?.score,
+              sentiment_confidence: tweet.sentiment?.confidence,
+              hashtags: tweet.hashtags || [],
+              mentions: tweet.mentions || [],
+              urls: tweet.urls || [],
+              media_type: tweet.media_type || null,
+              tweet_url: tweet.url,
+              search_type: type,
+              matched_keywords: tweet.matched_keywords || []
+            });
+          }
+        }
+      }
+      
+      if (tweetsToSave.length > 0) {
+        const { error } = await supabase
+          .from('twitter_tweets')
+          .insert(tweetsToSave);
+          
+        if (error) {
+          console.error('❌ Failed to save individual tweets:', error);
+        } else {
+          console.log(`✅ Saved ${tweetsToSave.length} tweets to database`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error saving tweets:', error);
+    }
+  };
+
+  // Account-specific tweet saving function (via backend API to bypass RLS)
+  const saveAccountTweetsToDatabase = async (sessionId, accountSpecificData) => {
+    try {
+      console.log('🎯 Frontend: Delegating account-specific saving to backend API', {
+        hasAccountSpecific: !!accountSpecificData,
+        accountSpecificType: typeof accountSpecificData,
+        hasAccountData: !!(accountSpecificData?.accountData),
+        hasFormattedTweets: !!(accountSpecificData?.formattedTweets),
+        tweetCount: accountSpecificData?.formattedTweets?.length || 0,
+        sessionId
+      });
+
+      if (!accountSpecificData || !accountSpecificData.accountData?.shouldSave) {
+        console.log('⚠️ No account-specific data to save');
+        return null;
+      }
+
+      const { accountData, formattedTweets, searchMetadata } = accountSpecificData;
+      
+      if (!formattedTweets || formattedTweets.length === 0) {
+        console.log('⚠️ No tweets to save for account-specific analysis');
+        return null;
+      }
+
+      // Prepare the request payload for backend API
+      const requestPayload = {
+        username: accountData.username,
+        tweets: formattedTweets,
+        searchParams: {
+          sessionId,
+          ...searchMetadata
+        },
+        accountMetadata: accountData.metadata || {
+          username: accountData.username,
+          display_name: formattedTweets[0]?.author?.name || null,
+          followers_count: formattedTweets[0]?.author?.followers || 0,
+          verified: formattedTweets[0]?.author?.verified || false,
+          profile_image_url: formattedTweets[0]?.author?.profile_image || null
+        }
+      };
+
+      console.log(`🌐 Calling backend save-account-specific API for @${accountData.username}`);
+      
+      // Call the backend API endpoint using existing callTwitterApi function
+      const result = await callTwitterApi({
+        action: 'save-account-specific',
+        ...requestPayload
+      });
+      
+      if (!result.success) {
+        throw new Error(`Backend processing failed: ${result.error}`);
+      }
+
+      console.log(`✅ Backend successfully saved account-specific tweets:`, result.data);
+
+      return {
+        accountId: result.data.accountId,
+        username: accountData.username,
+        tweetsCount: result.data.tweetsCount,
+        avgEngagement: result.data.avgEngagement,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (error) {
+      console.error('❌ Backend account-specific saving failed:', error);
+      
+      // Fallback: Log the issue but don't block the main search results
+      console.log('⚠️ Account-specific data will not be saved to individual tweets table due to backend error');
       return null;
     }
   };
@@ -191,6 +453,8 @@ export default function TwitterAnalyticsModule({ user }) {
         user_id: user?.id || 'anonymous'
       };
 
+      console.log('🐦 DEBUG: Request data being sent:', requestData);
+      console.log('🐦 DEBUG: Twitter API URL:', '/api/twitter-analytics');
       const data = await callTwitterApi(requestData);
       
       setResults(data);
@@ -204,7 +468,76 @@ export default function TwitterAnalyticsModule({ user }) {
       // Save to database (client-side)
       if (user?.id) {
         try {
-          await saveTwitterSearchToDatabase(searchData, data);
+          const sessionData = await saveTwitterSearchToDatabase(searchData, data);
+          
+          // 🔍 DEBUG: Check what we received from backend
+          console.log('🔍 Backend response structure:', {
+            hasAccountUsername: !!searchData.accountUsername,
+            accountUsername: searchData.accountUsername,
+            hasAccountSpecific: !!data.accountSpecific,
+            dataKeys: Object.keys(data),
+            accountSpecificStructure: data.accountSpecific || 'MISSING',
+            sessionId: sessionData?.id,
+            resultsStructure: {
+              hasResults: !!data.results,
+              hasAccount: !!(data.results?.account),
+              accountTweetsCount: data.results?.account?.tweets?.length || 0,
+              firstAccountTweet: data.results?.account?.tweets?.[0] || 'NO_TWEETS'
+            }
+          });
+          
+          // NEW: Save account-specific tweets if this is an account search
+          if (searchData.accountUsername && sessionData?.id) {
+            if (data.accountSpecific) {
+              // Primary path: Use backend-provided accountSpecific data
+              console.log(`🎯 Account search detected for @${searchData.accountUsername} - saving account-specific data from backend`);
+              
+              const accountSaveResult = await saveAccountTweetsToDatabase(sessionData.id, data.accountSpecific);
+              
+              if (accountSaveResult) {
+                console.log(`✅ Account-specific data saved:`, {
+                  account: accountSaveResult.username,
+                  tweets: accountSaveResult.tweetsCount,
+                  engagement: accountSaveResult.avgEngagement
+                });
+              } else {
+                console.warn('⚠️ Account-specific saving failed, but general search was saved');
+              }
+            } else if (data.results?.account?.tweets?.length > 0) {
+              // Fallback path: Create accountSpecific structure from results
+              console.log(`🔄 Backend missing accountSpecific field - creating from results.account.tweets for @${searchData.accountUsername}`);
+              
+              const fallbackAccountSpecific = {
+                accountData: {
+                  username: searchData.accountUsername.replace(/^@/, ''),
+                  shouldSave: true,
+                  tweetCount: data.results.account.tweets.length,
+                  searchTimestamp: new Date().toISOString()
+                },
+                formattedTweets: data.results.account.tweets,
+                searchMetadata: {
+                  searchType: 'account-specific-fallback',
+                  filters: { keyword: searchData.keyword, hashtags: searchData.hashtags },
+                  timestamp: new Date().toISOString()
+                }
+              };
+              
+              const accountSaveResult = await saveAccountTweetsToDatabase(sessionData.id, fallbackAccountSpecific);
+              
+              if (accountSaveResult) {
+                console.log(`✅ Account-specific data saved via fallback:`, {
+                  account: accountSaveResult.username,
+                  tweets: accountSaveResult.tweetsCount,
+                  engagement: accountSaveResult.avgEngagement
+                });
+              } else {
+                console.warn('⚠️ Account-specific fallback saving failed');
+              }
+            } else {
+              console.log(`ℹ️ Account search for @${searchData.accountUsername} found no tweets to save`);
+            }
+          }
+          
           // Trigger search history refresh
           setHistoryRefreshTrigger(prev => prev + 1);
         } catch (dbError) {

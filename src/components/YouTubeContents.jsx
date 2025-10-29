@@ -2,16 +2,73 @@ import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { saveYouTubeResults, loadYouTubeResults } from '../utils/searchCache'
 
-// New backend endpoint
-const YOUTUBE_SEARCH_API = '/api/youtube-search'
+// Backend endpoints - environment aware
+const getYouTubeSearchApi = () => import.meta.env.DEV 
+  ? 'http://localhost:3001/api/youtube-search'
+  : '/api/youtube-search'
 
-export default function YouTubeContents({ user, keyword, searchId, email, onNewSearch }) {
+const getYouTubeChannelSearchApi = () => import.meta.env.DEV 
+  ? 'http://localhost:3001/api/youtube-channel-search'
+  : '/api/youtube-channel-search'
+
+export default function YouTubeContents({ user, keyword, searchId, email, searchType = 'videos', filters, onFilterChange, onNewSearch }) {
   const [loading, setLoading] = useState(true)
   const [youtubeVideos, setYoutubeVideos] = useState([])
   const [error, setError] = useState('')
   const [expandedCards, setExpandedCards] = useState(new Set())
   const [analysisData, setAnalysisData] = useState({}) // Cache for analysis results
   const [overallSummary, setOverallSummary] = useState('') // Overall summary across all videos
+  const [showFilters, setShowFilters] = useState(false)
+  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false)
+
+  // Filter handling functions (using props)
+  const resetFilters = () => {
+    const defaultFilters = {
+      upload_date_filter: null,
+      sort_by_filter: 'relevance',
+      geo_filter: 'US',
+      content_type_filter: 'video'
+    }
+    Object.keys(defaultFilters).forEach(key => {
+      onFilterChange(key, defaultFilters[key])
+    })
+  }
+
+  // Content type helper functions
+  const getContentTypeIcon = (contentType) => {
+    switch (contentType) {
+      case 'shorts': return '⚡'
+      case 'live': return '🔴'
+      case 'channel': return '👤'
+      case 'playlist': return '📋'
+      default: return '🎬'
+    }
+  }
+
+  const getContentTypeLabel = (contentType) => {
+    switch (contentType) {
+      case 'shorts': return 'Short'
+      case 'live': return 'Live'
+      case 'channel': return 'Channel'
+      case 'playlist': return 'Playlist'
+      default: return 'Video'
+    }
+  }
+
+  const getContentTypeBadgeStyle = (contentType) => {
+    switch (contentType) {
+      case 'shorts': 
+        return { background: '#ff6b35', color: 'white' }
+      case 'live': 
+        return { background: '#dc3545', color: 'white' }
+      case 'channel': 
+        return { background: '#6f42c1', color: 'white' }
+      case 'playlist': 
+        return { background: '#20c997', color: 'white' }
+      default: 
+        return { background: '#0d6efd', color: 'white' }
+    }
+  }
 
   // Helper function to parse markdown-style bold text
   const parseTextWithFormatting = (text) => {
@@ -128,13 +185,17 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
       setLoading(true)
       setError('')
 
-      console.log('Calling backend API for YouTube search + summarization')
+      const isChannelSearch = searchType === 'channel'
+      console.log(`Calling backend API for YouTube ${isChannelSearch ? 'channel' : 'video'} search + summarization`)
 
-      // Generate search_id if not provided (for standalone YouTube searches)
+      // Generate search_id if not provided
       const effectiveSearchId = searchId || uuidv4()
 
-      // Call new backend endpoint that handles everything
-      const response = await fetch(YOUTUBE_SEARCH_API, {
+      // Choose the appropriate API endpoint
+      const apiEndpoint = isChannelSearch ? getYouTubeChannelSearchApi() : getYouTubeSearchApi()
+
+      // Call backend endpoint
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -143,7 +204,8 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
           keyword,
           user_id: user.id,
           search_id: effectiveSearchId,
-          email: email
+          email: email,
+          filters: filters
         })
       })
 
@@ -154,8 +216,20 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
 
       const data = await response.json()
 
+      // Check database save status and log for debugging
+      if (data.databaseSave) {
+        console.log('📊 Database Save Status:', data.databaseSave)
+        if (data.databaseSave.status === 'success') {
+          console.log('✅ Channel analytics saved to database successfully')
+        } else {
+          console.warn('⚠️ Database save failed:', data.databaseSave.error)
+          // Optional: Show a non-blocking notification to user
+          // Could implement a toast notification here
+        }
+      }
+
       if (data.status !== 'success' || !data.videos || data.videos.length === 0) {
-        setError('No YouTube videos found for this keyword')
+        setError(isChannelSearch ? 'No videos found for this channel' : 'No YouTube videos found for this keyword')
         setLoading(false)
         return
       }
@@ -179,12 +253,14 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
         }
       })
       setAnalysisData(analysisDataFromBackend)
+      setHasInitiallyLoaded(true) // Mark as initially loaded for auto-refetch
 
       // Save results to localStorage
       saveYouTubeResults(user.id, {
         keyword,
         searchId,
         email,
+        searchType,
         videos: videoResults,
         analysisData: analysisDataFromBackend,
         overallSummary: overallSummaryData
@@ -204,6 +280,16 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
     }
   }
 
+  // Auto-refetch when filters change (after initial load)
+  useEffect(() => {
+    if (hasInitiallyLoaded && keyword) {
+      const timeoutId = setTimeout(() => {
+        fetchYoutubeContent()
+      }, 500) // 500ms debounce
+      return () => clearTimeout(timeoutId)
+    }
+  }, [filters])
+
   useEffect(() => {
     if (!keyword) {
       setError('No keyword provided. Please enter a keyword to search.')
@@ -214,17 +300,17 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
     // Check if we have cached data for this user
     const cachedData = loadYouTubeResults(user.id)
 
-    if (cachedData && cachedData.keyword === keyword) {
-      // Load from cache instead of fetching
+    if (cachedData && cachedData.keyword === keyword && cachedData.searchType === searchType) {
+      // Load from cache if keyword and search type match
       setYoutubeVideos(cachedData.videos || [])
       setAnalysisData(cachedData.analysisData || {})
       setOverallSummary(cachedData.overallSummary || '')
       setLoading(false)
     } else {
-      // No cache or different keyword - fetch fresh data
+      // No cache, different keyword, or different search type - fetch fresh data
       fetchYoutubeContent()
     }
-  }, [keyword, user.id])
+  }, [keyword, searchType, user.id])
 
   const handleRetry = () => {
     fetchYoutubeContent()
@@ -249,13 +335,17 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
   }
 
   if (loading) {
+    const isChannelSearch = searchType === 'channel'
     return (
       <div className="youtube-contents-container">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Searching and analyzing YouTube videos...</p>
+          <p>{isChannelSearch ? 'Analyzing channel videos...' : 'Searching and analyzing YouTube videos...'}</p>
           <small style={{ marginTop: '10px', color: '#666' }}>
-            Fetching 10 videos for "{keyword}" and generating summaries
+            {isChannelSearch 
+              ? `Fetching recent videos from "${keyword}" and generating summaries`
+              : `Fetching 10 videos for "${keyword}" and generating summaries`
+            }
           </small>
         </div>
       </div>
@@ -288,18 +378,158 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
 
   return (
     <div className="youtube-contents-container">
-      <div className="youtube-header">
-        <h2>YouTube Content Analysis</h2>
-        {onNewSearch && (
-          <button onClick={onNewSearch} className="secondary-btn">
-            New Search
+      <div className="youtube-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ margin: 0 }}>{searchType === 'channel' ? 'YouTube Channel Analysis' : 'YouTube Content Analysis'}</h2>
+        <div className="header-actions" style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={() => setShowFilters(!showFilters)} 
+            className="secondary-btn"
+          >
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
           </button>
-        )}
+          {onNewSearch && (
+            <button onClick={onNewSearch} className="secondary-btn">
+              New Search
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Filter Panel */}
+      {showFilters && (
+        <div className="youtube-filters-panel" style={{
+          background: '#f8f9fa',
+          padding: '20px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          border: '1px solid #e9ecef'
+        }}>
+          <div className="filters-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '15px',
+            marginBottom: '15px'
+          }}>
+            {/* Upload Date Filter */}
+            <div className="filter-group">
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+                Upload Date:
+              </label>
+              <select 
+                value={filters.upload_date_filter || ''} 
+                onChange={(e) => onFilterChange('upload_date_filter', e.target.value || null)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ced4da',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="">Any time</option>
+                <option value="hour">Past hour</option>
+                <option value="today">Today</option>
+                <option value="week">This week</option>
+                <option value="month">This month</option>
+                <option value="year">This year</option>
+              </select>
+            </div>
+
+            {/* Sort By Filter */}
+            <div className="filter-group">
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+                Sort By:
+              </label>
+              <select 
+                value={filters.sort_by_filter} 
+                onChange={(e) => onFilterChange('sort_by_filter', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ced4da',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="relevance">Relevance</option>
+                <option value="date">Upload date</option>
+                <option value="views">View count</option>
+                <option value="rating">Rating</option>
+              </select>
+            </div>
+
+            {/* Region Filter */}
+            <div className="filter-group">
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+                Region:
+              </label>
+              <select 
+                value={filters.geo_filter} 
+                onChange={(e) => onFilterChange('geo_filter', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ced4da',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="ES">Spain</option>
+                <option value="IT">Italy</option>
+                <option value="JP">Japan</option>
+                <option value="IN">India</option>
+              </select>
+            </div>
+
+            {/* Content Type Filter */}
+            <div className="filter-group">
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+                Content Type:
+              </label>
+              <select 
+                value={filters.content_type_filter} 
+                onChange={(e) => onFilterChange('content_type_filter', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ced4da',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="video">Videos</option>
+                <option value="shorts">Shorts</option>
+                <option value="channel">Channels</option>
+                <option value="playlist">Playlists</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Filter Actions */}
+          <div className="filter-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '10px' }}>
+            <button 
+              onClick={resetFilters} 
+              className="secondary-btn"
+              style={{ padding: '8px 16px' }}
+            >
+              Reset Filters
+            </button>
+            <small style={{ color: '#666', alignSelf: 'center', marginLeft: '10px' }}>
+              Filters apply automatically
+            </small>
+          </div>
+        </div>
+      )}
 
       {youtubeVideos.length === 0 ? (
         <div className="no-results">
-          <p>No YouTube videos found for this search.</p>
+          <p>{searchType === 'channel' ? 'No videos found for this channel.' : 'No YouTube videos found for this search.'}</p>
         </div>
       ) : (
         <>
@@ -307,7 +537,7 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
           {overallSummary && (
             <div className="overall-summary-section">
               <div className="overall-summary-card">
-                <h3>📊 Trend Analysis for "{keyword}"</h3>
+                <h3>{searchType === 'channel' ? `📺 Channel Analysis for "${keyword}"` : `📊 Trend Analysis for "${keyword}"`}</h3>
                 <div className="overall-summary-content">
                   {overallSummary}
                 </div>
@@ -332,6 +562,28 @@ export default function YouTubeContents({ user, keyword, searchId, email, onNewS
                     src={video.thumbnail}
                     alt={video.video_name || video.title || 'Video thumbnail'}
                   />
+                  {/* Content Type Badge */}
+                  {video.contentType && (
+                    <span 
+                      className="content-type-badge"
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        left: '8px',
+                        background: getContentTypeBadgeStyle(video.contentType).background,
+                        color: getContentTypeBadgeStyle(video.contentType).color,
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '2px'
+                      }}
+                    >
+                      {getContentTypeIcon(video.contentType)} {getContentTypeLabel(video.contentType)}
+                    </span>
+                  )}
                   {video.duration && video.duration !== 'N/A' && (
                     <span className="video-duration">{video.duration}</span>
                   )}

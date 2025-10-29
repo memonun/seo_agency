@@ -24,7 +24,10 @@ initEmailJS()
  * @returns {string} HTML formatted email content
  */
 const formatDomainResultsForEmail = (results, searchParams) => {
-  if (!results || results.length === 0) {
+  // Handle new results format: { primary: [...], enhanced: {...} } or legacy array format
+  const primaryResults = results.primary || results
+  
+  if (!primaryResults || primaryResults.length === 0) {
     return '<p>No domains found matching your search criteria.</p>'
   }
 
@@ -34,12 +37,12 @@ const formatDomainResultsForEmail = (results, searchParams) => {
     <ul>
       <li>Domain Pattern: ${searchParams.domainPattern}</li>
       <li>Filter Type: ${searchParams.filterType}</li>
-      <li>Results Found: ${results.length}</li>
+      <li>Results Found: ${primaryResults.length}</li>
     </ul>
     <hr>
   `
 
-  results.forEach((domain, index) => {
+  primaryResults.forEach((domain, index) => {
     html += `
       <div style="margin-bottom: 30px; padding: 20px; border: 1px solid #e5e5e5; background: #f9f9f9;">
         <h3 style="margin-top: 0;">${index + 1}. ${domain.domain}</h3>

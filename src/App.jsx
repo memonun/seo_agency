@@ -9,6 +9,7 @@ import SEOModule from './pages/SEOModule'
 import YouTubeModule from './pages/YouTubeModule'
 import SocialListeningModule from './pages/SocialListeningModule'
 import TwitterAnalyticsModule from './pages/TwitterAnalyticsModule'
+import RedditModule from './pages/RedditModule'
 import NewsModule from './pages/NewsModule'
 import AnalyticsModule from './pages/AnalyticsModule'
 import GenerativeModule from './pages/GenerativeModule'
@@ -54,6 +55,7 @@ function App() {
           <Route path="/modules/youtube" element={<YouTubeModule user={user} />} />
           <Route path="/modules/social-listening" element={<SocialListeningModule user={user} />} />
           <Route path="/modules/twitter" element={<TwitterAnalyticsModule user={user} />} />
+          <Route path="/modules/reddit" element={<RedditModule user={user} />} />
           <Route path="/modules/news" element={<NewsModule user={user} />} />
           <Route path="/modules/analytics" element={<AnalyticsModule user={user} />} />
           <Route path="/modules/generative" element={<GenerativeModule user={user} />} />

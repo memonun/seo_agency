@@ -1,21 +1,7 @@
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '../lib/supabase'
-import { 
-  getDomainAnalytics, 
-  formatDomainResults,
-  getBulkTrafficEstimation,
-  getCompetitorsDomain,
-  getRelevantPages,
-  getBacklinksSummary,
-  getKeywordsForSite,
-  formatBulkTrafficResults,
-  formatCompetitorsResults,
-  formatRelevantPagesResults,
-  formatBacklinksResults,
-  formatKeywordsForSiteResults,
-  sanitizeDomainForBulkTraffic
-} from '../utils/dataForSEO'
+import { callDomainAnalyticsApi } from '../utils/apiConfig'
 import { sendDomainAnalyticsEmail } from '../utils/emailService'
 import DomainAnalyticsResults from './DomainAnalyticsResults'
 
@@ -63,89 +49,28 @@ export default function DomainAnalyticsForm({ user }) {
 
       if (sessionError) throw sessionError
 
-      // PRIMARY: Call original domain analytics API to preserve backward compatibility
-      const primaryResponse = await getDomainAnalytics({
+      // Call domain analytics API (server handles all complexity)
+      const apiResponse = await callDomainAnalyticsApi({
         domainPattern: formData.domainPattern,
         limit: parseInt(formData.limit),
-        filterType: formData.filterType
+        filterType: formData.filterType,
+        user_id: user.id,
+        session_id: sessionId
       })
 
-      // Format primary results (original working format)
-      const primaryResults = formatDomainResults(primaryResponse)
+      // Extract results from API response
+      const { results: { primary: primaryResults, enhanced: enhancedData }, meta } = apiResponse
       
       // Store primary results for immediate display
       setResults(primaryResults)
       setShowResults(true)
 
-      // ENHANCED: Call additional APIs in background for comprehensive analysis (non-blocking)
-      const domain = formData.domainPattern
-      
-      // Sanitize domain for bulk traffic API (removes wildcards, protocols, etc.)
-      const cleanDomain = sanitizeDomainForBulkTraffic(domain)
-      
-      const [
-        bulkTrafficResponse,
-        competitorsResponse,
-        relevantPagesResponse,
-        backlinksResponse,
-        domainMetricsResponse
-      ] = await Promise.allSettled([
-        // Use sanitized domain for bulk traffic API (skip if invalid)
-        cleanDomain.length > 0 ? getBulkTrafficEstimation({
-          targets: [cleanDomain]
-        }) : Promise.reject(new Error('Invalid domain after sanitization')),
-        getCompetitorsDomain({
-          target: domain
-        }),
-        getRelevantPages({
-          target: domain
-        }),
-        getBacklinksSummary({
-          target: domain
-        }),
-        getKeywordsForSite({
-          target: domain
-        })
-      ])
-
-      
-      // Build enhanced data object for supplementary analysis
-      const enhancedData = {
-        domain: domain,
-        trafficEstimation: bulkTrafficResponse.status === 'fulfilled' ? formatBulkTrafficResults(bulkTrafficResponse.value) : [],
-        competitors: competitorsResponse.status === 'fulfilled' ? formatCompetitorsResults(competitorsResponse.value) : [],
-        relevantPages: relevantPagesResponse.status === 'fulfilled' ? formatRelevantPagesResults(relevantPagesResponse.value) : [],
-        backlinks: backlinksResponse.status === 'fulfilled' ? formatBacklinksResults(backlinksResponse.value) : {},
-        domainMetrics: domainMetricsResponse.status === 'fulfilled' ? formatKeywordsForSiteResults(domainMetricsResponse.value) : [],
-        endpointStatus: {
-          bulkTraffic: bulkTrafficResponse.status,
-          competitors: competitorsResponse.status,
-          relevantPages: relevantPagesResponse.status,
-          backlinks: backlinksResponse.status,
-          domainMetrics: domainMetricsResponse.status
-        },
-        errors: {
-          bulkTraffic: bulkTrafficResponse.status === 'rejected' ? bulkTrafficResponse.reason?.message : null,
-          competitors: competitorsResponse.status === 'rejected' ? competitorsResponse.reason?.message : null,
-          relevantPages: relevantPagesResponse.status === 'rejected' ? relevantPagesResponse.reason?.message : null,
-          backlinks: backlinksResponse.status === 'rejected' ? backlinksResponse.reason?.message : null,
-          domainMetrics: domainMetricsResponse.status === 'rejected' ? domainMetricsResponse.reason?.message : null
-        }
-      }
-
       // Update results with enhanced data
       setResults({ primary: primaryResults, enhanced: enhancedData })
 
-      // Count successful endpoints and total data points
-      const successfulEndpoints = 1 + Object.values(enhancedData.endpointStatus).filter(status => status === 'fulfilled').length
-      const totalDataPoints = (
-        primaryResults.length +
-        enhancedData.trafficEstimation.length +
-        enhancedData.competitors.length +
-        enhancedData.relevantPages.length +
-        (Object.keys(enhancedData.backlinks).length > 0 ? 1 : 0) +
-        enhancedData.domainMetrics.length
-      )
+      // Get metrics from API response
+      const successfulEndpoints = meta.endpointsSuccessful
+      const totalDataPoints = meta.totalDataPoints
 
       // Update session in Supabase
       await supabase
@@ -153,7 +78,7 @@ export default function DomainAnalyticsForm({ user }) {
         .update({
           results_count: totalDataPoints,
           completed_at: new Date().toISOString(),
-          endpoints_called: 5,
+          endpoints_called: meta.totalEndpoints,
           endpoints_successful: successfulEndpoints
         })
         .eq('id', sessionId)
@@ -172,7 +97,7 @@ export default function DomainAnalyticsForm({ user }) {
       })
 
       // Show success message with comprehensive status
-      const endpointSummary = `${successfulEndpoints}/5 endpoints successful`
+      const endpointSummary = `${successfulEndpoints}/${meta.totalEndpoints} endpoints successful`
       if (emailResult.success) {
         setMessage({
           text: `Domain analysis complete! ${endpointSummary}. Report sent to ${recipientEmail}`,

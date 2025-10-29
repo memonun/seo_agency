@@ -125,3 +125,80 @@ export const processYouTubeVideos = (youtubeData) => {
 export const getVideoIdFromUrl = (url) => {
   return extractVideoId(url)
 }
+
+/**
+ * Extract channel ID from various YouTube channel URL formats
+ * @param {string} input - Channel URL, handle, or ID
+ * @returns {string|null} - Channel ID or null if invalid
+ */
+export const extractChannelId = (input) => {
+  if (!input || typeof input !== 'string') return null
+
+  try {
+    const cleanInput = input.trim()
+
+    // Pattern 1: Direct channel ID (UC...)
+    if (/^UC[a-zA-Z0-9_-]{22}$/.test(cleanInput)) {
+      return cleanInput
+    }
+
+    // Pattern 2: @username format
+    const handleMatch = cleanInput.match(/^@([a-zA-Z0-9_.-]+)$/)
+    if (handleMatch) {
+      return `@${handleMatch[1]}` // Return as handle for API
+    }
+
+    // Pattern 3: youtube.com/channel/CHANNEL_ID
+    const channelPattern = /(?:youtube\.com\/channel\/)([a-zA-Z0-9_-]+)/
+    const channelMatch = cleanInput.match(channelPattern)
+    if (channelMatch) return channelMatch[1]
+
+    // Pattern 4: youtube.com/c/CUSTOM_NAME
+    const customPattern = /(?:youtube\.com\/c\/)([a-zA-Z0-9_-]+)/
+    const customMatch = cleanInput.match(customPattern)
+    if (customMatch) return `@${customMatch[1]}` // Convert to handle format
+
+    // Pattern 5: youtube.com/user/USERNAME  
+    const userPattern = /(?:youtube\.com\/user\/)([a-zA-Z0-9_-]+)/
+    const userMatch = cleanInput.match(userPattern)
+    if (userMatch) return `@${userMatch[1]}`
+
+    // Pattern 6: youtube.com/@username
+    const atPattern = /(?:youtube\.com\/@)([a-zA-Z0-9_.-]+)/
+    const atMatch = cleanInput.match(atPattern)
+    if (atMatch) return `@${atMatch[1]}`
+
+    // Pattern 7: m.youtube.com variants
+    const mobileChannelPattern = /(?:m\.youtube\.com\/channel\/)([a-zA-Z0-9_-]+)/
+    const mobileChannelMatch = cleanInput.match(mobileChannelPattern)
+    if (mobileChannelMatch) return mobileChannelMatch[1]
+
+    return null
+  } catch (error) {
+    console.error('Error extracting channel ID:', error)
+    return null
+  }
+}
+
+/**
+ * Check if input is a valid YouTube channel identifier
+ * @param {string} input - Input to validate
+ * @returns {boolean} - True if valid channel identifier
+ */
+export const isValidChannelInput = (input) => {
+  if (!input || typeof input !== 'string') return false
+
+  // Check if we can extract a valid channel ID
+  const channelId = extractChannelId(input)
+  return channelId !== null
+}
+
+/**
+ * Normalize channel input to a consistent format for API calls
+ * @param {string} input - Channel URL, handle, or ID
+ * @returns {string} - Normalized channel identifier
+ */
+export const normalizeChannelInput = (input) => {
+  const channelId = extractChannelId(input)
+  return channelId || input // Return original if can't extract
+}

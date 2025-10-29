@@ -72,6 +72,7 @@ const generateMockTweets = (query, limit = 10) => {
       likes: Math.floor(Math.random() * 1000) + 10,
       retweets: Math.floor(Math.random() * 500) + 5,
       replies: Math.floor(Math.random() * 100) + 2,
+      quotes: Math.floor(Math.random() * 30),
       views: Math.floor(Math.random() * 5000) + 100
     },
     sentiment: {
@@ -80,7 +81,9 @@ const generateMockTweets = (query, limit = 10) => {
       confidence: (Math.random() * 0.5 + 0.5).toFixed(2) // 0.5 to 1
     },
     created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-    hashtags: [`#${query.replace(/\s+/g, '')}`, '#socialmedia', '#trending'].slice(0, Math.floor(Math.random() * 3) + 1)
+    hashtags: [`#${query.replace(/\s+/g, '')}`, '#socialmedia', '#trending'].slice(0, Math.floor(Math.random() * 3) + 1),
+    mentions: [`@user${Math.floor(Math.random() * 5) + 1}`, '@influencer', '@expert'].slice(0, Math.floor(Math.random() * 2) + 1),
+    replies: [] // Will be populated if mentions enabled
   }));
 };
 
@@ -235,22 +238,11 @@ export default async function handler(req, res) {
           };
           break;
           
-        case 'hashtag':
-          if (!hashtags || !Array.isArray(hashtags)) {
-            return res.status(400).json({
-              error: 'Invalid hashtags',
-              message: 'Hashtags array is required for hashtag action'
-            });
-          }
-          mockData = hashtags.flatMap(hashtag => 
-            generateMockTweets(hashtag, Math.floor(limit / hashtags.length))
-          );
-          break;
           
         default:
           return res.status(400).json({
             error: 'Invalid action',
-            message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
+            message: 'Supported actions: search, combined-search, separated-search, account-analysis, discover-hashtags'
           });
       }
       
@@ -302,8 +294,6 @@ export default async function handler(req, res) {
     switch (action) {
       case 'search':
         return await handleKeywordSearch(twitterClient, req, res);
-      case 'hashtag':
-        return await handleHashtagAnalysis(twitterClient, req, res);
       case 'combined-search':
         return await handleCombinedSearch(twitterClient, req, res);
       case 'separated-search':
@@ -312,12 +302,12 @@ export default async function handler(req, res) {
         return await handleAccountAnalysis(twitterClient, req, res);
       case 'discover-hashtags':
         return await handleHashtagDiscovery(twitterClient, req, res);
-      case 'sentiment':
-        return await handleSentimentAnalysis(twitterClient, req, res);
+      case 'save-account-specific':
+        return await handleSaveAccountSpecific(req, res);
       default:
         return res.status(400).json({
           error: 'Invalid action',
-          message: 'Supported actions: search, hashtag, combined-search, separated-search, account-analysis, discover-hashtags, sentiment'
+          message: 'Supported actions: search, combined-search, separated-search, account-analysis, discover-hashtags, save-account-specific'
         });
     }
     
@@ -447,6 +437,7 @@ async function handleKeywordSearch(client, req, res) {
           confidence: sentiment.confidence
         },
         hashtags,
+        mentions: tweet.entities?.mentions?.map(mention => `@${mention.username}`) || [],
         url: `https://twitter.com/${author?.username}/status/${tweet.id}`,
         replies: [] // Will be populated if mentions is enabled
       };
@@ -1235,6 +1226,13 @@ async function handleAccountAnalysis(client, req, res) {
       // Continue without AI - not critical
     }
     
+    // NEW: Add account-specific saving data to response
+    const accountSavingData = await saveAccountSpecificTweets(
+      cleanUsername, 
+      formattedTweets, 
+      { keyword, hashtags, includeMentions, limit, sortOrder }
+    );
+    
     return res.status(200).json({
       success: true,
       data: formattedTweets,
@@ -1245,7 +1243,9 @@ async function handleAccountAnalysis(client, req, res) {
         hashtags: hashtags || []
       },
       total: tweets.length,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // NEW: Account-specific data for frontend database insertion
+      accountSpecific: accountSavingData
     });
     
   } catch (error) {
@@ -1437,13 +1437,6 @@ function generateAccountAnalytics(tweets, username, keyword, hashtags) {
   return baseAnalytics;
 }
 
-async function handleHashtagAnalysis(client, req, res) {
-  // TODO: Implement hashtag analysis
-  return res.status(501).json({
-    error: 'Not implemented',
-    message: 'Hashtag analysis will be implemented in the next step'
-  });
-}
 
 // NEW: Separated search handler that returns structured results for each search type
 async function handleSeparatedSearch(client, req, res) {
@@ -1541,6 +1534,23 @@ async function handleSeparatedSearch(client, req, res) {
     // Calculate global analytics
     const globalAnalytics = calculateGlobalAnalyticsSeparated(accountResult, keywordResult, hashtagResult)
     
+    // NEW: Add account-specific saving for separated searches with account data
+    let accountSpecific = null
+    if (hasAccount && accountResult && accountResult.tweets && accountResult.tweets.length > 0) {
+      console.log(`🎯 Account found in separated search for @${accountUsername} - preparing account-specific data`)
+      
+      const cleanUsername = accountUsername.replace(/^@/, '')
+      accountSpecific = await saveAccountSpecificTweets(
+        cleanUsername,
+        accountResult.tweets,
+        { keyword, hashtags, includeMentions, limit, sortOrder }
+      )
+      
+      if (accountSpecific) {
+        console.log(`✅ Account-specific data prepared for @${cleanUsername}`)
+      }
+    }
+    
     // Build the final response
     const response = {
       success: true,
@@ -1560,7 +1570,9 @@ async function handleSeparatedSearch(client, req, res) {
         limit,
         global
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // NEW: Include account-specific data if available (for frontend database saving)
+      ...(accountSpecific && { accountSpecific })
     }
     
     console.log('✅ Separated search complete:', {
@@ -1714,7 +1726,9 @@ function formatTweets(tweets, users) {
         confidence: sentiment.confidence
       },
       hashtags,
-      url: `https://twitter.com/${author?.username}/status/${tweet.id}`
+      mentions: tweet.entities?.mentions?.map(mention => `@${mention.username}`) || [],
+      url: `https://twitter.com/${author?.username}/status/${tweet.id}`,
+      replies: []
     };
   });
 }
@@ -1771,13 +1785,6 @@ function generateCombinedAnalytics(tweets, keyword, hashtags) {
   return analytics;
 }
 
-async function handleSentimentAnalysis(client, req, res) {
-  // TODO: Implement sentiment analysis
-  return res.status(501).json({
-    error: 'Not implemented',
-    message: 'Sentiment analysis will be implemented in the next step'
-  });
-}
 
 // NEW: Helper functions for separated search
 async function searchAccountData(client, params) {
@@ -2164,6 +2171,7 @@ function formatTweetsSeparated(tweets, users) {
         likes: tweet.public_metrics?.like_count || 0,
         retweets: tweet.public_metrics?.retweet_count || 0,
         replies: tweet.public_metrics?.reply_count || 0,
+        quotes: tweet.public_metrics?.quote_count || 0,
         views: tweet.public_metrics?.impression_count || 0
       },
       sentiment: {
@@ -2171,8 +2179,165 @@ function formatTweetsSeparated(tweets, users) {
         score: 0.5
       },
       hashtags: tweet.entities?.hashtags?.map(h => h.tag) || [],
+      mentions: tweet.entities?.mentions?.map(mention => `@${mention.username}`) || [],
       url: `https://twitter.com/${author.username}/status/${tweet.id}`,
       replies: []
     }
   })
+}
+
+// NEW: Account-specific tweet saving functionality
+// This function handles saving tweets to the database when account searches are performed
+async function saveAccountSpecificTweets(accountUsername, tweets, searchData) {
+  // Initialize Supabase client (serverless environment doesn't have direct DB access)
+  // This function is designed to be called by the frontend after receiving the API response
+  console.log(`📊 Account-specific saving requested for @${accountUsername} with ${tweets.length} tweets`)
+  
+  // Return the data structure needed for frontend database insertion
+  return {
+    accountData: {
+      username: accountUsername.replace(/^@/, ''),
+      shouldSave: true,
+      tweetCount: tweets.length,
+      searchTimestamp: new Date().toISOString()
+    },
+    formattedTweets: tweets.map(tweet => ({
+      ...tweet,
+      isAccountSpecific: true,
+      accountUsername: accountUsername.replace(/^@/, ''),
+      collectedAt: new Date().toISOString()
+    })),
+    searchMetadata: {
+      searchType: 'account-specific',
+      filters: searchData || {},
+      timestamp: new Date().toISOString()
+    }
+  }
+}
+
+// API-compatible wrapper for account-specific saving (Serverless)
+// This function returns { success, data, error } format for API endpoints
+async function saveAccountSpecificTweetsForAPI(accountUsername, tweets, searchData) {
+  try {
+    console.log(`🌐 API wrapper: Calling saveAccountSpecificTweets for @${accountUsername}`)
+    
+    // Call the original function that returns frontend-compatible format
+    const result = await saveAccountSpecificTweets(accountUsername, tweets, searchData)
+    
+    // Check if result is valid (serverless environment doesn't do actual database operations)
+    if (!result || !result.accountData || result.accountData.shouldSave === false) {
+      return {
+        success: false,
+        error: result?.accountData?.error || 'Failed to prepare account-specific data',
+        data: null
+      }
+    }
+    
+    // Convert to API format (serverless doesn't save to DB, so provide metadata only)
+    return {
+      success: true,
+      data: {
+        accountId: null, // Serverless doesn't save to DB
+        username: result.accountData.username,
+        tweetsCount: result.accountData.tweetCount || 0,
+        avgEngagement: '0.0000', // Serverless doesn't calculate this
+        timestamp: result.accountData.searchTimestamp,
+        note: 'Serverless environment - data prepared for frontend saving'
+      },
+      message: `Successfully prepared ${result.accountData.tweetCount || 0} account-specific tweets for frontend saving`
+    }
+    
+  } catch (error) {
+    console.error('❌ API wrapper error (serverless):', error)
+    return {
+      success: false,
+      error: error.message,
+      data: null
+    }
+  }
+}
+
+// Helper function to extract account metadata from tweets
+function extractAccountMetadata(tweets, accountUsername) {
+  if (!tweets || tweets.length === 0) {
+    return {
+      username: accountUsername.replace(/^@/, ''),
+      display_name: null,
+      followers_count: 0,
+      verified: false,
+      profile_image_url: null,
+      bio: null
+    }
+  }
+  
+  // Get account info from the first tweet's author data
+  const firstTweet = tweets[0]
+  const author = firstTweet.author || {}
+  
+  return {
+    username: accountUsername.replace(/^@/, ''),
+    display_name: author.name || null,
+    followers_count: author.followers || 0,
+    following_count: author.following || 0,
+    verified: author.verified || false,
+    profile_image_url: author.profile_image || null,
+    bio: author.bio || null,
+    tweet_count: author.tweet_count || 0
+  }
+}
+
+// Function to calculate engagement rate for a tweet
+function calculateEngagementRate(tweet) {
+  if (!tweet.metrics || !tweet.author?.followers) {
+    return 0
+  }
+  
+  const totalEngagement = (tweet.metrics.likes || 0) + 
+                         (tweet.metrics.retweets || 0) + 
+                         (tweet.metrics.replies || 0)
+  
+  if (tweet.author.followers === 0) return 0
+  
+  return (totalEngagement / tweet.author.followers).toFixed(4)
+}
+
+// Handler for save-account-specific action - bypasses RLS issues
+async function handleSaveAccountSpecific(req, res) {
+  try {
+    const { username, tweets, searchParams, accountMetadata } = req.body;
+
+    if (!username || !tweets || !Array.isArray(tweets)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request',
+        message: 'Missing required fields: username, tweets array'
+      });
+    }
+
+    console.log(`🎯 Backend: Saving account-specific tweets for @${username}`, {
+      tweetCount: tweets.length,
+      sessionId: searchParams?.sessionId
+    });
+
+    // Call the API-compatible wrapper function
+    const result = await saveAccountSpecificTweetsForAPI(username, tweets, searchParams);
+
+    if (!result || !result.success) {
+      throw new Error(result?.error || 'Failed to save account-specific tweets');
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: result.data,
+      message: result.message || `Successfully prepared ${tweets.length} account-specific tweets for frontend saving`
+    });
+
+  } catch (error) {
+    console.error('❌ Backend save-account-specific error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to save account-specific tweets'
+    });
+  }
 }
