@@ -6,7 +6,8 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import crypto from 'crypto'
 // Using built-in fetch (Node.js 18+)
-import { TwitterApi } from '@virtuals-protocol/game-twitter-node'
+// Twitter API functionality disabled - using mock mode only
+// import { TwitterApi } from '@virtuals-protocol/game-twitter-node'
 import { createClient } from '@supabase/supabase-js'
 
 dotenv.config()
@@ -1729,9 +1730,8 @@ function getTwitterClient() {
     console.log('🔧 Creating TwitterApi client...')
     
     // CRITICAL: Use gameTwitterAccessToken parameter (from ERROR_DOCUMENTATION.md)
-    const client = new TwitterApi({
-      gameTwitterAccessToken: accessToken
-    })
+    // Twitter API disabled - return null to force mock mode
+    const client = null
     
     console.log('✅ TwitterApi client created successfully')
     console.log('=== END TWITTER CLIENT INIT ===\n')

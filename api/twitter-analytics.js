@@ -2,7 +2,7 @@
 // Twitter Analytics using GAME SDK Twitter Plugin
 // Handles keyword search, hashtag analysis, and sentiment analysis
 
-import { TwitterApi } from '@virtuals-protocol/game-twitter-node';
+// Twitter API functionality temporarily disabled - using mock mode only
 
 // Rate limiting tracker
 const rateLimiter = {
@@ -29,27 +29,10 @@ const rateLimiter = {
   }
 };
 
-// Initialize GAME SDK Twitter client
+// Initialize Twitter client - DISABLED: Returns null to force mock mode
 const getTwitterClient = () => {
-  const accessToken = process.env.GAME_TWITTER_ACCESS_TOKEN;
-  
-  if (!accessToken) {
-    throw new Error('GAME_TWITTER_ACCESS_TOKEN not found in environment');
-  }
-  
-  if (!accessToken.startsWith('apx-')) {
-    throw new Error('Invalid token format. GAME tokens must start with "apx-"');
-  }
-  
-  try {
-    // CRITICAL: Use gameTwitterAccessToken parameter (from ERROR_DOCUMENTATION.md)
-    const client = new TwitterApi({
-      gameTwitterAccessToken: accessToken
-    });
-    return client;
-  } catch (error) {
-    throw new Error(`Failed to initialize GAME Twitter client: ${error.message}`);
-  }
+  console.log('🚫 Twitter client disabled - using mock mode only');
+  return null;
 };
 
 // Database storage removed - results are now exported as downloadable JSON files
@@ -279,17 +262,24 @@ export default async function handler(req, res) {
       });
     }
     
-    // Production mode - check rate limiting
-    if (!rateLimiter.canMakeRequest()) {
-      return res.status(429).json({
-        error: 'Rate limit exceeded',
-        message: 'Too many requests. Please wait before trying again.',
-        retryAfter: rateLimiter.getTimeUntilReset()
-      });
-    }
+    // Production mode disabled - force mock mode
+    console.log('🚫 Production Twitter API disabled - forcing mock mode');
     
-    // Initialize Twitter client
-    const twitterClient = getTwitterClient();
+    // Always use mock mode since Twitter client is disabled
+    return res.status(200).json({
+      success: true,
+      mock: true,
+      message: 'Twitter API temporarily disabled - using mock data only',
+      data: generateMockTweets('disabled', 10),
+      analytics: {
+        total_tweets: 10,
+        avg_sentiment: 0,
+        sentiment_distribution: { positive: 0, negative: 0, neutral: 10 },
+        top_hashtags: [],
+        engagement_stats: { avg_likes: 0, avg_retweets: 0, total_engagement: 0 }
+      },
+      timestamp: new Date().toISOString()
+    });
     
     // Route to appropriate handler based on action
     switch (action) {
@@ -365,7 +355,7 @@ async function handleKeywordSearch(client, req, res) {
     
     // Build API parameters with sort order
     const apiParams = {
-      max_results: Math.max(10, limit), // Removed 100 cap for upgraded SDK tier
+      max_results: limit, // Pass through user's exact limit
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -611,7 +601,7 @@ function generateAnalytics(tweets, query, includeMentions = false) {
 
 // Advanced reply fetching with multiple fallback methods (from testing framework)
 async function fetchTweetReplies(client, tweetId, limit = 10, originalTweetAuthor = null) {
-  const maxResults = Math.max(10, limit * 2); // Removed 100 cap for upgraded SDK tier
+  const maxResults = limit; // Pass through user's exact limit
   
   // Method 1: Enhanced conversation_id search with proper field expansion
   try {
@@ -786,7 +776,7 @@ async function handleHashtagDiscovery(client, req, res) {
     const searchQuery = `${keyword.trim()} -is:retweet lang:en`;
     
     const searchResults = await client.v2.search(searchQuery, {
-      max_results: Math.min(200, limit * 2), // Get more tweets for better hashtag discovery
+      max_results: limit, // Pass through user's exact limit
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1023,7 +1013,7 @@ async function handleAccountAnalysis(client, req, res) {
     
     // Build API parameters
     const apiParams = {
-      max_results: Math.max(10, limit), // Removed 100 cap for upgraded SDK tier
+      max_results: limit, // Pass through user's exact limit
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1707,7 +1697,7 @@ async function searchAccountData(client, params) {
     }
     
     const apiParams = {
-      max_results: Math.max(10, limit),
+      max_results: limit,
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1803,7 +1793,7 @@ async function searchKeywordDataSeparated(client, params) {
     }
     
     const apiParams = {
-      max_results: Math.max(10, limit),
+      max_results: limit,
       'tweet.fields': [
         'created_at',
         'public_metrics',
@@ -1879,7 +1869,7 @@ async function searchHashtagDataSeparated(client, params) {
     }
     
     const apiParams = {
-      max_results: Math.max(10, limit),
+      max_results: limit,
       'tweet.fields': [
         'created_at',
         'public_metrics',
