@@ -289,9 +289,13 @@ app.post('/api/youtube-search', async (req, res) => {
 
 // YouTube Channel Search + Summarization Endpoint
 app.post('/api/youtube-channel-search', async (req, res) => {
+  console.log(`\n🎯 CHANNEL SEARCH ENDPOINT HIT`)
+  console.log(`   Request body:`, req.body)
+  
   const { keyword: channelInput, user_id, search_id, email } = req.body
 
   if (!channelInput) {
+    console.error(`❌ Missing channel input`)
     return res.status(400).json({ error: 'Channel input is required' })
   }
 
@@ -499,7 +503,7 @@ async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
   // Add optional filter parameters
   if (filters.upload_date_filter) params.append('upload_date', filters.upload_date_filter)
   if (filters.sort_by_filter) params.append('sort_by', filters.sort_by_filter)
-  if (filters.geo_filter) params.append('geo', filters.geo_filter)
+  if (filters.geo_filter) params.append('lang', filters.geo_filter) // Use lang parameter for language filtering
 
   const url = `https://${RAPIDAPI_HOST}/search?${params.toString()}`
 
@@ -2613,7 +2617,8 @@ async function handleAccountAnalysis(client, params, req, res) {
     const accountSavingData = await saveAccountSpecificTweets(
       cleanUsername, 
       formattedTweets, 
-      { keyword, hashtags, includeMentions, limit, sortOrder }
+      { keyword, hashtags, includeMentions, limit, sortOrder },
+      users
     );
     
     return res.status(200).json({
@@ -2719,37 +2724,13 @@ async function handleHashtagDiscovery(client, params, req, res) {
 
 // Utility functions for real Twitter API
 
-// Calculate basic sentiment
+// Neutral sentiment stub - AI analysis removed
 function calculateBasicSentiment(text) {
-  const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'best', 'awesome', 'perfect', 'happy', 'excited', 'brilliant']
-  const negativeWords = ['bad', 'terrible', 'awful', 'hate', 'worst', 'horrible', 'disappointing', 'sucks', 'stupid', 'annoying', 'sad', 'angry', 'frustrated']
-  
-  const words = text.toLowerCase().split(/\s+/)
-  let score = 0
-  let matches = 0
-  
-  words.forEach(word => {
-    if (positiveWords.includes(word)) {
-      score += 1
-      matches++
-    } else if (negativeWords.includes(word)) {
-      score -= 1
-      matches++
-    }
-  })
-  
-  const normalizedScore = matches > 0 ? score / words.length : 0
-  const confidence = Math.min(matches / 10, 1)
-  
-  let label = 'neutral'
-  if (normalizedScore > 0.01) label = 'positive'
-  else if (normalizedScore < -0.01) label = 'negative'
-  
   return {
-    label,
-    score: Math.max(-1, Math.min(1, normalizedScore * 10)),
-    confidence: Math.max(0.3, confidence)
-  }
+    label: 'neutral',
+    score: 0,
+    confidence: null
+  };
 }
 
 // NEW: Generate analytics specific to account searches
@@ -3081,83 +3062,10 @@ function generateAnalytics(tweets, query, includeMentions = false) {
 }
 
 // AI-powered account analysis using OpenRouter
+// AI analysis stub - AI functionality removed
 async function analyzeAccountWithAI(tweets, accountUsername) {
-  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
-  
-  if (!OPENROUTER_API_KEY) {
-    return null // AI is optional - gracefully degrades
-  }
-  
-  try {
-    const tweetsForAnalysis = tweets.slice(0, 10).map(t => ({
-      text: t.text,
-      likes: t.metrics?.likes || 0,
-      retweets: t.metrics?.retweets || 0,
-      replies: t.metrics?.replies || 0,
-      created_at: t.created_at
-    }))
-    
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [{
-          role: 'user',
-          content: `Analyze Twitter account @${accountUsername} based on these recent tweets:
-          ${JSON.stringify(tweetsForAnalysis, null, 2)}
-          
-          Provide detailed insights on:
-          1. Content strategy and main themes
-          2. Engagement patterns (what drives likes/retweets)
-          3. Writing style and tone
-          4. Posting consistency
-          5. Audience interaction style
-          
-          Return ONLY valid JSON with these fields:
-          {
-            "content_themes": ["theme1", "theme2", "theme3"],
-            "writing_style": "description of writing style",
-            "engagement_insights": "what type of content gets most engagement",
-            "audience_sentiment": "overall sentiment towards the account",
-            "posting_patterns": "analysis of posting frequency and timing",
-            "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
-          }`
-        }]
-      })
-    })
-    
-    if (!response.ok) {
-      console.error('AI analysis failed:', response.statusText)
-      return null
-    }
-    
-    const data = await response.json()
-    const content = data.choices?.[0]?.message?.content
-    
-    if (content) {
-      try {
-        // Handle markdown-wrapped JSON responses
-        let cleanContent = content.trim()
-        if (cleanContent.startsWith('```json') || cleanContent.startsWith('```')) {
-          // Remove markdown code blocks
-          cleanContent = cleanContent.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim()
-        }
-        return JSON.parse(cleanContent)
-      } catch (e) {
-        console.error('Failed to parse AI response:', e)
-        return null
-      }
-    }
-    
-    return null
-  } catch (error) {
-    console.error('AI analysis error:', error)
-    return null // Graceful degradation
-  }
+  console.log('🚫 analyzeAccountWithAI called but returning null (AI disabled)');
+  return null; // AI analysis disabled
 }
 
 // Generate analytics specific to account analysis
@@ -6035,7 +5943,7 @@ app.get('/api/test-apify', async (req, res) => {
 
 // NEW: Account-specific tweet saving functionality (Dev Server)
 // This function handles saving tweets to the database when account searches are performed
-async function saveAccountSpecificTweets(accountUsername, tweets, searchData) {
+async function saveAccountSpecificTweets(accountUsername, tweets, searchData, rawUsers = []) {
   // Development server has direct Supabase access with service role key
   console.log(`📊 Account-specific saving requested for @${accountUsername} with ${tweets.length} tweets`)
   
@@ -6063,8 +5971,8 @@ async function saveAccountSpecificTweets(accountUsername, tweets, searchData) {
   }
   
   try {
-    // Extract account metadata from tweets
-    const accountMetadata = extractAccountMetadata(tweets, accountUsername)
+    // Extract account metadata from tweets and raw user data
+    const accountMetadata = extractAccountMetadata(tweets, accountUsername, rawUsers)
     
     // Upsert account information
     const { data: accountData, error: accountError } = await supabase
@@ -6212,12 +6120,12 @@ async function saveAccountSpecificTweets(accountUsername, tweets, searchData) {
 
 // API-compatible wrapper for account-specific saving (Dev Server)
 // This function returns { success, data, error } format for API endpoints
-async function saveAccountSpecificTweetsForAPI(accountUsername, tweets, searchData) {
+async function saveAccountSpecificTweetsForAPI(accountUsername, tweets, searchData, rawUsers = []) {
   try {
     console.log(`🌐 API wrapper: Calling saveAccountSpecificTweets for @${accountUsername}`)
     
     // Call the original function that returns frontend-compatible format
-    const result = await saveAccountSpecificTweets(accountUsername, tweets, searchData)
+    const result = await saveAccountSpecificTweets(accountUsername, tweets, searchData, rawUsers)
     
     // Check if saving was successful based on accountData.shouldSave
     if (!result || !result.accountData || result.accountData.shouldSave === false) {
@@ -6251,32 +6159,39 @@ async function saveAccountSpecificTweetsForAPI(accountUsername, tweets, searchDa
   }
 }
 
-// Helper function to extract account metadata from tweets (Dev Server)
-function extractAccountMetadata(tweets, accountUsername) {
+// Helper function to extract account metadata from tweets and raw user data (Dev Server)
+function extractAccountMetadata(tweets, accountUsername, rawUsers = []) {
   if (!tweets || tweets.length === 0) {
     return {
       username: accountUsername.replace(/^@/, ''),
       display_name: null,
       followers_count: 0,
+      following_count: 0,
       verified: false,
       profile_image_url: null,
-      bio: null
+      bio: null,
+      tweet_count: 0
     }
   }
   
-  // Get account info from the first tweet's author data
+  // Get account info from the first tweet's author data (formatted)
   const firstTweet = tweets[0]
   const author = firstTweet.author || {}
   
+  // Find the raw user data for this account
+  const rawUser = rawUsers.find(user => 
+    user.username?.toLowerCase() === accountUsername.replace(/^@/, '').toLowerCase()
+  )
+  
   return {
     username: accountUsername.replace(/^@/, ''),
-    display_name: author.name || null,
-    followers_count: author.followers || 0,
-    following_count: author.following || 0,
-    verified: author.verified || false,
-    profile_image_url: author.profile_image || null,
-    bio: author.bio || null,
-    tweet_count: author.tweet_count || 0
+    display_name: author.name || rawUser?.name || null,
+    followers_count: author.followers || rawUser?.public_metrics?.followers_count || 0,
+    following_count: rawUser?.public_metrics?.following_count || 0,
+    verified: author.verified || rawUser?.verified || false,
+    profile_image_url: author.profile_image || rawUser?.profile_image_url || null,
+    bio: rawUser?.description || null,
+    tweet_count: rawUser?.public_metrics?.tweet_count || 0
   }
 }
 
