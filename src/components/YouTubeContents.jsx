@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { saveYouTubeResults, loadYouTubeResults } from '../utils/searchCache'
+import { getYouTubeApiUrl, apiRequest, isDev } from '../utils/apiConfig'
+import '../styles/modern-buttons.css'
 
-// Backend endpoints - environment aware
-const getYouTubeSearchApi = () => import.meta.env.DEV 
-  ? 'http://localhost:3001/api/youtube-search'
-  : '/api/youtube-search'
-
-const getYouTubeChannelSearchApi = () => import.meta.env.DEV 
-  ? 'http://localhost:3001/api/youtube-channel-search'
-  : '/api/youtube-channel-search'
+// YouTube Channel Search API URL
+const getYouTubeChannelSearchApi = () => {
+  const baseUrl = isDev() ? 'http://localhost:3001' : ''
+  return `${baseUrl}/api/youtube-channel-search`
+}
 
 export default function YouTubeContents({ user, keyword, searchId, email, searchType = 'videos', filters, onFilterChange, onNewSearch }) {
   const [loading, setLoading] = useState(true)
@@ -186,13 +185,20 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
       setError('')
 
       const isChannelSearch = searchType === 'channel'
+      console.log(`🔍 CHANNEL SEARCH DEBUG:`)
+      console.log(`   searchType: "${searchType}"`)
+      console.log(`   isChannelSearch: ${isChannelSearch}`)
+      console.log(`   keyword: "${keyword}"`)
+      console.log(`   user.id: "${user.id}"`)
       console.log(`Calling backend API for YouTube ${isChannelSearch ? 'channel' : 'video'} search + summarization`)
 
       // Generate search_id if not provided
       const effectiveSearchId = searchId || uuidv4()
+      console.log(`   search_id: "${effectiveSearchId}"`)
 
       // Choose the appropriate API endpoint
-      const apiEndpoint = isChannelSearch ? getYouTubeChannelSearchApi() : getYouTubeSearchApi()
+      const apiEndpoint = isChannelSearch ? getYouTubeChannelSearchApi() : getYouTubeApiUrl()
+      console.log(`   API endpoint: "${apiEndpoint}"`)
 
       // Call backend endpoint
       const response = await fetch(apiEndpoint, {
@@ -209,12 +215,22 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
         })
       })
 
+      console.log(`📡 API Response Status: ${response.status}`)
+      
       if (!response.ok) {
         const errorData = await response.json()
+        console.error(`❌ API Error Response:`, errorData)
         throw new Error(errorData.error || `API request failed: ${response.status}`)
       }
 
       const data = await response.json()
+      console.log(`✅ API Response Data:`, {
+        status: data.status,
+        keyword: data.keyword,
+        videosCount: data.videos?.length || 0,
+        channelId: data.channelId,
+        overallSummary: data.overallSummary ? 'Present' : 'Missing'
+      })
 
       // Check database save status and log for debugging
       if (data.databaseSave) {
@@ -361,13 +377,13 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
           </div>
           <div style={{ marginTop: '20px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
             {keyword && (
-              <button onClick={handleRetry} className="primary-btn">
-                Retry Analysis
+              <button onClick={handleRetry} className="btn-modern-base btn-primary-modern">
+                🔄 Retry Analysis
               </button>
             )}
             {onNewSearch && (
-              <button onClick={onNewSearch} className="secondary-btn">
-                New Search
+              <button onClick={onNewSearch} className="btn-modern-base btn-secondary-modern">
+                ✨ New Search
               </button>
             )}
           </div>
@@ -377,54 +393,41 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
   }
 
   return (
-    <div className="youtube-contents-container">
-      <div className="youtube-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ margin: 0 }}>{searchType === 'channel' ? 'YouTube Channel Analysis' : 'YouTube Content Analysis'}</h2>
-        <div className="header-actions" style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            onClick={() => setShowFilters(!showFilters)} 
-            className="secondary-btn"
-          >
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
-          </button>
-          {onNewSearch && (
-            <button onClick={onNewSearch} className="secondary-btn">
-              New Search
+    <div className="videos-grid-modern">
+      <div className="youtube-header-modern">
+        <div className="youtube-header-content">
+          <div className="youtube-title-section">
+            <h2 className="youtube-title-modern" style={{ fontSize: 'var(--font-size-2xl)', margin: 0 }}>
+              {searchType === 'channel' ? '📺 Channel Analysis Results' : '🎬 Video Analysis Results'}
+            </h2>
+          </div>
+          <div className="header-actions-modern">
+            <button 
+              onClick={() => setShowFilters(!showFilters)} 
+              className={`filter-toggle-btn ${showFilters ? 'active' : ''}`}
+            >
+              {showFilters ? '🔼 Hide Filters' : '🔽 Show Filters'}
             </button>
-          )}
+            {onNewSearch && (
+              <button onClick={onNewSearch} className="btn-modern-base btn-secondary-modern">
+                ✨ New Search
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Filter Panel */}
+      {/* Modern Filter Panel */}
       {showFilters && (
-        <div className="youtube-filters-panel" style={{
-          background: '#f8f9fa',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          border: '1px solid #e9ecef'
-        }}>
-          <div className="filters-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '15px',
-            marginBottom: '15px'
-          }}>
+        <div className="filters-panel-modern">
+          <div className="filters-grid-modern">
             {/* Upload Date Filter */}
-            <div className="filter-group">
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                Upload Date:
-              </label>
+            <div className="filter-group-modern">
+              <label className="form-label-modern">Upload Date</label>
               <select 
                 value={filters.upload_date_filter || ''} 
                 onChange={(e) => onFilterChange('upload_date_filter', e.target.value || null)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px',
-                  fontSize: '14px'
-                }}
+                className="filter-select-modern"
               >
                 <option value="">Any time</option>
                 <option value="hour">Past hour</option>
@@ -436,20 +439,12 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
             </div>
 
             {/* Sort By Filter */}
-            <div className="filter-group">
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                Sort By:
-              </label>
+            <div className="filter-group-modern">
+              <label className="form-label-modern">Sort By</label>
               <select 
                 value={filters.sort_by_filter} 
                 onChange={(e) => onFilterChange('sort_by_filter', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px',
-                  fontSize: '14px'
-                }}
+                className="filter-select-modern"
               >
                 <option value="relevance">Relevance</option>
                 <option value="date">Upload date</option>
@@ -459,20 +454,12 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
             </div>
 
             {/* Region Filter */}
-            <div className="filter-group">
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                Region:
-              </label>
+            <div className="filter-group-modern">
+              <label className="form-label-modern">Region</label>
               <select 
                 value={filters.geo_filter} 
                 onChange={(e) => onFilterChange('geo_filter', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px',
-                  fontSize: '14px'
-                }}
+                className="filter-select-modern"
               >
                 <option value="US">United States</option>
                 <option value="GB">United Kingdom</option>
@@ -488,20 +475,12 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
             </div>
 
             {/* Content Type Filter */}
-            <div className="filter-group">
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                Content Type:
-              </label>
+            <div className="filter-group-modern">
+              <label className="form-label-modern">Content Type</label>
               <select 
                 value={filters.content_type_filter} 
                 onChange={(e) => onFilterChange('content_type_filter', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px',
-                  fontSize: '14px'
-                }}
+                className="filter-select-modern"
               >
                 <option value="video">Videos</option>
                 <option value="shorts">Shorts</option>
@@ -511,16 +490,15 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
             </div>
           </div>
 
-          {/* Filter Actions */}
-          <div className="filter-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '10px' }}>
+          {/* Modern Filter Actions */}
+          <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', marginTop: 'var(--space-4)', alignItems: 'center' }}>
             <button 
               onClick={resetFilters} 
-              className="secondary-btn"
-              style={{ padding: '8px 16px' }}
+              className="btn-modern-base btn-secondary-modern"
             >
-              Reset Filters
+              🔄 Reset Filters
             </button>
-            <small style={{ color: '#666', alignSelf: 'center', marginLeft: '10px' }}>
+            <small style={{ color: 'var(--secondary)', fontSize: 'var(--font-size-xs)' }}>
               Filters apply automatically
             </small>
           </div>
@@ -545,124 +523,185 @@ export default function YouTubeContents({ user, keyword, searchId, email, search
             </div>
           )}
 
-          <div className="youtube-videos-list">
+          <div style={{ display: 'grid', gap: 'var(--space-6)' }}>
             {youtubeVideos.map((video, index) => {
             const isExpanded = expandedCards.has(index)
 
             return (
-              <div key={index} className="youtube-card">
-                {/* Thumbnail */}
+              <div key={index} className="video-card-modern" style={{ animationDelay: `${index * 100}ms` }}>
+                {/* Modern Thumbnail */}
                 <a
                   href={video.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="youtube-card-thumbnail"
+                  className="video-thumbnail-modern"
                 >
                   <img
                     src={video.thumbnail}
                     alt={video.video_name || video.title || 'Video thumbnail'}
                   />
-                  {/* Content Type Badge */}
+                  {/* Modern Content Type Badge */}
                   {video.contentType && (
                     <span 
-                      className="content-type-badge"
+                      className={`badge-modern badge-${video.contentType}`}
                       style={{
                         position: 'absolute',
-                        top: '8px',
-                        left: '8px',
-                        background: getContentTypeBadgeStyle(video.contentType).background,
-                        color: getContentTypeBadgeStyle(video.contentType).color,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '2px'
+                        top: 'var(--space-2)',
+                        left: 'var(--space-2)',
                       }}
                     >
                       {getContentTypeIcon(video.contentType)} {getContentTypeLabel(video.contentType)}
                     </span>
                   )}
                   {video.duration && video.duration !== 'N/A' && (
-                    <span className="video-duration">{video.duration}</span>
+                    <span 
+                      className="badge-modern"
+                      style={{
+                        position: 'absolute',
+                        bottom: 'var(--space-2)',
+                        right: 'var(--space-2)',
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        color: 'white'
+                      }}
+                    >
+                      {video.duration}
+                    </span>
                   )}
                   {video.position && (
-                    <span className="video-rank">#{video.position}</span>
+                    <span 
+                      className="badge-modern"
+                      style={{
+                        position: 'absolute',
+                        top: 'var(--space-2)',
+                        right: 'var(--space-2)',
+                        background: 'var(--accent)',
+                        color: 'white'
+                      }}
+                    >
+                      #{video.position}
+                    </span>
                   )}
                   {video.isLive && (
-                    <span className="video-live-badge">LIVE</span>
+                    <span className="badge-modern badge-live" style={{
+                      position: 'absolute',
+                      top: 'var(--space-2)',
+                      left: 'var(--space-2)',
+                    }}>
+                      🔴 LIVE
+                    </span>
                   )}
                 </a>
 
-                {/* Content */}
-                <div className="youtube-card-content">
-                  {/* Title */}
-                  <h3 className="video-title">
+                {/* Modern Content */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                  {/* Modern Title */}
+                  <h3 style={{ 
+                    margin: 0, 
+                    fontSize: 'var(--font-size-lg)', 
+                    fontWeight: 600, 
+                    lineHeight: 1.4,
+                    color: 'var(--primary)'
+                  }}>
                     <a
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      style={{ 
+                        color: 'inherit', 
+                        textDecoration: 'none',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
                     >
                       {video.video_name || video.title || 'Untitled Video'}
                     </a>
                   </h3>
 
-                  {/* Channel Info with Verified Badge */}
-                  <div className="youtube-channel-info">
-                    <span className="channel-name">
+                  {/* Modern Channel Info */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                    <span style={{ 
+                      color: 'var(--secondary)', 
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-1)'
+                    }}>
                       {video.channel}
                       {video.isVerified && (
-                        <svg className="verified-badge" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                          <path d="M7 0L8.5 2.5L11 3L9.5 5.5L10 8L7 6.5L4 8L4.5 5.5L3 3L5.5 2.5L7 0Z" fill="#666"/>
-                          <circle cx="7" cy="7" r="5" fill="none" stroke="#666" strokeWidth="0.5"/>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
                       )}
                     </span>
                     {video.subscribers && (
-                      <span className="subscriber-count">{video.subscribers} subscribers</span>
+                      <span className="badge-modern" style={{ 
+                        background: 'var(--gray-100)',
+                        color: 'var(--secondary)',
+                        fontSize: 'var(--font-size-xs)'
+                      }}>
+                        {video.subscribers} subscribers
+                      </span>
                     )}
                   </div>
 
-                  {/* Metadata with Engagement */}
-                  <div className="youtube-card-meta">
-                    <span className="view-count">{video.views} views</span>
+                  {/* Modern Metadata */}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 'var(--space-3)',
+                    fontSize: 'var(--font-size-sm)',
+                    color: 'var(--secondary)',
+                    flexWrap: 'wrap'
+                  }}>
+                    <span>👁️ {video.views} views</span>
                     {video.likes && (
-                      <>
-                        <span className="meta-separator">•</span>
-                        <span className="like-count">👍 {video.likes}</span>
-                      </>
+                      <span>👍 {video.likes}</span>
                     )}
                     <span className="meta-separator">•</span>
-                    <span className="publish-time">{video.publishedTime}</span>
+                    <span>{video.publishedTime}</span>
                   </div>
 
-                  {/* Description */}
-                  <p className="video-description">
-                    {video.description || 'No description available'}
-                  </p>
+                  {/* Modern Description */}
+                  {video.description && (
+                    <p style={{ 
+                      margin: 0,
+                      fontSize: 'var(--font-size-sm)',
+                      color: 'var(--secondary)',
+                      lineHeight: 1.5,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {video.description}
+                    </p>
+                  )}
 
-                  {/* Action Buttons */}
-                  <div className="youtube-card-actions">
+                  {/* Modern Action Buttons */}
+                  <div className="action-buttons-modern">
                     <a
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="action-btn primary"
+                      className="action-btn-modern"
+                      style={{ background: 'var(--accent)', color: 'white', border: 'none' }}
                     >
-                      Watch on YouTube
+                      ▶️ Watch
                     </a>
                     <button
                       onClick={() => copyLink(video.url)}
-                      className="action-btn secondary"
+                      className="action-btn-modern"
                     >
-                      Copy Link
+                      🔗 Copy
                     </button>
                     <button
                       onClick={() => toggleExpand(video, index)}
-                      className="action-btn secondary expand-btn"
+                      className="action-btn-modern"
                     >
-                      {isExpanded ? 'Hide Analysis ▲' : 'View Analysis ▼'}
+                      {isExpanded ? '🔼 Hide' : '🔽 Analysis'}
                     </button>
                   </div>
 

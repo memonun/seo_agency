@@ -1,15 +1,35 @@
 // Vercel Serverless Function
 // YouTube channel search + video analysis + AI summarization
 
+import { createClient } from '@supabase/supabase-js'
+
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabase = supabaseUrl && supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null
+
 export default async function handler(req, res) {
+  console.log(`\n🎯 SERVERLESS CHANNEL SEARCH ENDPOINT HIT`)
+  console.log(`   Method: ${req.method}`)
+  console.log(`   Request body:`, req.body)
+  
   // Only allow POST
   if (req.method !== 'POST') {
+    console.error(`❌ Method not allowed: ${req.method}`)
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   const { keyword: channelInput, user_id, search_id, email } = req.body
 
   if (!channelInput) {
+    console.error(`❌ Missing channel input`)
     return res.status(400).json({ error: 'Channel input is required' })
   }
 
@@ -347,70 +367,110 @@ async function fetchTranscriptWithRetry(videoId, maxRetries = 3) {
 
 async function fetchTranscript(videoId) {
   const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
 
-  const url = `https://youtube-transcript3.p.rapidapi.com/api/transcript?videoId=${videoId}`
+  const url = `https://${RAPIDAPI_HOST}/get_transcript?id=${videoId}`
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Host': 'youtube-transcript3.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
     }
   })
 
   if (!response.ok) {
-    throw new Error(`Transcript API failed: ${response.status}`)
+    throw new Error(`YT-API transcript failed: ${response.status}`)
   }
 
   const data = await response.json()
 
-  if (!data.transcript || !Array.isArray(data.transcript) || data.transcript.length === 0) {
-    throw new Error('No valid transcript found')
+  // YT-API transcript response structure: { id, transcript: [] }
+  if (!data.transcript || !Array.isArray(data.transcript)) {
+    throw new Error('No transcript found in YT-API response')
   }
 
-  return data.transcript
+  if (data.transcript.length === 0) {
+    throw new Error('Empty transcript returned')
+  }
+
+  // Convert YT-API transcript format to expected format
+  return data.transcript.map(item => ({
+    text: item.text || '',
+    offset: parseInt(item.startMs) / 1000 || 0 // Convert milliseconds to seconds
+  }))
 }
 
 async function fetchVideoComments(videoId) {
   const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY
+  const RAPIDAPI_HOST = 'yt-api.p.rapidapi.com'
 
-  const url = `https://youtube-v31.p.rapidapi.com/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&order=relevance`
+  const url = `https://${RAPIDAPI_HOST}/comments?id=${videoId}`
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com',
-      'X-RapidAPI-Key': RAPIDAPI_KEY
+      'x-rapidapi-key': RAPIDAPI_KEY,
+      'x-rapidapi-host': RAPIDAPI_HOST
     }
   })
 
   if (!response.ok) {
-    throw new Error(`Comments API failed: ${response.status}`)
+    throw new Error(`YT-API comments failed: ${response.status}`)
   }
 
   const data = await response.json()
 
-  if (!data.items || !Array.isArray(data.items)) {
-    throw new Error('No valid comments found')
+  // YT-API comments response structure: { commentsCount, data: [] }
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error('No comments found in YT-API response')
   }
 
+  const totalCount = parseInt(data.commentsCount) || data.data.length
+
   return {
-    totalCount: data.pageInfo?.totalResults || data.items.length,
-    items: data.items.map(item => {
-      const snippet = item.snippet?.topLevelComment?.snippet
-      return {
-        id: item.id,
-        authorDisplayName: snippet?.authorDisplayName || 'Unknown',
-        authorProfileImageUrl: snippet?.authorProfileImageUrl || '',
-        textDisplay: snippet?.textDisplay || '',
-        likeCount: snippet?.likeCount || 0,
-        publishedAt: snippet?.publishedAt || '',
-        updatedAt: snippet?.updatedAt || snippet?.publishedAt || '',
-        isChannelOwner: snippet?.authorChannelId === item.snippet?.channelId || false,
-        replies: item.snippet?.totalReplyCount || 0
-      }
-    })
+    totalCount: totalCount,
+    items: data.data.slice(0, 20).map(comment => ({
+      id: comment.commentId || `comment_${Date.now()}`,
+      authorDisplayName: comment.authorText || 'Unknown',
+      authorProfileImageUrl: comment.authorThumbnail?.[0]?.url || '',
+      textDisplay: comment.textDisplay || '',
+      likeCount: parseYouTubeNumber(comment.likesCount) || 0,
+      publishedAt: comment.publishedTimeText || '',
+      updatedAt: comment.publishedTimeText || '',
+      isChannelOwner: comment.authorIsChannelOwner || false,
+      replies: parseInt(comment.replyCount) || 0
+    }))
   }
+}
+
+// Helper function to parse YouTube numbers (e.g., "125K" -> 125000, "48K" -> 48000)
+function parseYouTubeNumber(numberStr) {
+  if (!numberStr || typeof numberStr !== 'string') return 0
+  
+  const cleanStr = numberStr.trim().toUpperCase()
+  
+  // Handle "K" suffix (thousands)
+  if (cleanStr.endsWith('K')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000)
+  }
+  
+  // Handle "M" suffix (millions)
+  if (cleanStr.endsWith('M')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000)
+  }
+  
+  // Handle "B" suffix (billions)
+  if (cleanStr.endsWith('B')) {
+    const num = parseFloat(cleanStr.slice(0, -1))
+    return isNaN(num) ? 0 : Math.round(num * 1000000000)
+  }
+  
+  // Handle regular numbers
+  const num = parseInt(cleanStr.replace(/,/g, ''))
+  return isNaN(num) ? 0 : num
 }
 
 function processTimestamps(transcript) {
@@ -619,30 +679,17 @@ async function saveChannelAnalytics(userId, searchId, channelInput, channelId, e
     console.log('   videosWithSummaries length:', videosWithSummaries?.length || 0)
     console.log('   overallSummary length:', overallSummary?.length || 0)
 
-    // Import Supabase client for serverless functions
-    const { createClient } = await import('@supabase/supabase-js')
-    
-    const supabaseUrl = process.env.VITE_SUPABASE_URL
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-    
+    // Use module-level Supabase client
     console.log('🔑 Environment variables check:')
     console.log('   VITE_SUPABASE_URL exists:', !!supabaseUrl)
     console.log('   SUPABASE_SERVICE_ROLE_KEY exists:', !!supabaseServiceKey)
     console.log('   VITE_SUPABASE_URL value:', supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'undefined')
     
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('❌ CRITICAL: Supabase environment variables missing!')
+    if (!supabase) {
+      console.error('❌ CRITICAL: Supabase client not initialized!')
       console.log('⏭️ Skipping database save - Supabase not configured')
       return null
     }
-
-    console.log('🔌 Creating Supabase client...')
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    })
 
     console.log('✅ Supabase client created successfully')
     console.log('💾 Saving channel analytics to database...')
@@ -655,7 +702,7 @@ async function saveChannelAnalytics(userId, searchId, channelInput, channelId, e
         processingTimestamp: new Date().toISOString(),
         apiVersion: '1.0',
         aiModel: 'google/gemini-2.0-flash-001',
-        apisUsed: ['yt-api', 'youtube-v31', 'youtube-transcript3'],
+        apisUsed: ['yt-api'],
         searchType: 'channel'
       }
     }

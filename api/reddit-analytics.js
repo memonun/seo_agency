@@ -4,30 +4,30 @@
 
 import fetch from 'node-fetch';
 
-// Rate limiting tracker
-const rateLimiter = {
-  requests: [],
-  limit: 50, // Conservative limit for Apify API
-  window: 5 * 60 * 1000, // 5 minutes
-  
-  canMakeRequest() {
-    const now = Date.now();
-    this.requests = this.requests.filter(time => now - time < this.window);
-    
-    if (this.requests.length >= this.limit) {
-      return false;
-    }
-    
-    this.requests.push(now);
-    return true;
-  },
-  
-  getTimeUntilReset() {
-    if (this.requests.length === 0) return 0;
-    const oldest = Math.min(...this.requests);
-    return Math.max(0, this.window - (Date.now() - oldest));
-  }
-};
+// Import constants
+import { 
+  POSITIVE_WORDS, 
+  NEGATIVE_WORDS, 
+  MIN_SENTIMENT_SCORE, 
+  MAX_SENTIMENT_SCORE,
+  SENTIMENT_CONFIDENCE_DIVISOR,
+  MOCK_AUTHORS,
+  MOCK_SUBREDDITS,
+  DEFAULT_MAX_ITEMS,
+  DEFAULT_MOCK_LIMIT,
+  DEFAULT_TIMEOUT,
+  MOCK_SCORE_BASE,
+  MOCK_SCORE_RANGE,
+  MOCK_UPVOTE_RATIO_MIN,
+  MOCK_UPVOTE_RATIO_RANGE,
+  MOCK_COMMENTS_RANGE,
+  MOCK_COMMENTS_BASE,
+  MOCK_AWARDS_RANGE,
+  ERROR_MESSAGES,
+  API_CONFIG
+} from '../src/constants/reddit.js';
+
+// Rate limiting removed for consistency with backend environment
 
 // Initialize Apify client
 const getApifyClient = () => {
@@ -45,9 +45,9 @@ const getApifyClient = () => {
 };
 
 // Mock data generator for development
-const generateMockRedditPosts = (query, limit = 10, searchType = 'subreddit') => {
-  const mockAuthors = ['user1', 'user2', 'user3', 'poweruser', 'expert_redditor'];
-  const mockSubreddits = ['technology', 'science', 'AskReddit', 'worldnews', 'funny'];
+const generateMockRedditPosts = (query, limit = DEFAULT_MOCK_LIMIT, searchType = 'subreddit') => {
+  const mockAuthors = MOCK_AUTHORS;
+  const mockSubreddits = MOCK_SUBREDDITS;
   
   return Array(limit).fill(null).map((_, i) => ({
     id: `mock_${Date.now()}_${i}`,
@@ -55,9 +55,9 @@ const generateMockRedditPosts = (query, limit = 10, searchType = 'subreddit') =>
     selftext: `This is mock content for post ${i + 1} about ${query}. Lorem ipsum dolor sit amet.`,
     author: mockAuthors[i % mockAuthors.length],
     subreddit: searchType === 'subreddit' ? query : mockSubreddits[i % mockSubreddits.length],
-    score: Math.floor(Math.random() * 10000) + 10,
-    upvote_ratio: (Math.random() * 0.4 + 0.6).toFixed(2), // 0.6 to 1.0
-    num_comments: Math.floor(Math.random() * 500) + 5,
+    score: Math.floor(Math.random() * MOCK_SCORE_RANGE) + MOCK_SCORE_BASE,
+    upvote_ratio: (Math.random() * MOCK_UPVOTE_RATIO_RANGE + MOCK_UPVOTE_RATIO_MIN).toFixed(2),
+    num_comments: Math.floor(Math.random() * MOCK_COMMENTS_RANGE) + MOCK_COMMENTS_BASE,
     created_utc: Math.floor((Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) / 1000),
     url: `https://reddit.com/r/${query}/comments/mock${i}`,
     permalink: `/r/${query}/comments/mock${i}/mock_post_${i}/`,
@@ -79,8 +79,8 @@ const generateMockRedditPosts = (query, limit = 10, searchType = 'subreddit') =>
 
 // Basic sentiment analysis function
 function calculateBasicSentiment(text) {
-  const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'best', 'awesome', 'perfect', 'thanks', 'helpful'];
-  const negativeWords = ['bad', 'terrible', 'awful', 'hate', 'worst', 'horrible', 'disappointing', 'sucks', 'stupid', 'annoying', 'broken', 'useless'];
+  const positiveWords = POSITIVE_WORDS;
+  const negativeWords = NEGATIVE_WORDS;
   
   const words = text.toLowerCase().split(/\s+/);
   let score = 0;
@@ -97,7 +97,7 @@ function calculateBasicSentiment(text) {
   });
   
   const normalizedScore = matches > 0 ? score / words.length : 0;
-  const confidence = Math.min(matches / 10, 1);
+  const confidence = Math.min(matches / SENTIMENT_CONFIDENCE_DIVISOR, 1);
   
   let label = 'neutral';
   if (normalizedScore > 0.01) label = 'positive';
@@ -105,7 +105,7 @@ function calculateBasicSentiment(text) {
   
   return {
     label,
-    score: Math.max(-1, Math.min(1, normalizedScore * 10)),
+    score: Math.max(MIN_SENTIMENT_SCORE, Math.min(MAX_SENTIMENT_SCORE, normalizedScore * SENTIMENT_CONFIDENCE_DIVISOR)),
     confidence: Math.max(0.3, confidence)
   };
 }
@@ -209,13 +209,7 @@ function generateAnalytics(posts, searchQuery, searchType) {
 const handleError = (error, res) => {
   console.error('Reddit Analytics API Error:', error);
   
-  if (error.message?.includes('rate limit')) {
-    return res.status(429).json({
-      error: 'Rate limit exceeded',
-      message: 'Please wait before making another request',
-      retryAfter: rateLimiter.getTimeUntilReset()
-    });
-  }
+  // Rate limit handling removed for consistency
   
   if (error.message?.includes('authentication')) {
     return res.status(401).json({
@@ -267,7 +261,7 @@ export default async function handler(req, res) {
       username, 
       sortOrder = 'hot', 
       timeRange, 
-      maxItems = 25, 
+      maxItems = DEFAULT_MAX_ITEMS, 
       includeComments = false,
       includeCommunityInfo = true,
       user_id 
@@ -345,14 +339,7 @@ export default async function handler(req, res) {
       });
     }
     
-    // Production mode - check rate limiting
-    if (!rateLimiter.canMakeRequest()) {
-      return res.status(429).json({
-        error: 'Rate limit exceeded',
-        message: 'Too many requests. Please wait before trying again.',
-        retryAfter: rateLimiter.getTimeUntilReset()
-      });
-    }
+    // Rate limiting removed for consistency with backend environment
     
     // Initialize Apify client
     const apifyClient = getApifyClient();
@@ -384,7 +371,7 @@ async function handleSubredditSearch(client, req, res) {
       subreddit, 
       sortOrder = 'hot', 
       timeRange, 
-      maxItems = 25,
+      maxItems = DEFAULT_MAX_ITEMS,
       includeComments = false,
       includeCommunityInfo = true
     } = req.body;
@@ -429,7 +416,7 @@ async function handleSubredditSearch(client, req, res) {
     const runId = runData.data.id;
     
     // Wait for completion (with timeout)
-    const results = await waitForApifyCompletion(client, runId, 60000); // 60 second timeout
+    const results = await waitForApifyCompletion(client, runId, DEFAULT_TIMEOUT); // 60 second timeout
     
     // Process and format results
     const posts = results.filter(item => item.type === 'post' || !item.type);
@@ -467,7 +454,7 @@ async function handleKeywordSearch(client, req, res) {
     const { 
       query, 
       sortOrder = 'relevance', 
-      maxItems = 25,
+      maxItems = DEFAULT_MAX_ITEMS,
       includeComments = false
     } = req.body;
     
@@ -506,7 +493,7 @@ async function handleKeywordSearch(client, req, res) {
     const runId = runData.data.id;
     
     // Wait for completion
-    const results = await waitForApifyCompletion(client, runId, 60000);
+    const results = await waitForApifyCompletion(client, runId, DEFAULT_TIMEOUT);
     
     // Process and format results
     const posts = results.filter(item => item.type === 'post' || !item.type);
@@ -544,7 +531,7 @@ async function handleUserSearch(client, req, res) {
     const { 
       username, 
       sortOrder = 'new', 
-      maxItems = 25,
+      maxItems = DEFAULT_MAX_ITEMS,
       includeComments = false
     } = req.body;
     
@@ -584,7 +571,7 @@ async function handleUserSearch(client, req, res) {
     const runId = runData.data.id;
     
     // Wait for completion
-    const results = await waitForApifyCompletion(client, runId, 60000);
+    const results = await waitForApifyCompletion(client, runId, DEFAULT_TIMEOUT);
     
     // Process and format results
     const posts = results.filter(item => item.type === 'post' || !item.type);
@@ -617,7 +604,7 @@ async function handleUserSearch(client, req, res) {
 }
 
 // Helper function to wait for Apify run completion
-async function waitForApifyCompletion(client, runId, timeout = 60000) {
+async function waitForApifyCompletion(client, runId, timeout = DEFAULT_TIMEOUT) {
   const startTime = Date.now();
   
   while (Date.now() - startTime < timeout) {

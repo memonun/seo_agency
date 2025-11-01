@@ -37,6 +37,9 @@ Before marking any module as complete, verify:
 
 **This principle overrides all other considerations. Development productivity and deployment reliability depend on this consistency.**
 
+## 🚨 CRITICAL RULE #2: Deployement Check
+- Dont forget to alwyas check the deployement logs with the subagent whwnever we push to main
+
 ---
 
 ## Project Overview

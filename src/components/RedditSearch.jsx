@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import '../styles/RedditModule.css';
+import styles from '../styles/RedditModule.module.css';
 
 export default function RedditSearch({ 
   onSearch, 
@@ -120,7 +120,7 @@ export default function RedditSearch({
   };
 
   return (
-    <div className="reddit-search-container">
+    <div className={styles.searchContainer}>
       {showNewSearchButton && (
         <div className="new-search-header">
           <button 
@@ -134,7 +134,7 @@ export default function RedditSearch({
 
       <form onSubmit={handleSubmit} className="search-form">
         {/* Search Type Selection */}
-        <div className="reddit-form-group">
+        <div className={styles.formGroup}>
           <label>Search Type</label>
           <div className="reddit-search-type-selector">
             <label className="reddit-radio-option">
@@ -177,7 +177,7 @@ export default function RedditSearch({
         </div>
 
         {/* Main Input Field */}
-        <div className="reddit-form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="reddit-input">
             {searchType === 'subreddit' && 'Subreddit Name'}
             {searchType === 'search' && 'Search Query'}
@@ -199,7 +199,7 @@ export default function RedditSearch({
         </div>
 
         {/* Sort Order */}
-        <div className="reddit-form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="sort-order">Sort Order</label>
           <select
             id="sort-order"
@@ -217,7 +217,7 @@ export default function RedditSearch({
 
         {/* Time Range (only for "top" sort) */}
         {sortOrder === 'top' && (
-          <div className="reddit-form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="time-range">Time Range</label>
             <select
               id="time-range"
@@ -236,7 +236,7 @@ export default function RedditSearch({
         )}
 
         {/* Max Items */}
-        <div className="reddit-form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="max-items">Number of Posts</label>
           <select
             id="max-items"
@@ -287,7 +287,7 @@ export default function RedditSearch({
           <button 
             type="submit" 
             disabled={loading}
-            className="reddit-search-button"
+            className={styles.searchButton}
           >
             {loading ? (
               <>

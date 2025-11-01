@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { callDomainAnalyticsApi } from '../utils/apiConfig'
 import { sendDomainAnalyticsEmail } from '../utils/emailService'
 import DomainAnalyticsResults from './DomainAnalyticsResults'
+import '../styles/modern-buttons.css'
 
 export default function DomainAnalyticsForm({ user }) {
   const [formData, setFormData] = useState({
@@ -204,8 +205,8 @@ export default function DomainAnalyticsForm({ user }) {
           </div>
 
           {!showResults && (
-            <button type="submit" disabled={loading}>
-              {loading ? 'Analyzing...' : 'Analyze Domains'}
+            <button type="submit" disabled={loading} className="btn-modern-base btn-primary-modern btn-lg btn-full-width">
+              {loading ? '⏳ Analyzing...' : '🔍 Analyze Domains'}
             </button>
           )}
         </form>
@@ -220,8 +221,8 @@ export default function DomainAnalyticsForm({ user }) {
         {/* New search button */}
         {showResults && (
           <div className="action-buttons">
-            <button onClick={handleNewSearch} className="primary-btn">
-              Start New Analysis
+            <button onClick={handleNewSearch} className="btn-modern-base btn-primary-modern">
+              ✨ Start New Analysis
             </button>
           </div>
         )}

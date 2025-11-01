@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import YouTubeContents from '../components/YouTubeContents'
 import { loadSearchCache, loadYouTubeResults, clearYouTubeResults } from '../utils/searchCache'
+import '../styles/youtube-modern.css'
+import '../styles/modern-buttons.css'
 
 export default function YouTubeModule({ user }) {
   const location = useLocation()
@@ -26,7 +28,7 @@ export default function YouTubeModule({ user }) {
   const [filters, setFilters] = useState({
     upload_date_filter: null,
     sort_by_filter: 'relevance',
-    geo_filter: 'US',
+    geo_filter: 'en', // Actually language filter
     content_type_filter: 'video'
   })
 
@@ -87,219 +89,177 @@ export default function YouTubeModule({ user }) {
   }
 
   return (
-    <div className="module-page">
-      <div className="module-header" style={{ 
-        borderBottom: '2px solid #FF0000', 
-        paddingBottom: '15px',
-        marginBottom: '20px'
-      }}>
-        <h1 style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px',
-          margin: '0 0 10px 0'
-        }}>
-          {/* YouTube Logo SVG */}
-          <svg 
-            width="26" 
-            height="26" 
-            viewBox="0 0 24 24" 
-            fill="#FF0000"
-            aria-label="YouTube Logo"
-          >
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
-          YouTube Analytics
-        </h1>
-        <p className="module-description">
-          Analyze YouTube content and generate video summaries
-        </p>
+    <div className="youtube-module-modern">
+      <div className="youtube-header-modern">
+        <div className="youtube-header-content">
+          <div className="youtube-title-section">
+            <div>
+              <h1 className="youtube-title-modern">
+                {/* YouTube Logo SVG */}
+                <svg 
+                  width="32" 
+                  height="32" 
+                  viewBox="0 0 24 24" 
+                  fill="#FF0000"
+                  aria-label="YouTube Logo"
+                >
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                YouTube Analytics
+              </h1>
+              <p className="youtube-subtitle">
+                Analyze YouTube content and generate AI-powered video summaries
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {!showResults ? (
-        <div className="container">
-          <form onSubmit={handleSearch}>
-            {/* Search Type Selector */}
-            <div className="form-group">
-              <label>Search Type</label>
-              <div className="search-type-selector">
-                <label className="radio-option">
+        <div className="youtube-search-modern">
+          <div className="search-card-modern">
+            <form onSubmit={handleSearch}>
+              {/* Modern Search Type Toggle */}
+              <div className="search-type-toggle">
+                <button
+                  type="button"
+                  className={`search-type-option ${searchType === 'videos' ? 'active' : ''}`}
+                  onClick={() => setSearchType('videos')}
+                >
+                  🔍 Search Videos
+                </button>
+                <button
+                  type="button"
+                  className={`search-type-option ${searchType === 'channel' ? 'active' : ''}`}
+                  onClick={() => setSearchType('channel')}
+                >
+                  📺 Analyze Channel
+                </button>
+              </div>
+
+              {/* Video Search Input */}
+              {searchType === 'videos' && (
+                <div className="form-group-modern">
+                  <label htmlFor="youtube-keyword" className="form-label-modern">
+                    Search Keyword
+                  </label>
                   <input
-                    type="radio"
-                    name="searchType"
-                    value="videos"
-                    checked={searchType === 'videos'}
-                    onChange={(e) => setSearchType(e.target.value)}
+                    type="text"
+                    id="youtube-keyword"
+                    className="form-input-modern"
+                    value={searchParams.keyword}
+                    onChange={(e) => setSearchParams({ ...searchParams, keyword: e.target.value })}
+                    placeholder="Enter keyword to search YouTube videos..."
+                    required
                   />
-                  <span className="radio-label">
-                    🔍 Search Videos
-                  </span>
-                </label>
-                <label className="radio-option">
+                  <p className="form-help-text">
+                    Enter a keyword to find and analyze top YouTube videos
+                  </p>
+                </div>
+              )}
+
+              {/* Channel Search Input */}
+              {searchType === 'channel' && (
+                <div className="form-group-modern">
+                  <label htmlFor="youtube-channel" className="form-label-modern">
+                    Channel URL or Handle
+                  </label>
                   <input
-                    type="radio"
-                    name="searchType"
-                    value="channel"
-                    checked={searchType === 'channel'}
-                    onChange={(e) => setSearchType(e.target.value)}
+                    type="text"
+                    id="youtube-channel"
+                    className="form-input-modern"
+                    value={channelInput}
+                    onChange={(e) => setChannelInput(e.target.value)}
+                    placeholder="Enter @username, channel URL, or channel ID..."
+                    required
                   />
-                  <span className="radio-label">
-                    📺 Search Channel
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            {/* Video Search Input */}
-            {searchType === 'videos' && (
-              <div className="form-group">
-                <label htmlFor="youtube-keyword">Search Keyword</label>
-                <input
-                  type="text"
-                  id="youtube-keyword"
-                  value={searchParams.keyword}
-                  onChange={(e) => setSearchParams({ ...searchParams, keyword: e.target.value })}
-                  placeholder="Enter keyword to search YouTube videos"
-                  required
-                />
-                <small>Enter a keyword to find and analyze top YouTube videos</small>
-              </div>
-            )}
-
-            {/* Channel Search Input */}
-            {searchType === 'channel' && (
-              <div className="form-group">
-                <label htmlFor="youtube-channel">Channel URL or Handle</label>
-                <input
-                  type="text"
-                  id="youtube-channel"
-                  value={channelInput}
-                  onChange={(e) => setChannelInput(e.target.value)}
-                  placeholder="Enter @username, channel URL, or channel ID"
-                  required
-                />
-                <small>Enter @username (e.g., @mkbhd), full channel URL, or channel ID</small>
-              </div>
-            )}
-
-            {/* Search Filters */}
-            <div className="form-group">
-              <label>Search Filters</label>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '15px',
-                background: '#f8f9fa',
-                padding: '15px',
-                borderRadius: '8px',
-                border: '1px solid #e9ecef'
-              }}>
-                {/* Upload Date Filter */}
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
-                    Upload Date:
-                  </label>
-                  <select 
-                    value={filters.upload_date_filter || ''} 
-                    onChange={(e) => handleFilterChange('upload_date_filter', e.target.value || null)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #ced4da',
-                      borderRadius: '4px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="">Any time</option>
-                    <option value="hour">Past hour</option>
-                    <option value="today">Today</option>
-                    <option value="week">This week</option>
-                    <option value="month">This month</option>
-                    <option value="year">This year</option>
-                  </select>
+                  <p className="form-help-text">
+                    Enter @username (e.g., @mkbhd), full channel URL, or channel ID
+                  </p>
                 </div>
+              )}
 
-                {/* Sort By Filter */}
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
-                    Sort By:
-                  </label>
-                  <select 
-                    value={filters.sort_by_filter} 
-                    onChange={(e) => handleFilterChange('sort_by_filter', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #ced4da',
-                      borderRadius: '4px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="relevance">Relevance</option>
-                    <option value="date">Upload date</option>
-                    <option value="views">View count</option>
-                    <option value="rating">Rating</option>
-                  </select>
-                </div>
+              {/* Modern Search Filters */}
+              <div className="form-group-modern">
+                <label className="form-label-modern">Search Filters</label>
+                <div className="filters-panel-modern">
+                  <div className="filters-grid-modern">
+                    {/* Upload Date Filter */}
+                    <div className="filter-group-modern">
+                      <label className="form-label-modern">Upload Date</label>
+                      <select 
+                        value={filters.upload_date_filter || ''} 
+                        onChange={(e) => handleFilterChange('upload_date_filter', e.target.value || null)}
+                        className="filter-select-modern"
+                      >
+                        <option value="">Any time</option>
+                        <option value="hour">Past hour</option>
+                        <option value="today">Today</option>
+                        <option value="week">This week</option>
+                        <option value="month">This month</option>
+                        <option value="year">This year</option>
+                      </select>
+                    </div>
 
-                {/* Region Filter */}
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
-                    Region:
-                  </label>
-                  <select 
-                    value={filters.geo_filter} 
-                    onChange={(e) => handleFilterChange('geo_filter', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #ced4da',
-                      borderRadius: '4px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="US">United States</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="DE">Germany</option>
-                    <option value="FR">France</option>
-                    <option value="ES">Spain</option>
-                    <option value="IT">Italy</option>
-                    <option value="JP">Japan</option>
-                    <option value="IN">India</option>
-                  </select>
-                </div>
+                    {/* Sort By Filter */}
+                    <div className="filter-group-modern">
+                      <label className="form-label-modern">Sort By</label>
+                      <select 
+                        value={filters.sort_by_filter} 
+                        onChange={(e) => handleFilterChange('sort_by_filter', e.target.value)}
+                        className="filter-select-modern"
+                      >
+                        <option value="relevance">Relevance</option>
+                        <option value="date">Upload date</option>
+                        <option value="views">View count</option>
+                        <option value="rating">Rating</option>
+                      </select>
+                    </div>
 
-                {/* Content Type Filter */}
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
-                    Content Type:
-                  </label>
-                  <select 
-                    value={filters.content_type_filter} 
-                    onChange={(e) => handleFilterChange('content_type_filter', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #ced4da',
-                      borderRadius: '4px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="video">Videos</option>
-                    <option value="shorts">Shorts</option>
-                    <option value="channel">Channels</option>
-                    <option value="playlist">Playlists</option>
-                  </select>
+                    {/* Region Filter */}
+                    <div className="filter-group-modern">
+                      <label className="form-label-modern">Region</label>
+                      <select 
+                        value={filters.geo_filter} 
+                        onChange={(e) => handleFilterChange('geo_filter', e.target.value)}
+                        className="filter-select-modern"
+                      >
+                        <option value="US">United States</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="ES">Spain</option>
+                        <option value="IT">Italy</option>
+                        <option value="JP">Japan</option>
+                        <option value="KR">South Korea</option>
+                      </select>
+                    </div>
+
+                    {/* Content Type Filter */}
+                    <div className="filter-group-modern">
+                      <label className="form-label-modern">Content Type</label>
+                      <select 
+                        value={filters.content_type_filter} 
+                        onChange={(e) => handleFilterChange('content_type_filter', e.target.value)}
+                        className="filter-select-modern"
+                      >
+                        <option value="video">Videos</option>
+                        <option value="shorts">Shorts</option>
+                        <option value="channel">Channels</option>
+                        <option value="playlist">Playlists</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button type="submit">
-              {searchType === 'videos' ? 'Search YouTube Videos' : 'Analyze Channel Videos'}
-            </button>
-          </form>
+              <button type="submit" className="btn-modern-base btn-primary-modern btn-lg btn-full-width">
+                {searchType === 'videos' ? '🔍 Search YouTube Videos' : '📺 Analyze Channel Videos'}
+              </button>
+            </form>
+          </div>
         </div>
       ) : (
         <>

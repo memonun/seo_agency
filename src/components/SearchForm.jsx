@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '../lib/supabase'
 import SearchHistory from './SearchHistory'
 import { saveSearchCache, loadSearchCache, clearSearchCache } from '../utils/searchCache'
+import '../styles/modern-buttons.css'
 
 const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || ''
 const CONTENT_IDEAS_WEBHOOK_URL = import.meta.env.VITE_CONTENT_IDEAS_WEBHOOK_URL || ''
@@ -256,8 +257,8 @@ export default function SearchForm({ user }) {
 
         {/* Initial search button - only show when idle or search_error */}
         {(stage === 'idle' || stage === 'search_error') && (
-          <button type="submit" disabled={loading}>
-            {loading ? 'Processing...' : 'Start Research'}
+          <button type="submit" disabled={loading} className="btn-modern-base btn-primary-modern btn-lg btn-full-width">
+            {loading ? '⏳ Processing...' : '🚀 Start Research'}
           </button>
         )}
       </form>
@@ -277,17 +278,17 @@ export default function SearchForm({ user }) {
             <button
               onClick={handleGetContentIdeas}
               disabled={loading}
-              className="primary-btn"
+              className="btn-modern-base btn-primary-modern"
             >
-              {loading ? 'Processing...' : 'Get Content Ideas'}
+              {loading ? '⏳ Processing...' : '💡 Get Content Ideas'}
             </button>
             <span className="divider">|</span>
             <button
               onClick={handleGetYoutubeContents}
               disabled={loading}
-              className="primary-btn"
+              className="btn-modern-base btn-primary-modern"
             >
-              Get 10 YouTube Contents
+              🎬 Get 10 YouTube Contents
             </button>
           </div>
         )}
@@ -295,11 +296,11 @@ export default function SearchForm({ user }) {
         {/* After search error */}
         {stage === 'search_error' && (
           <>
-            <button onClick={handleRetry} className="secondary-btn">
-              Retry
+            <button onClick={handleRetry} className="btn-modern-base btn-secondary-modern">
+              🔄 Retry
             </button>
-            <button className="secondary-btn" onClick={() => alert('Contact support')}>
-              Contact Us
+            <button className="btn-modern-base btn-secondary-modern" onClick={() => alert('Contact support')}>
+              📞 Contact Us
             </button>
           </>
         )}
@@ -309,16 +310,16 @@ export default function SearchForm({ user }) {
           <button
             onClick={handleGetContentIdeas}
             disabled={loading}
-            className="secondary-btn"
+            className="btn-modern-base btn-secondary-modern"
           >
-            {loading ? 'Processing...' : 'Retry Get Content Ideas'}
+            {loading ? '⏳ Processing...' : '🔄 Retry Get Content Ideas'}
           </button>
         )}
 
         {/* After content ideas success */}
         {stage === 'ideas_success' && (
-          <button onClick={handleNewSearch} className="primary-btn">
-            Start New Search
+          <button onClick={handleNewSearch} className="btn-modern-base btn-primary-modern">
+            ✨ Start New Search
           </button>
         )}
       </div>

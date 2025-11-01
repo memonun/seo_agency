@@ -20,7 +20,7 @@ import {
   getRedditSearchStatus
 } from '../utils/searchCache';
 import { supabase } from '../lib/supabase';
-import '../styles/RedditModule.css';
+import styles from '../styles/RedditModule.module.css';
 
 export default function RedditModule({ user }) {
   const [results, setResults] = useState(null);
@@ -705,9 +705,9 @@ export default function RedditModule({ user }) {
         </p>
       </div>
 
-      <div className="reddit-main-container">
+      <div className={styles.mainContainer}>
         {/* Left side: Search form and notifications */}
-        <div className="reddit-search-section">
+        <div className={styles.searchSection}>
           <RedditSearch 
             onSearch={handleSearch}
             loading={loading}
@@ -793,7 +793,7 @@ export default function RedditModule({ user }) {
 
         {/* Right side: Search History Sidebar */}
         {user && (
-          <div className="reddit-history-sidebar">
+          <div className={styles.historySidebar}>
             <RedditSearchHistory 
               user={user}
               refreshTrigger={historyRefreshTrigger}

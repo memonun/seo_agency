@@ -4288,7 +4288,7 @@ app.post('/api/reddit-analytics', async (req, res) => {
       }
       
       const mockData = generateMockRedditPosts(mockQuery, maxItems, searchType)
-      const analytics = generateRedditAnalytics(mockData, mockQuery, searchType)
+      const analytics = generateAnalytics(mockData, mockQuery, searchType)
       
       console.log(`✅ Mock Reddit search completed: ${mockData.length} posts`)
       console.log('📤 FINAL RESPONSE ANALYTICS:', JSON.stringify(analytics, null, 2))
@@ -4367,41 +4367,37 @@ app.post('/api/reddit-analytics', async (req, res) => {
     console.error('❌ Reddit Analytics API Error:', error)
     console.error('=== END REDDIT ERROR ===\n')
     
-    // Enhanced error handling
-    if (error.message?.includes('Apify API token not found')) {
-      return res.status(401).json({
-        error: 'Authentication failed',
-        message: 'Apify API token not found. Please set APIFY_API_KEY in your .env file',
-        timestamp: new Date().toISOString()
-      });
-    }
-    
-    if (error.message?.includes('rate limit')) {
-      return res.status(429).json({
-        error: 'Rate limit exceeded',
-        message: 'Please wait before making another request',
-        retryAfter: apifyRateLimiter.getTimeUntilReset(),
-        timestamp: new Date().toISOString()
-      });
-    }
-    
-    if (error.message?.includes('Apify API error')) {
-      return res.status(502).json({
-        error: 'External API error',
-        message: 'Apify Reddit Scraper API is currently unavailable',
-        timestamp: new Date().toISOString()
-      });
-    }
-    
-    return res.status(500).json({
-      error: 'Reddit analytics failed',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
+    return handleRedditError(error, res);
   }
 })
 
 // Apify Reddit Client Functions (ported from serverless function)
+
+// Centralized error handler for Reddit API (ported from serverless function)
+const handleRedditError = (error, res) => {
+  console.error('Reddit Analytics API Error:', error);
+  
+  if (error.message?.includes('authentication') || error.message?.includes('Apify API token not found')) {
+    return res.status(401).json({
+      error: 'Authentication failed',
+      message: 'Invalid Apify credentials'
+    });
+  }
+  
+  if (error.message?.includes('not found')) {
+    return res.status(404).json({
+      error: 'No results found',
+      message: 'No Reddit posts found for your search query'
+    });
+  }
+  
+  return res.status(500).json({
+    error: 'Internal server error',
+    message: 'An unexpected error occurred',
+    details: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
+};
+
 const getApifyClient = () => {
   // Support both naming conventions for environment variables
   const apiToken = process.env.APIFY_API_TOKEN || process.env.APIFY_API_KEY || process.env.apify_api_key;
@@ -4521,7 +4517,7 @@ function generateMockRedditPosts(query, limit = 10, searchType = 'subreddit') {
 }
 
 // Generate analytics from Reddit posts
-function generateRedditAnalytics(posts, searchQuery, searchType) {
+function generateAnalytics(posts, searchQuery, searchType) {
   console.log('\n📈 === REDDIT ANALYTICS CALCULATION START ===')
   console.log('📊 Input data:', {
     postsCount: posts.length,
@@ -4817,7 +4813,7 @@ async function handleSubredditSearch(client, req, res) {
     
     // Generate analytics based on posts only (even if comments included)
     console.log('📈 GENERATING ANALYTICS...')
-    const analytics = generateRedditAnalytics(posts, subreddit, 'subreddit');
+    const analytics = generateAnalytics(posts, subreddit, 'subreddit');
     console.log('📈 ANALYTICS GENERATED:', Object.keys(analytics))
     console.log('📤 FINAL SUBREDDIT RESPONSE ANALYTICS:', JSON.stringify(analytics, null, 2))
     
@@ -4837,11 +4833,7 @@ async function handleSubredditSearch(client, req, res) {
     
   } catch (error) {
     console.error('Subreddit search error:', error);
-    return res.status(500).json({
-      error: 'Search failed',
-      message: 'Failed to search subreddit. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleRedditError(error, res);
   }
 }
 
@@ -5036,7 +5028,7 @@ async function handleRedditKeywordSearch(client, req, res) {
     
     // Generate analytics based on posts only (even if comments included)
     console.log('📈 GENERATING SEARCH ANALYTICS...')
-    const analytics = generateRedditAnalytics(posts, query, 'search');
+    const analytics = generateAnalytics(posts, query, 'search');
     console.log('📈 SEARCH ANALYTICS GENERATED:', Object.keys(analytics))
     
     console.log('✅ REDDIT KEYWORD SEARCH COMPLETED SUCCESSFULLY')
@@ -5055,11 +5047,7 @@ async function handleRedditKeywordSearch(client, req, res) {
     
   } catch (error) {
     console.error('❌ Reddit keyword search error:', error);
-    return res.status(500).json({
-      error: 'Search failed',
-      message: 'Failed to search Reddit. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleRedditError(error, res);
   }
 }
 
@@ -5191,7 +5179,7 @@ async function handleRedditUserSearch(client, req, res) {
     
     // Generate analytics based on posts only (even if comments included)
     console.log('📈 GENERATING USER ANALYTICS...')
-    const analytics = generateRedditAnalytics(posts, cleanUsername, 'user');
+    const analytics = generateAnalytics(posts, cleanUsername, 'user');
     console.log('📈 USER ANALYTICS GENERATED:', Object.keys(analytics))
     
     console.log('✅ REDDIT USER SEARCH COMPLETED SUCCESSFULLY')
@@ -5210,11 +5198,7 @@ async function handleRedditUserSearch(client, req, res) {
     
   } catch (error) {
     console.error('❌ Reddit user search error:', error);
-    return res.status(500).json({
-      error: 'User search failed',
-      message: 'Failed to search user. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleRedditError(error, res);
   }
 }
 

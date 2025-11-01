@@ -1831,12 +1831,26 @@ input:disabled {
 }
 
 .overall-summary-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  color: #2c3e50;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.overall-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+  border-radius: 16px 16px 0 0;
 }
 
 .overall-summary-card h3 {
@@ -1850,16 +1864,17 @@ input:disabled {
 
 .overall-summary-content {
   font-size: 15px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.7;
+  color: #495057;
   text-align: left;
 }
 
 /* Mobile responsiveness for overall summary */
 @media (max-width: 768px) {
   .overall-summary-card {
-    padding: 16px;
-    margin-bottom: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
   }
   
   .overall-summary-card h3 {
@@ -1869,7 +1884,7 @@ input:disabled {
   
   .overall-summary-content {
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 }
 
