@@ -185,8 +185,8 @@ describe('RedditSearch Component', () => {
   });
 
   it('validates required fields based on search type', async () => {
-    // Mock alert
-    window.alert = jest.fn();
+    // Clear and set up alert mock
+    global.alert.mockClear();
 
     render(
       <RedditSearch 
@@ -195,11 +195,13 @@ describe('RedditSearch Component', () => {
       />
     );
 
-    // Try to submit without filling required field
-    const submitButton = screen.getByRole('button', { name: /analyze subreddit/i });
-    fireEvent.click(submitButton);
+    // Get the form to trigger submit event directly
+    const form = screen.getByRole('button', { name: /analyze subreddit/i }).closest('form');
+    
+    // Try to submit without filling required field by triggering form submission
+    fireEvent.submit(form);
 
-    expect(window.alert).toHaveBeenCalledWith('Please enter a subreddit name');
+    expect(global.alert).toHaveBeenCalledWith('Please enter a subreddit name');
     expect(mockOnSearch).not.toHaveBeenCalled();
   });
 
