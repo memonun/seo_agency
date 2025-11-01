@@ -203,7 +203,7 @@ async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
   // Add optional filter parameters
   if (filters.upload_date_filter) params.append('upload_date', filters.upload_date_filter)
   if (filters.sort_by_filter) params.append('sort_by', filters.sort_by_filter)
-  if (filters.geo_filter) params.append('lang', filters.geo_filter) // Use lang parameter for language filtering
+  if (filters.geo_filter) params.append('geo', filters.geo_filter) // Use geo parameter for country filtering
 
   const url = `https://${RAPIDAPI_HOST}/search?${params.toString()}`
 

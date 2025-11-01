@@ -504,7 +504,7 @@ async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
   // Add optional filter parameters
   if (filters.upload_date_filter) params.append('upload_date', filters.upload_date_filter)
   if (filters.sort_by_filter) params.append('sort_by', filters.sort_by_filter)
-  if (filters.geo_filter) params.append('lang', filters.geo_filter) // Use lang parameter for language filtering
+  if (filters.geo_filter) params.append('geo', filters.geo_filter) // Use geo parameter for country filtering
 
   const url = `https://${RAPIDAPI_HOST}/search?${params.toString()}`
 
@@ -524,8 +524,12 @@ async function fetchYouTubeVideosYTAPI(keyword, filters = {}) {
 
   const data = await response.json()
 
-  // Extract videos from YT-API response format - CONFIRMED WORKING
+  // Extract videos from YT-API response format
   if (!data.data || !Array.isArray(data.data)) {
+    console.error('❌ YT-API Response Structure Error:')
+    console.error('   Expected: data.data (array)')
+    console.error('   Received keys:', Object.keys(data))
+    console.error('   data.data value:', data.data)
     throw new Error('No videos found in YT-API response')
   }
 
@@ -651,7 +655,14 @@ async function fetchTranscriptYTAPI(videoId) {
   const data = await response.json()
 
   // YT-API transcript response structure: { id, transcript: [] }
+  console.log('🔍 Transcript Response Keys:', Object.keys(data))
+  console.log('🔍 Transcript data:', data)
+  
   if (!data.transcript || !Array.isArray(data.transcript)) {
+    console.error('❌ Transcript Response Structure Error:')
+    console.error('   Expected: data.transcript (array)')
+    console.error('   Received keys:', Object.keys(data))
+    console.error('   data.transcript value:', data.transcript)
     throw new Error('No transcript found in YT-API response')
   }
 
