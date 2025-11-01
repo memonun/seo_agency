@@ -81,13 +81,23 @@
 - **Result:** Same error - mixing legacy version with modern syntax failed
 - **Notes:** Hybrid approach unsuccessful
 
-### **Attempt #6:** [IN PROGRESS] Exact Revert to Working Config
+### **Attempt #6:** Exact Revert to Working Config (Commit: fcf679f)
+- **Date:** 2025-11-01
+- **Status:** 🟡 **BUILD SUCCESS, RUNTIME FAILURE**
+- **Error:** `Unexpected token 'T', "The page c"... is not valid JSON`
+- **Strategy:** Exact replication of Attempt #1 successful configuration
+- **Config:** Reverted to commit a5176fd vercel.json exactly
+- **Result:** Build succeeded, but API endpoints return HTML instead of JSON
+- **Root Cause Identified:** Broken circular API routing `{"src": "/api/(.*)", "dest": "/api/$1"}`
+- **Notes:** Build works, but routing prevents API calls from reaching serverless functions
+
+### **Attempt #7:** [IN PROGRESS] Fix Circular API Routing  
 - **Date:** 2025-11-01
 - **Status:** 🔄 **PENDING**
-- **Strategy:** Exact replication of Attempt #1 successful configuration
-- **Config:** Reverting to commit a5176fd vercel.json exactly
-- **Expected:** Should succeed based on previous success
-- **Notes:** Testing if exact revert resolves all issues
+- **Strategy:** Remove broken circular API route, let Vercel handle `/api` automatically
+- **Config:** Remove `{"src": "/api/(.*)", "dest": "/api/$1"}` route
+- **Expected:** API calls should reach serverless functions and return JSON
+- **Notes:** Testing definitive fix for circular routing issue
 
 ## 📋 PATTERNS IDENTIFIED
 
