@@ -135,8 +135,12 @@ export default function RedditSearch({
       <form onSubmit={handleSubmit} className="search-form">
         {/* Search Type Selection */}
         <div className={styles.formGroup}>
-          <label>Search Type</label>
-          <div className="reddit-search-type-selector">
+          <label id="search-type-label">Search Type</label>
+          <div 
+            className="reddit-search-type-selector"
+            role="radiogroup" 
+            aria-labelledby="search-type-label"
+          >
             <label className="reddit-radio-option">
               <input
                 type="radio"
@@ -144,9 +148,13 @@ export default function RedditSearch({
                 value="subreddit"
                 checked={searchType === 'subreddit'}
                 onChange={(e) => setSearchType(e.target.value)}
+                aria-describedby="subreddit-desc"
               />
               <span className="reddit-radio-label">
-                📋 Subreddit Analysis
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249z"/>
+                </svg>
+                r/ Subreddit
               </span>
             </label>
             <label className="reddit-radio-option">
@@ -156,9 +164,14 @@ export default function RedditSearch({
                 value="search"
                 checked={searchType === 'search'}
                 onChange={(e) => setSearchType(e.target.value)}
+                aria-describedby="search-desc"
               />
               <span className="reddit-radio-label">
-                🔍 Keyword Search
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                  <path d="M9 8l1.5 2L12 8V6H8v2z" opacity="0.8"/>
+                </svg>
+                Keyword Search
               </span>
             </label>
             <label className="reddit-radio-option">
@@ -168,9 +181,16 @@ export default function RedditSearch({
                 value="user"
                 checked={searchType === 'user'}
                 onChange={(e) => setSearchType(e.target.value)}
+                aria-describedby="user-desc"
               />
               <span className="reddit-radio-label">
-                👤 User Analysis
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  <circle cx="10" cy="4" r="1" opacity="0.7"/>
+                  <circle cx="14" cy="4" r="1" opacity="0.7"/>
+                  <path d="M12 2c.5 0 1 .3 1 .8s-.5.8-1 .8-1-.3-1-.8.5-.8 1-.8z" opacity="0.8"/>
+                </svg>
+                User Analysis
               </span>
             </label>
           </div>
@@ -192,9 +212,9 @@ export default function RedditSearch({
             required
           />
           <small>
-            {searchType === 'subreddit' && 'Enter subreddit name without "r/" prefix'}
-            {searchType === 'search' && 'Search across all of Reddit for posts matching your query'}
-            {searchType === 'user' && 'Enter username without "u/" prefix to analyze their posts'}
+            {searchType === 'subreddit' && <span id="subreddit-desc">Enter subreddit name without "r/" prefix</span>}
+            {searchType === 'search' && <span id="search-desc">Search across all of Reddit for posts matching your query</span>}
+            {searchType === 'user' && <span id="user-desc">Enter username without "u/" prefix to analyze their posts</span>}
           </small>
         </div>
 
@@ -261,10 +281,22 @@ export default function RedditSearch({
                 type="checkbox"
                 checked={includeComments}
                 onChange={(e) => setIncludeComments(e.target.checked)}
+                aria-describedby="comments-warning"
+                id="include-comments"
               />
-              <span>💬 Include Comments Analysis</span>
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '6px'}}>
+                  <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 12H7v-2h10v2zm0-3H7V9h10v2zm0-3H7V6h10v2z"/>
+                </svg>
+                Include Comments Analysis
+              </span>
             </label>
-            <small>⚠️ Comments count towards your API limit. Disable for more posts.</small>
+            <small id="comments-warning">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style={{marginRight: '4px', verticalAlign: 'middle'}}>
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+              </svg>
+              Comments count towards your API limit. Disable for more posts.
+            </small>
           </div>
 
           {searchType === 'subreddit' && (
@@ -274,10 +306,18 @@ export default function RedditSearch({
                   type="checkbox"
                   checked={includeCommunityInfo}
                   onChange={(e) => setIncludeCommunityInfo(e.target.checked)}
+                  aria-describedby="community-info-desc"
+                  id="include-community-info"
                 />
-                <span>📊 Include Community Info</span>
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '6px'}}>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4-4H7v2h10V7z" opacity="0.6"/>
+                  </svg>
+                  Include Community Info
+                </span>
               </label>
-              <small>Include subreddit statistics and community information</small>
+              <small id="community-info-desc">Include subreddit statistics and community information</small>
             </div>
           )}
         </div>
