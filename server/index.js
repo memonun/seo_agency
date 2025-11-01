@@ -7,8 +7,19 @@ import dotenv from 'dotenv'
 import crypto from 'crypto'
 import { TwitterApi } from '@virtuals-protocol/game-twitter-node'
 import { createClient } from '@supabase/supabase-js'
+import { chromium } from 'playwright'
+import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs/promises'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import axios from 'axios'
+import { scrapeInstagram, enrichInstagramWithComments } from '../src/utils/socialListening/scrapers/instagram.js'
 
 dotenv.config()
+
+// ES Module __dirname equivalent
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Initialize Supabase client for server-side database operations
 const supabaseUrl = process.env.VITE_SUPABASE_URL
@@ -3611,10 +3622,2852 @@ app.post('/api/news-analytics', async (req, res) => {
   }
 })
 
+// ============================================================
+// SOCIAL LISTENING API (Dual Environment - matches /api/social-listening.js)
+// Instagram + TikTok Monitoring with Job Queue Pattern
+// ============================================================
+
+app.post('/api/social-listening', async (req, res) => {
+  console.log('\n📱 Social Listening API Request:', req.body.action)
+
+  try {
+    const { action } = req.body
+
+    if (!action) {
+      return res.status(400).json({
+        error: 'Missing action parameter',
+        message: 'Please specify an action'
+      })
+    }
+
+    // Initialize Supabase client
+    if (!supabase) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Supabase client not initialized'
+      })
+    }
+
+    // Route to appropriate handler (same logic as serverless function)
+    switch (action) {
+      // Campaign Management
+      case 'create-campaign':
+        return await handleCreateCampaign(supabase, req, res)
+      case 'update-campaign':
+        return await handleUpdateCampaign(supabase, req, res)
+      case 'get-campaign':
+        return await handleGetCampaign(supabase, req, res)
+      case 'list-campaigns':
+        return await handleListCampaigns(supabase, req, res)
+      case 'delete-campaign':
+        return await handleDeleteCampaign(supabase, req, res)
+
+      // Job Management (Manual Trigger)
+      case 'start-scrape':
+        return await handleStartScrapeJob(supabase, req, res)
+      case 'process-jobs':
+        return await handleProcessJobs(supabase, req, res)
+      case 'get-job-status':
+        return await handleGetJobStatus(supabase, req, res)
+      case 'list-jobs':
+        return await handleListJobs(supabase, req, res)
+      case 'cancel-job':
+        return await handleCancelJob(supabase, req, res)
+
+      // Data Retrieval
+      case 'get-mentions':
+        return await handleGetMentions(supabase, req, res)
+      case 'get-mention-details':
+        return await handleGetMentionDetails(supabase, req, res)
+      case 'get-trends':
+        return await handleGetTrends(supabase, req, res)
+      case 'get-influencers':
+        return await handleGetInfluencers(supabase, req, res)
+      case 'get-alerts':
+        return await handleGetAlerts(supabase, req, res)
+      case 'get-daily-stats':
+        return await handleGetDailyStats(supabase, req, res)
+
+      // Alert Management
+      case 'mark-alert-read':
+        return await handleMarkAlertRead(supabase, req, res)
+      case 'dismiss-alert':
+        return await handleDismissAlert(supabase, req, res)
+
+      // Analytics
+      case 'run-analytics':
+        return await handleRunAnalytics(supabase, req, res)
+      case 'get-analytics-summary':
+        return await handleGetAnalyticsSummary(supabase, req, res)
+
+      // Testing & Debugging
+      case 'test-scraper':
+        return await handleTestScraper(req, res)
+
+      default:
+        return res.status(400).json({
+          error: 'Invalid action',
+          message: `Action "${action}" is not supported`
+        })
+    }
+  } catch (error) {
+    console.error('❌ Social Listening API Error:', error)
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    })
+  }
+})
+
+// GET route for social listening (for status checks and data retrieval)
+app.get('/api/social-listening', async (req, res) => {
+  // Return error - campaigns not implemented yet
+  return res.status(500).json({
+    error: 'Campaign feature not implemented',
+    message: 'Database schema not set up. Use test-scraper for now.'
+  })
+})
+
+// Campaign Management Handlers
+async function handleCreateCampaign(supabase, req, res) {
+  const { user_id, name, description, brand_mentions, keywords, hashtags, competitors, platforms, instagram_config, tiktok_config, relevance_context, alert_config } = req.body
+
+  if (!user_id || !name) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      message: 'user_id and name are required'
+    })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.campaigns')
+    .insert([{
+      user_id,
+      name,
+      description,
+      brand_mentions: brand_mentions || [],
+      keywords: keywords || [],
+      hashtags: hashtags || [],
+      competitors: competitors || [],
+      platforms: platforms || { instagram: true, tiktok: true },
+      instagram_config: instagram_config || {
+        track_stories: true,
+        track_reels: true,
+        monitor_profiles: [],
+        hashtags: [],
+        max_posts_per_scrape: 200
+      },
+      tiktok_config: tiktok_config || {
+        track_sounds: false,
+        monitor_profiles: [],
+        hashtags: [],
+        query_terms: [],
+        max_videos_per_scrape: 100
+      },
+      relevance_context,
+      alert_config: alert_config || {
+        sentiment_threshold: -0.3,
+        volume_spike_multiplier: 2.5,
+        enable_email: true,
+        enable_slack: false,
+        influencer_follower_threshold: 10000
+      }
+    }])
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    campaign: data,
+    message: 'Campaign created successfully'
+  })
+}
+
+async function handleUpdateCampaign(supabase, req, res) {
+  const { campaign_id, ...updates } = req.body
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.campaigns')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', campaign_id)
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    campaign: data,
+    message: 'Campaign updated successfully'
+  })
+}
+
+async function handleGetCampaign(supabase, req, res) {
+  const { campaign_id } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.campaigns')
+    .select('*')
+    .eq('id', campaign_id)
+    .single()
+
+  if (error) {
+    return res.status(404).json({ error: 'Campaign not found', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    campaign: data
+  })
+}
+
+async function handleListCampaigns(supabase, req, res) {
+  const { user_id, active_only = 'true' } = req.query
+
+  if (!user_id) {
+    return res.status(400).json({ error: 'Missing user_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.campaigns')
+    .select('*')
+    .eq('user_id', user_id)
+    .order('created_at', { ascending: false })
+
+  if (active_only === 'true') {
+    query = query.eq('is_active', true)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    campaigns: data,
+    total: data.length
+  })
+}
+
+async function handleDeleteCampaign(supabase, req, res) {
+  const { campaign_id } = req.body
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  const { error } = await supabase
+    .from('social_listening.campaigns')
+    .delete()
+    .eq('id', campaign_id)
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'Campaign deleted successfully'
+  })
+}
+
+// Job Management Handlers
+async function handleStartScrapeJob(supabase, req, res) {
+  const { campaign_id, user_id, platforms, job_type = 'full_scrape', parameters = {} } = req.body
+
+  if (!campaign_id || !user_id) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      message: 'campaign_id and user_id are required'
+    })
+  }
+
+  const { data: campaign, error: campaignError } = await supabase
+    .from('social_listening.campaigns')
+    .select('*')
+    .eq('id', campaign_id)
+    .single()
+
+  if (campaignError || !campaign) {
+    return res.status(404).json({ error: 'Campaign not found' })
+  }
+
+  const platformsToScrape = platforms || []
+  if (platformsToScrape.length === 0) {
+    if (campaign.platforms.instagram) platformsToScrape.push('instagram')
+    if (campaign.platforms.tiktok) platformsToScrape.push('tiktok')
+  }
+
+  const { data: job, error: jobError } = await supabase
+    .from('social_listening.scrape_jobs')
+    .insert([{
+      campaign_id,
+      user_id,
+      job_type,
+      platforms: platformsToScrape,
+      parameters,
+      status: 'queued',
+      progress: {
+        current: 0,
+        total: 0,
+        message: 'Job queued, waiting to start...'
+      }
+    }])
+    .select()
+    .single()
+
+  if (jobError) {
+    return res.status(500).json({ error: 'Failed to create job', message: jobError.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    job,
+    message: 'Scrape job created successfully',
+    note: 'Job is queued. Use get-job-status to check progress or call process-jobs to trigger processing.'
+  })
+}
+
+async function handleProcessJobs(supabase, req, res) {
+  try {
+    // Import job worker (dynamic import)
+    const { SocialListeningJobWorker } = await import('../src/utils/socialListening/workers/jobWorker.js')
+
+    // Get environment variables
+    const supabaseUrl = process.env.VITE_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const apifyToken = process.env.APIFY_API_TOKEN
+
+    if (!apifyToken) {
+      return res.status(500).json({
+        error: 'Missing APIFY_API_TOKEN',
+        message: 'Instagram scraping requires Apify API token to be configured'
+      })
+    }
+
+    // Create worker
+    const worker = new SocialListeningJobWorker({
+      supabaseUrl,
+      supabaseKey,
+      apifyToken
+    })
+
+    // Process queued jobs
+    await worker.processQueuedJobs()
+
+    return res.status(200).json({
+      success: true,
+      message: 'Job processing triggered successfully'
+    })
+
+  } catch (error) {
+    console.error('❌ Error processing jobs:', error)
+    return res.status(500).json({
+      error: 'Job processing failed',
+      message: error.message
+    })
+  }
+}
+
+async function handleGetJobStatus(supabase, req, res) {
+  const { job_id } = req.query
+
+  if (!job_id) {
+    return res.status(400).json({ error: 'Missing job_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.scrape_jobs')
+    .select('*')
+    .eq('id', job_id)
+    .single()
+
+  if (error) {
+    return res.status(404).json({ error: 'Job not found', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    job: data
+  })
+}
+
+async function handleListJobs(supabase, req, res) {
+  const { campaign_id, user_id, status, limit = 50 } = req.query
+
+  let query = supabase
+    .from('social_listening.scrape_jobs')
+    .select('*')
+    .order('queued_at', { ascending: false })
+    .limit(parseInt(limit))
+
+  if (campaign_id) query = query.eq('campaign_id', campaign_id)
+  if (user_id) query = query.eq('user_id', user_id)
+  if (status) query = query.eq('status', status)
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    jobs: data,
+    total: data.length
+  })
+}
+
+async function handleCancelJob(supabase, req, res) {
+  const { job_id } = req.body
+
+  if (!job_id) {
+    return res.status(400).json({ error: 'Missing job_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.scrape_jobs')
+    .update({
+      status: 'cancelled',
+      completed_at: new Date().toISOString()
+    })
+    .eq('id', job_id)
+    .eq('status', 'queued')
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: 'Failed to cancel job', message: error.message })
+  }
+
+  if (!data) {
+    return res.status(400).json({ error: 'Job cannot be cancelled (already running or completed)' })
+  }
+
+  return res.status(200).json({
+    success: true,
+    job: data,
+    message: 'Job cancelled successfully'
+  })
+}
+
+// Data Retrieval Handlers
+async function handleGetMentions(supabase, req, res) {
+  const { campaign_id, platform, is_relevant, limit = 100, offset = 0, sort_by = 'published_at', order = 'desc' } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.mentions')
+    .select('*')
+    .eq('campaign_id', campaign_id)
+    .order(sort_by, { ascending: order === 'asc' })
+    .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1)
+
+  if (platform) query = query.eq('platform', platform)
+  if (is_relevant !== undefined) query = query.eq('is_relevant', is_relevant === 'true')
+
+  const { data, error, count } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    mentions: data,
+    total: count,
+    limit: parseInt(limit),
+    offset: parseInt(offset)
+  })
+}
+
+async function handleGetMentionDetails(supabase, req, res) {
+  const { mention_id } = req.query
+
+  if (!mention_id) {
+    return res.status(400).json({ error: 'Missing mention_id' })
+  }
+
+  const { data: mention, error: mentionError } = await supabase
+    .from('social_listening.mentions')
+    .select('*')
+    .eq('id', mention_id)
+    .single()
+
+  if (mentionError) {
+    return res.status(404).json({ error: 'Mention not found', message: mentionError.message })
+  }
+
+  const { data: comments, error: commentsError } = await supabase
+    .from('social_listening.comments')
+    .select('*')
+    .eq('mention_id', mention_id)
+    .order('created_at', { ascending: false })
+
+  return res.status(200).json({
+    success: true,
+    mention,
+    comments: commentsError ? [] : comments
+  })
+}
+
+async function handleGetTrends(supabase, req, res) {
+  const { campaign_id, platform, is_active = 'true', limit = 20 } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.trends')
+    .select('*')
+    .eq('campaign_id', campaign_id)
+    .order('trend_score', { ascending: false })
+    .limit(parseInt(limit))
+
+  if (platform) query = query.eq('platform', platform)
+  if (is_active === 'true') query = query.eq('is_active', true)
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    trends: data,
+    total: data.length
+  })
+}
+
+async function handleGetInfluencers(supabase, req, res) {
+  const { campaign_id, platform, tier, limit = 20 } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.influencers')
+    .select('*')
+    .eq('campaign_id', campaign_id)
+    .order('overall_score', { ascending: false })
+    .limit(parseInt(limit))
+
+  if (platform) query = query.eq('platform', platform)
+  if (tier) query = query.eq('tier', tier)
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    influencers: data,
+    total: data.length
+  })
+}
+
+async function handleGetAlerts(supabase, req, res) {
+  const { campaign_id, is_read = 'false', severity, limit = 50 } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.alerts')
+    .select('*')
+    .eq('campaign_id', campaign_id)
+    .eq('dismissed', false)
+    .order('created_at', { ascending: false })
+    .limit(parseInt(limit))
+
+  if (is_read !== 'all') query = query.eq('is_read', is_read === 'true')
+  if (severity) query = query.eq('severity', severity)
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    alerts: data,
+    total: data.length
+  })
+}
+
+async function handleGetDailyStats(supabase, req, res) {
+  const { campaign_id, start_date, end_date, limit = 30 } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  let query = supabase
+    .from('social_listening.daily_stats')
+    .select('*')
+    .eq('campaign_id', campaign_id)
+    .order('date', { ascending: false })
+    .limit(parseInt(limit))
+
+  if (start_date) query = query.gte('date', start_date)
+  if (end_date) query = query.lte('date', end_date)
+
+  const { data, error } = await query
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    stats: data,
+    total: data.length
+  })
+}
+
+// Alert Management Handlers
+async function handleMarkAlertRead(supabase, req, res) {
+  const { alert_id } = req.body
+
+  if (!alert_id) {
+    return res.status(400).json({ error: 'Missing alert_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.alerts')
+    .update({ is_read: true })
+    .eq('id', alert_id)
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    alert: data,
+    message: 'Alert marked as read'
+  })
+}
+
+async function handleDismissAlert(supabase, req, res) {
+  const { alert_id } = req.body
+
+  if (!alert_id) {
+    return res.status(400).json({ error: 'Missing alert_id' })
+  }
+
+  const { data, error } = await supabase
+    .from('social_listening.alerts')
+    .update({ dismissed: true })
+    .eq('id', alert_id)
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: 'Database error', message: error.message })
+  }
+
+  return res.status(200).json({
+    success: true,
+    alert: data,
+    message: 'Alert dismissed'
+  })
+}
+
+// Analytics Handlers
+async function handleRunAnalytics(supabase, req, res) {
+  const { campaign_id } = req.body
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  try {
+    console.log(`\n📊 Running analytics for campaign ${campaign_id.slice(0, 8)}...`)
+
+    // Import analytics worker
+    const { AnalyticsWorker } = await import('../src/utils/socialListening/workers/analyticsWorker.js')
+
+    // Get environment variables
+    const supabaseUrl = process.env.VITE_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    // Create worker
+    const worker = new AnalyticsWorker({
+      supabaseUrl,
+      supabaseKey
+    })
+
+    // Run analytics
+    const result = await worker.runAnalytics(campaign_id)
+
+    console.log(`✅ Analytics complete: ${result.success ? 'Success' : 'Failed with errors'}`)
+
+    return res.status(200).json({
+      success: true,
+      analytics: result
+    })
+
+  } catch (error) {
+    console.error('❌ Error running analytics:', error)
+    return res.status(500).json({
+      error: 'Analytics processing failed',
+      message: error.message
+    })
+  }
+}
+
+async function handleGetAnalyticsSummary(supabase, req, res) {
+  const { campaign_id, days = 7 } = req.query
+
+  if (!campaign_id) {
+    return res.status(400).json({ error: 'Missing campaign_id' })
+  }
+
+  try {
+    console.log(`\n📊 Getting analytics summary for campaign ${campaign_id.slice(0, 8)}...`)
+
+    // Import analytics worker
+    const { AnalyticsWorker } = await import('../src/utils/socialListening/workers/analyticsWorker.js')
+
+    // Get environment variables
+    const supabaseUrl = process.env.VITE_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    // Create worker
+    const worker = new AnalyticsWorker({
+      supabaseUrl,
+      supabaseKey
+    })
+
+    // Get summary
+    const summary = await worker.getAnalyticsSummary(campaign_id, parseInt(days))
+
+    console.log(`✅ Analytics summary retrieved`)
+
+    return res.status(200).json({
+      success: true,
+      summary
+    })
+
+  } catch (error) {
+    console.error('❌ Error getting analytics summary:', error)
+    return res.status(500).json({
+      error: 'Failed to get analytics summary',
+      message: error.message
+    })
+  }
+}
+
+// Test Scraper Handler - Returns raw JSON from scrapers (NO MOCK DATA)
+// Optional TikTok parameters: includeComments, maxCommentsPerVideo
+async function handleTestScraper(req, res) {
+  const {
+    platform,
+    query,
+    limit = 10,
+    includeComments = false,
+    maxCommentsPerVideo = 20
+  } = req.body
+
+  if (!platform || !query) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      message: 'platform and query are required'
+    })
+  }
+
+  // Validate comment parameters
+  if (includeComments && (maxCommentsPerVideo < 1 || maxCommentsPerVideo > 100)) {
+    return res.status(400).json({
+      error: 'Invalid parameter',
+      message: 'maxCommentsPerVideo must be between 1 and 100'
+    })
+  }
+
+  try {
+    console.log(`🧪 Testing ${platform} scraper with query: ${query}`)
+    if (includeComments && platform === 'tiktok') {
+      console.log(`   Including comments (max ${maxCommentsPerVideo} per video)`)
+    }
+
+    let results
+
+    // Use real scrapers (NO MOCK DATA)
+    if (platform === 'instagram') {
+      // Check if Apify token is available for Instagram
+      if (!process.env.APIFY_API_TOKEN) {
+        return res.status(500).json({
+          error: 'Configuration error',
+          message: 'APIFY_API_TOKEN not configured. Instagram scraping requires Apify API token.'
+        })
+      }
+
+      const { scrapeInstagram } = await import('../src/utils/socialListening/scrapers/instagram.js')
+      results = await scrapeInstagram({
+        searchQueries: [query],
+        maxPostsPerQuery: parseInt(limit),
+        apifyToken: process.env.APIFY_API_TOKEN
+      })
+    } else if (platform === 'tiktok') {
+      const { scrapeTikTok } = await import('../src/utils/socialListening/scrapers/tiktok.js')
+      results = await scrapeTikTok({
+        searchQueries: [query],
+        maxVideosPerQuery: parseInt(limit),
+        includeComments,
+        maxCommentsPerVideo: parseInt(maxCommentsPerVideo)
+      })
+    } else {
+      return res.status(400).json({
+        error: 'Invalid platform',
+        message: 'Platform must be "instagram" or "tiktok"'
+      })
+    }
+
+    console.log(`✅ Scraper test completed: ${results.length} results`)
+
+    return res.status(200).json({
+      success: true,
+      platform,
+      query,
+      count: results.length,
+      data: results,
+      sample: results.length > 0 ? results[0] : null
+    })
+
+  } catch (error) {
+    console.error('❌ Error testing scraper:', error)
+    return res.status(500).json({
+      error: 'Scraper test failed',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    })
+  }
+}
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend server is running' })
 })
+
+// ============================================
+// SOCIAL SCRAPING - JSON-FIRST APPROACH
+// TikTok & Instagram Profile/Hashtag/Keyword Scraping
+// ============================================
+
+// ============================================
+// APIFY INTEGRATION - Core Functions
+// ============================================
+
+/**
+ * Get configured Apify client
+ * @returns {Promise<ApifyClient>} Configured Apify client instance
+ */
+async function getApifyClient() {
+  const { ApifyClient } = await import('apify-client');
+  const token = process.env.APIFY_API_TOKEN;
+
+  if (!token) {
+    throw new Error('APIFY_API_TOKEN not found in environment variables');
+  }
+
+  return new ApifyClient({ token });
+}
+
+/**
+ * Run an Apify actor and return results
+ * @param {string} actorId - Apify actor ID (e.g., "clockworks/tiktok-scraper")
+ * @param {object} input - Actor input parameters
+ * @param {object} options - Additional options (timeout, memory, etc.)
+ * @returns {Promise<Array>} Array of result items from the actor's dataset
+ */
+async function runApifyActor(actorId, input, options = {}) {
+  console.log(`\n🤖 Starting Apify Actor: ${actorId}`);
+  console.log(`📥 Input:`, JSON.stringify(input, null, 2));
+
+  try {
+    const client = await getApifyClient();
+
+    // Default options
+    const runOptions = {
+      waitSecs: options.waitSecs || 300, // 5 minutes default timeout
+      ...options
+    };
+
+    // Start the actor run and wait for completion
+    console.log(`⏳ Running actor (max wait: ${runOptions.waitSecs}s)...`);
+    const run = await client.actor(actorId).call(input, runOptions);
+
+    console.log(`✅ Actor completed: ${run.status}`);
+    console.log(`📊 Dataset ID: ${run.defaultDatasetId}`);
+
+    // Fetch results from the default dataset
+    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+    console.log(`📦 Retrieved ${items.length} items from dataset`);
+
+    return items;
+  } catch (error) {
+    console.error(`❌ Apify actor error:`, error.message);
+    throw new Error(`Apify actor failed: ${error.message}`);
+  }
+}
+
+/**
+ * Transform Apify output to our standard format
+ * @param {Array} apifyData - Raw data from Apify actor
+ * @param {string} scrapeType - Type of scrape: "profile", "hashtag", "keyword", "comments"
+ * @param {string} target - The target (username, hashtag, or keyword)
+ * @returns {object} Transformed data in our standard format
+ */
+function transformApifyToOurFormat(apifyData, scrapeType, target) {
+  console.log(`\n🔄 Transforming Apify data (type: ${scrapeType}, target: ${target})`);
+
+  const videos = apifyData.map((item, index) => {
+    // Map Apify fields to our schema
+    // Apify TikTok scraper returns fields like: id, text, authorMeta, videoMeta, diggCount, shareCount, playCount, commentCount, etc.
+    try {
+      return {
+        video_id: item.id || item.videoId || `unknown_${index}`,
+        description: item.text || item.description || '',
+        author: {
+          username: item.authorMeta?.name || item.author?.uniqueId || 'unknown',
+          nickname: item.authorMeta?.nickName || item.author?.nickname || '',
+          verified: item.authorMeta?.verified || item.author?.verified || false,
+          follower_count: item.authorMeta?.fans || item.author?.followerCount || 0
+        },
+        stats: {
+          play_count: item.playCount || item.videoMeta?.playCount || 0,
+          like_count: item.diggCount || item.stats?.diggCount || 0,
+          comment_count: item.commentCount || item.stats?.commentCount || 0,
+          share_count: item.shareCount || item.stats?.shareCount || 0
+        },
+        create_time: item.createTime || item.createTimeISO || new Date().toISOString(),
+        video_url: item.webVideoUrl || item.videoUrl || `https://www.tiktok.com/@${item.authorMeta?.name}/video/${item.id}`,
+        hashtags: item.hashtags || item.challenges?.map(c => c.title) || [],
+        music: {
+          title: item.musicMeta?.musicName || item.music?.title || '',
+          author: item.musicMeta?.musicAuthor || item.music?.authorName || ''
+        }
+      };
+    } catch (error) {
+      console.warn(`⚠️ Error transforming item ${index}:`, error.message);
+      return null;
+    }
+  }).filter(v => v !== null);
+
+  console.log(`✅ Transformed ${videos.length} videos successfully`);
+
+  return {
+    platform: 'TikTok',
+    scrape_type: scrapeType,
+    target: target,
+    scraped_at: new Date().toISOString(),
+    video_count: videos.length,
+    videos: videos
+  };
+}
+
+// ============================================
+// APIFY-BASED SCRAPERS (Primary Implementation)
+// ============================================
+
+/**
+ * Apify TikTok Hashtag Scraper
+ * Uses clockworks/tiktok-scraper actor for hashtag scraping
+ * @param {string} hashtag - Hashtag to scrape (with or without #)
+ * @param {number} maxVideos - Maximum number of videos to fetch
+ * @returns {Promise<object>} Formatted scraping results
+ */
+async function apifyScrapeTikTokHashtag(hashtag, maxVideos = 50) {
+  console.log(`\n#️⃣ Apify TikTok Hashtag Scraping Started`);
+  console.log(`🏷️ Hashtag: ${hashtag}`);
+  console.log(`📊 Max Videos: ${maxVideos}`);
+
+  // Ensure hashtag starts with #
+  const formattedHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+
+  try {
+    const apifyInput = {
+      hashtags: [formattedHashtag],
+      resultsPerPage: Math.min(maxVideos, 100), // Apify actor limit
+      shouldDownloadVideos: false,
+      shouldDownloadCovers: false,
+      shouldDownloadSlideshowImages: false
+    };
+
+    // Run the Apify actor
+    const items = await runApifyActor('clockworks/tiktok-scraper', apifyInput, {
+      waitSecs: 180 // 3 minutes timeout for hashtag scraping
+    });
+
+    // Transform to our format
+    const result = transformApifyToOurFormat(items, 'hashtag', formattedHashtag);
+
+    console.log(`✅ Hashtag scraping completed: ${result.video_count} videos`);
+
+    return result;
+  } catch (error) {
+    console.error(`❌ Apify hashtag scraping failed:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Apify TikTok Keyword Scraper
+ * Uses clockworks/tiktok-scraper actor for keyword/search scraping
+ * @param {string} keyword - Search keyword
+ * @param {number} maxVideos - Maximum number of videos to fetch
+ * @returns {Promise<object>} Formatted scraping results
+ */
+async function apifyScrapeTikTokKeyword(keyword, maxVideos = 50) {
+  console.log(`\n🔍 Apify TikTok Keyword Scraping Started`);
+  console.log(`🔑 Keyword: ${keyword}`);
+  console.log(`📊 Max Videos: ${maxVideos}`);
+
+  try {
+    const apifyInput = {
+      searchQueries: [keyword],
+      resultsPerPage: Math.min(maxVideos, 100), // Apify actor limit
+      shouldDownloadVideos: false,
+      shouldDownloadCovers: false,
+      shouldDownloadSlideshowImages: false
+    };
+
+    // Run the Apify actor
+    const items = await runApifyActor('clockworks/tiktok-scraper', apifyInput, {
+      waitSecs: 180 // 3 minutes timeout for keyword scraping
+    });
+
+    // Transform to our format
+    const result = transformApifyToOurFormat(items, 'keyword', keyword);
+
+    console.log(`✅ Keyword scraping completed: ${result.video_count} videos`);
+
+    return result;
+  } catch (error) {
+    console.error(`❌ Apify keyword scraping failed:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Apify TikTok Profile Scraper
+ * Uses clockworks/tiktok-scraper actor for profile scraping
+ * @param {string} profileUrl - Full TikTok profile URL (e.g., https://tiktok.com/@username)
+ * @param {number} maxVideos - Maximum number of videos to fetch
+ * @returns {Promise<object>} Formatted scraping results
+ */
+async function apifyScrapeTikTokProfile(profileUrl, maxVideos = 50) {
+  console.log(`\n👤 Apify TikTok Profile Scraping Started`);
+  console.log(`🔗 Profile URL: ${profileUrl}`);
+  console.log(`📊 Max Videos: ${maxVideos}`);
+
+  try {
+    const apifyInput = {
+      profileURLs: [profileUrl],
+      resultsPerPage: Math.min(maxVideos, 100), // Apify actor limit
+      shouldDownloadVideos: false,
+      shouldDownloadCovers: false,
+      shouldDownloadSlideshowImages: false
+    };
+
+    // Run the Apify actor
+    const items = await runApifyActor('clockworks/tiktok-scraper', apifyInput, {
+      waitSecs: 180 // 3 minutes timeout for profile scraping
+    });
+
+    // Transform to our format
+    const result = transformApifyToOurFormat(items, 'profile', profileUrl);
+
+    console.log(`✅ Profile scraping completed: ${result.video_count} videos`);
+
+    return result;
+  } catch (error) {
+    console.error(`❌ Apify profile scraping failed:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Helper: Chunk array into smaller batches
+ * @param {Array} array - Array to chunk
+ * @param {number} size - Chunk size
+ * @returns {Array} Array of chunks
+ */
+function chunkArray(array, size) {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/**
+ * Helper: Extract video URL from video object
+ * @param {Object} video - Video object
+ * @returns {string|null} Video URL or null
+ */
+function extractVideoUrl(video) {
+  return video.video_url || video.webVideoUrl || video.url || null;
+}
+
+/**
+ * Apify TikTok Comments Enrichment (Refactored)
+ * Enriches ALL video objects with comments using batch processing
+ * @param {Array} videos - Array of video objects to enrich
+ * @returns {Promise<Array>} Videos enriched with comments
+ */
+async function apifyEnrichWithComments(videos) {
+  console.log(`\n💬 Apify TikTok Comments Enrichment Started`);
+  console.log(`📊 Total videos to process: ${videos.length}`);
+
+  // Configuration (no feature flags - always enabled)
+  const batchSize = parseInt(process.env.COMMENTS_BATCH_SIZE) || 50;
+  const maxComments = parseInt(process.env.MAX_COMMENTS_PER_VIDEO) || 20;
+
+  console.log(`📋 Config: Batch size ${batchSize}, max ${maxComments} comments per video`);
+
+  if (videos.length === 0) {
+    console.log(`⚠️  No videos to enrich`);
+    return videos;
+  }
+
+  try {
+    // Extract video URLs from ALL videos
+    const videoUrls = videos.map(extractVideoUrl).filter(url => url);
+
+    if (videoUrls.length === 0) {
+      console.log(`⚠️  No valid video URLs found for comment enrichment`);
+      return videos.map(v => ({ ...v, comments: [] }));
+    }
+
+    // Split videos into batches
+    const videoBatches = chunkArray(videos, batchSize);
+    console.log(`📦 Processing ${videoBatches.length} batches of up to ${batchSize} videos each`);
+
+    let allEnrichedVideos = [];
+    let totalEnriched = 0;
+
+    // Process each batch sequentially
+    for (let i = 0; i < videoBatches.length; i++) {
+      const batch = videoBatches[i];
+      const batchUrls = batch.map(extractVideoUrl).filter(url => url);
+
+      console.log(`\n🔄 Processing batch ${i + 1}/${videoBatches.length} (${batchUrls.length} videos)...`);
+
+      try {
+        // Actor input for this batch
+        const apifyInput = {
+          postURLs: batchUrls,
+          maxComments: maxComments,
+          shouldDownloadVideos: false,
+          shouldDownloadCovers: false
+        };
+
+        console.log(`🤖 Running clockworks/tiktok-comments-scraper actor...`);
+
+        // Run the dedicated comments scraper actor
+        const commentsData = await runApifyActor('clockworks/tiktok-comments-scraper', apifyInput, {
+          waitSecs: 240 // 4 minutes timeout
+        });
+
+        console.log(`✅ Retrieved ${commentsData.length} items from actor`);
+
+        // Group individual comments by video URL
+        // (Apify returns each comment as a separate item, not nested arrays)
+        const commentsMap = new Map();
+        commentsData.forEach(item => {
+          // Get video URL from Apify's response
+          const videoUrl = item.videoWebUrl || item.submittedVideoUrl || item.input;
+
+          if (videoUrl && item.text) {
+            // Initialize array if this is the first comment for this video
+            if (!commentsMap.has(videoUrl)) {
+              commentsMap.set(videoUrl, []);
+            }
+
+            // Add this comment to the video's comments array
+            const comments = commentsMap.get(videoUrl);
+            if (comments.length < maxComments) {
+              comments.push({
+                id: item.cid,
+                text: item.text,
+                author: {
+                  username: item.uniqueId || 'unknown',
+                  nickname: item.uniqueId || ''
+                },
+                like_count: item.diggCount || 0,
+                created_at: item.createTimeISO || item.createTime || ''
+              });
+            }
+          }
+        });
+
+        console.log(`📊 Grouped comments: ${commentsMap.size} videos have comments`);
+
+        // Enrich this batch of videos with comments
+        const enrichedBatch = batch.map(video => {
+          const videoUrl = extractVideoUrl(video);
+          const comments = commentsMap.get(videoUrl);
+
+          if (comments && comments.length > 0) {
+            totalEnriched++;
+            return {
+              ...video,
+              comments: comments  // Comments are already formatted correctly
+            };
+          }
+
+          // Video without comments
+          return { ...video, comments: [] };
+        });
+
+        allEnrichedVideos.push(...enrichedBatch);
+
+        console.log(`✅ Batch ${i + 1} completed: ${commentsMap.size} videos enriched`);
+
+        // Add delay between batches to avoid rate limits (except after last batch)
+        if (i < videoBatches.length - 1) {
+          console.log(`⏱️  Waiting 2 seconds before next batch...`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+      } catch (error) {
+        console.error(`❌ Batch ${i + 1} failed:`, error.message);
+        console.log(`⚠️  Adding batch without comments (graceful degradation)`);
+        // Add batch without comments on error
+        allEnrichedVideos.push(...batch.map(v => ({ ...v, comments: [] })));
+      }
+    }
+
+    console.log(`\n✅ Comments enrichment completed: ${totalEnriched}/${videos.length} videos enriched`);
+    console.log(`📊 Success rate: ${((totalEnriched / videos.length) * 100).toFixed(1)}%`);
+
+    return allEnrichedVideos;
+
+  } catch (error) {
+    console.error(`❌ Comments enrichment failed completely:`, error.message);
+    console.log(`⚠️  Returning all videos without comments`);
+    // Return all videos without comments on complete failure
+    return videos.map(v => ({ ...v, comments: [] }));
+  }
+}
+
+// ============================================
+// PLAYWRIGHT-BASED SCRAPERS (Legacy/Fallback)
+// ============================================
+
+/**
+ * TikTok Profile Scraper (Playwright version)
+ * Replicates tiktok_page.py logic in pure JavaScript
+ */
+async function scrapeTikTokProfile(url, maxVideos = 50) {
+  console.log(`\n🎬 TikTok Profile Scraping Started`)
+  console.log(`🔗 URL: ${url}`)
+  console.log(`📊 Max Videos: ${maxVideos}`)
+
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-blink-features=AutomationControlled', '--mute-audio']
+  })
+
+  const context = await browser.newContext({
+    userAgent: process.env.TIKTOK_USER_AGENT || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  })
+
+  const page = await context.newPage()
+
+  const videos = []
+  const seenIds = new Set()
+  let done = false
+
+  // Intercept network responses (same as Python pattern)
+  page.on('response', async (response) => {
+    try {
+      if (!response.url().includes('/api/post/item_list') || response.status() !== 200) {
+        return
+      }
+
+      const contentType = response.headers()['content-type'] || ''
+      if (!contentType.includes('application/json')) {
+        return
+      }
+
+      let text = await response.text()
+
+      // Remove JSONP prefix if present (same as Python regex)
+      text = text.replace(/^\s*for\s*\(.*?\);\s*/, '')
+
+      const data = JSON.parse(text)
+      const videoList = data.itemList || []
+
+      console.log(`    📦 API Response: ${videoList.length} videos`)
+
+      for (const video of videoList) {
+        const videoId = video.id
+        if (videoId && !seenIds.has(videoId) && videos.length < maxVideos) {
+          videos.push(video)
+          seenIds.add(videoId)
+        }
+      }
+
+      if (!data.hasMore || videos.length >= maxVideos) {
+        done = true
+        console.log(`    🏁 Scraping complete`)
+      }
+    } catch (error) {
+      console.log(`    ⚠️ Response parse error: ${error.message}`)
+    }
+  })
+
+  try {
+    // Navigate to profile
+    await page.goto(url, { timeout: 30000, waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(3000)
+
+    // Scroll to load more videos
+    const STEP_PX = 1000
+    const STEP_WAIT_MS = 350
+    const MAX_IDLE_STEPS = 150
+
+    let idle = 0
+    let previousHeight = await page.evaluate('document.body.scrollHeight')
+
+    while (!done && idle < MAX_IDLE_STEPS && videos.length < maxVideos) {
+      await page.evaluate(`window.scrollBy(0, ${STEP_PX})`)
+      await page.waitForTimeout(STEP_WAIT_MS)
+
+      const currentHeight = await page.evaluate('document.body.scrollHeight')
+      idle = currentHeight === previousHeight ? idle + 1 : 0
+      previousHeight = currentHeight
+
+      if (idle % 20 === 0 && idle > 0) {
+        console.log(`    📜 Scrolling... idle steps: ${idle}/${MAX_IDLE_STEPS}, videos: ${videos.length}`)
+      }
+    }
+
+    await page.waitForTimeout(1500)
+
+  } catch (error) {
+    console.error(`    ⚠️ Scraping error: ${error.message}`)
+  } finally {
+    await browser.close()
+  }
+
+  console.log(`✅ Scraped ${videos.length} videos`)
+  return videos
+}
+
+/**
+ * Scrape TikTok videos by hashtag
+ * Navigates to https://www.tiktok.com/tag/{hashtag}
+ * Intercepts /api/search/general/full responses
+ * @param {string} hashtag - Hashtag to search (with or without #)
+ * @param {number} maxVideos - Maximum videos to collect (default: 50)
+ * @returns {Promise<Array>} Array of video objects
+ */
+async function scrapeTikTokHashtag(hashtag, maxVideos = 50) {
+  const cleanHashtag = hashtag.replace(/^#/, '')
+  const url = `https://www.tiktok.com/tag/${cleanHashtag}`
+
+  console.log(`\n🏷️  TikTok Hashtag Scraping Started`)
+  console.log(`🔗 Hashtag: #${cleanHashtag}`)
+  console.log(`📊 Max Videos: ${maxVideos}`)
+
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-blink-features=AutomationControlled', '--mute-audio']
+  })
+
+  const context = await browser.newContext({
+    userAgent: process.env.TIKTOK_USER_AGENT || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+  })
+
+  const page = await context.newPage()
+  const videos = []
+  const seenIds = new Set()
+  let done = false
+
+  // Intercept API responses for search results
+  page.on('response', async (response) => {
+    try {
+      // Debug: Log ALL API calls
+      const url = response.url()
+      if (url.includes('/api/') && url.includes('tiktok')) {
+        console.log(`    🔍 API Call: ${url.substring(0, 100)}...`)
+      }
+
+      // Check multiple API endpoints (hashtags use challenge endpoints!)
+      if (!url.includes('/api/search/general/full') &&
+          !url.includes('/api/post/item_list') &&
+          !url.includes('/api/search/general/preview') &&
+          !url.includes('/api/challenge/item_list')) {
+        return
+      }
+
+      if (response.status() !== 200) {
+        console.log(`    ⚠️ Non-200 status: ${response.status()}`)
+        return
+      }
+
+      const contentType = response.headers()['content-type'] || ''
+      if (!contentType.includes('application/json')) {
+        return
+      }
+
+      let text = await response.text()
+      if (!text || text.trim() === '') {
+        console.log(`    ⚠️ Empty response body`)
+        return
+      }
+
+      text = text.replace(/^\s*for\s*\(.*?\);\s*/, '') // Remove JSONP prefix
+
+      const data = JSON.parse(text)
+
+      // Handle search results format: data.data array
+      if (data.data && Array.isArray(data.data)) {
+        console.log(`    📦 API Response (search): ${data.data.length} sections`)
+
+        for (const section of data.data) {
+          if (section.type === 1 && section.item) {
+            // Type 1 = video item
+            const video = section.item
+            const videoId = video.id
+            if (videoId && !seenIds.has(videoId) && videos.length < maxVideos) {
+              videos.push(video)
+              seenIds.add(videoId)
+            }
+          }
+        }
+      }
+
+      // Handle itemList format (fallback)
+      if (data.itemList && Array.isArray(data.itemList)) {
+        console.log(`    📦 API Response (itemList): ${data.itemList.length} items`)
+
+        for (const video of data.itemList) {
+          const videoId = video.id
+          if (videoId && !seenIds.has(videoId) && videos.length < maxVideos) {
+            videos.push(video)
+            seenIds.add(videoId)
+          }
+        }
+      }
+
+      if (videos.length >= maxVideos) {
+        done = true
+        console.log(`    🏁 Scraping complete`)
+      }
+    } catch (error) {
+      console.log(`    ⚠️ Response parse error: ${error.message}`)
+    }
+  })
+
+  try {
+    await page.goto(url, { timeout: 30000, waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(3000)
+
+    // Scroll to load more videos
+    const STEP_PX = 1000
+    const STEP_WAIT_MS = 350
+    const MAX_IDLE_STEPS = 150
+
+    let idle = 0
+    let previousHeight = await page.evaluate('document.body.scrollHeight')
+
+    while (!done && idle < MAX_IDLE_STEPS && videos.length < maxVideos) {
+      await page.evaluate(`window.scrollBy(0, ${STEP_PX})`)
+      await page.waitForTimeout(STEP_WAIT_MS)
+
+      const currentHeight = await page.evaluate('document.body.scrollHeight')
+      idle = currentHeight === previousHeight ? idle + 1 : 0
+      previousHeight = currentHeight
+
+      if (idle % 20 === 0 && idle > 0) {
+        console.log(`    📜 Scrolling... idle steps: ${idle}/${MAX_IDLE_STEPS}, videos: ${videos.length}`)
+      }
+    }
+
+    await page.waitForTimeout(1500)
+  } catch (error) {
+    console.error(`    ⚠️ Scraping error: ${error.message}`)
+  } finally {
+    await browser.close()
+  }
+
+  console.log(`✅ Scraped ${videos.length} videos for hashtag #${cleanHashtag}`)
+  return videos
+}
+
+/**
+ * Scrape TikTok videos by keyword search
+ * Navigates to https://www.tiktok.com/search?q={keyword}
+ * Intercepts /api/search/general/full responses (same as hashtag)
+ * @param {string} keyword - Search keyword
+ * @param {number} maxVideos - Maximum videos to collect (default: 50)
+ * @returns {Promise<Array>} Array of video objects
+ */
+async function scrapeTikTokKeyword(keyword, maxVideos = 50) {
+  const url = `https://www.tiktok.com/search?q=${encodeURIComponent(keyword)}`
+
+  console.log(`\n🔍 TikTok Keyword Scraping Started`)
+  console.log(`🔗 Keyword: ${keyword}`)
+  console.log(`📊 Max Videos: ${maxVideos}`)
+
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-blink-features=AutomationControlled', '--mute-audio']
+  })
+
+  const context = await browser.newContext({
+    userAgent: process.env.TIKTOK_USER_AGENT || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+  })
+
+  const page = await context.newPage()
+  const videos = []
+  const seenIds = new Set()
+  let done = false
+
+  // Intercept API responses for search results (same as hashtag)
+  page.on('response', async (response) => {
+    try {
+      // Debug: Log ALL API calls
+      const url = response.url()
+      if (url.includes('/api/') && url.includes('tiktok')) {
+        console.log(`    🔍 API Call: ${url.substring(0, 100)}...`)
+      }
+
+      // Check multiple API endpoints (hashtags use challenge endpoints!)
+      if (!url.includes('/api/search/general/full') &&
+          !url.includes('/api/post/item_list') &&
+          !url.includes('/api/search/general/preview') &&
+          !url.includes('/api/challenge/item_list')) {
+        return
+      }
+
+      if (response.status() !== 200) {
+        console.log(`    ⚠️ Non-200 status: ${response.status()}`)
+        return
+      }
+
+      const contentType = response.headers()['content-type'] || ''
+      if (!contentType.includes('application/json')) {
+        return
+      }
+
+      let text = await response.text()
+      if (!text || text.trim() === '') {
+        console.log(`    ⚠️ Empty response body`)
+        return
+      }
+
+      text = text.replace(/^\s*for\s*\(.*?\);\s*/, '') // Remove JSONP prefix
+
+      const data = JSON.parse(text)
+
+      // Handle search results format: data.data array
+      if (data.data && Array.isArray(data.data)) {
+        console.log(`    📦 API Response (search): ${data.data.length} sections`)
+
+        for (const section of data.data) {
+          if (section.type === 1 && section.item) {
+            // Type 1 = video item
+            const video = section.item
+            const videoId = video.id
+            if (videoId && !seenIds.has(videoId) && videos.length < maxVideos) {
+              videos.push(video)
+              seenIds.add(videoId)
+            }
+          }
+        }
+      }
+
+      // Handle itemList format (fallback)
+      if (data.itemList && Array.isArray(data.itemList)) {
+        console.log(`    📦 API Response (itemList): ${data.itemList.length} items`)
+
+        for (const video of data.itemList) {
+          const videoId = video.id
+          if (videoId && !seenIds.has(videoId) && videos.length < maxVideos) {
+            videos.push(video)
+            seenIds.add(videoId)
+          }
+        }
+      }
+
+      if (videos.length >= maxVideos) {
+        done = true
+        console.log(`    🏁 Scraping complete`)
+      }
+    } catch (error) {
+      console.log(`    ⚠️ Response parse error: ${error.message}`)
+    }
+  })
+
+  try {
+    await page.goto(url, { timeout: 30000, waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(3000)
+
+    // Scroll to load more videos
+    const STEP_PX = 1000
+    const STEP_WAIT_MS = 350
+    const MAX_IDLE_STEPS = 150
+
+    let idle = 0
+    let previousHeight = await page.evaluate('document.body.scrollHeight')
+
+    while (!done && idle < MAX_IDLE_STEPS && videos.length < maxVideos) {
+      await page.evaluate(`window.scrollBy(0, ${STEP_PX})`)
+      await page.waitForTimeout(STEP_WAIT_MS)
+
+      const currentHeight = await page.evaluate('document.body.scrollHeight')
+      idle = currentHeight === previousHeight ? idle + 1 : 0
+      previousHeight = currentHeight
+
+      if (idle % 20 === 0 && idle > 0) {
+        console.log(`    📜 Scrolling... idle steps: ${idle}/${MAX_IDLE_STEPS}, videos: ${videos.length}`)
+      }
+    }
+
+    await page.waitForTimeout(1500)
+  } catch (error) {
+    console.error(`    ⚠️ Scraping error: ${error.message}`)
+  } finally {
+    await browser.close()
+  }
+
+  console.log(`✅ Scraped ${videos.length} videos for keyword "${keyword}"`)
+  return videos
+}
+
+/**
+ * Parse TikTok video data to structured format
+ * Replicates tiktok_to_row() function from Python
+ */
+function parseTikTokVideo(video, username) {
+  const author = video.author || {}
+  const stats = video.stats || {}
+  const statsV2 = video.statsV2 || {}
+  const authorStats = video.authorStats || {}
+
+  // Extract metrics
+  const likes = parseInt(statsV2.diggCount || stats.diggCount || 0)
+  const comments = parseInt(statsV2.commentCount || stats.commentCount || 0)
+  const shares = parseInt(statsV2.shareCount || stats.shareCount || 0)
+  const reposts = parseInt(statsV2.collectCount || stats.collectCount || 0)
+  const followers = parseInt(authorStats.followerCount || 0)
+  const playCount = parseInt(statsV2.playCount || stats.playCount || 0)
+
+  // Calculate engagement
+  const totalEngagement = likes + comments + shares + reposts
+  const engagementRate = followers > 0 ? ((totalEngagement / followers) * 100).toFixed(2) : null
+
+  // Extract hashtags
+  const hashtags = (video.challenges || [])
+    .map(c => c.title)
+    .filter(Boolean)
+
+  // Extract mentions
+  const mentions = (video.textExtra || [])
+    .filter(item => item.type === 0) // Type 0 = mention
+    .map(item => item.userUniqueId)
+    .filter(Boolean)
+
+  // Get description
+  let description = ''
+  if (typeof video.contents === 'object' && video.contents !== null) {
+    description = video.contents.desc || ''
+  } else if (Array.isArray(video.contents) && video.contents.length > 0) {
+    description = video.contents[0].desc || ''
+  } else {
+    description = video.desc || ''
+  }
+
+  // Music info
+  const music = video.music || {}
+
+  return {
+    video_id: video.id,
+    profile: typeof author === 'object' ? author.uniqueId : username,
+    create_time: video.createTime ? new Date(parseInt(video.createTime) * 1000).toISOString() : null,
+    is_ad: video.isAd || false,
+
+    // Author stats
+    follower_count: followers,
+    following_count: parseInt(authorStats.followingCount || 0),
+    heart_count: parseInt(authorStats.heart || 0),
+    video_count: parseInt(authorStats.videoCount || 0),
+
+    // Video stats
+    play_count: playCount,
+    like_count: likes,
+    comment_count: comments,
+    share_count: shares,
+    repost_count: reposts,
+
+    // Content
+    description: description.substring(0, 500),
+    thumbnail_url: video.video?.cover || '',
+
+    // Hashtags & mentions
+    hashtags: hashtags.length > 0 ? hashtags : null,
+    hashtag_count: hashtags.length,
+    mentions: mentions.length > 0 ? mentions : null,
+    mention_count: mentions.length,
+
+    // Music
+    music_title: music.title || '',
+    music_author: music.authorName || '',
+    music_original: music.original || false,
+
+    // Video meta
+    video_duration: video.video?.duration || null,
+    is_duet: !!video.duetInfo,
+    is_stitch: !!video.stitchInfo,
+
+    // Author details
+    author_nickname: typeof author === 'object' ? author.nickname : null,
+    author_verified: typeof author === 'object' ? author.verified || false : false,
+    author_signature: typeof author === 'object' ? author.signature || '' : '',
+
+    // Calculated
+    total_engagement: totalEngagement,
+    engagement_rate: engagementRate ? parseFloat(engagementRate) : null,
+    scraped_at: new Date().toISOString()
+  }
+}
+
+/**
+ * Social Scraping Endpoint
+ * POST /api/social-scraping/run
+ *
+ * Accepts JSON input, scrapes TikTok/Instagram, outputs JSON
+ * NO DATABASE - JSON-first approach
+ */
+app.post('/api/social-scraping/run', async (req, res) => {
+  console.log('\n📱 Social Scraping API Request')
+
+  try {
+    const input = req.body
+
+    // Validate input
+    if (!input || !input.brand) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Missing brand data in request body'
+      })
+    }
+
+    const { user_id, brand } = input
+    const batch_id = uuidv4()
+    const scrape_timestamp = new Date().toISOString()
+
+    console.log(`👤 User ID: ${user_id}`)
+    console.log(`🏷️  Brand: ${brand.name}`)
+    console.log(`🔑 Batch ID: ${batch_id}`)
+
+    // Check which TikTok scraping implementation to use
+    const useApify = process.env.USE_APIFY_FOR_TIKTOK === 'true'
+    console.log(`\n🤖 TikTok Scraping Method: ${useApify ? 'APIFY' : 'PLAYWRIGHT'}`)
+
+    const result = {
+      user_id,
+      batch_id,
+      scrape_timestamp,
+      brand_name: brand.name,
+      scraping_method: useApify ? 'apify' : 'playwright',
+      summary: {
+        tiktok: {
+          profiles_scraped: 0,
+          hashtags_scraped: 0,
+          keywords_scraped: 0,
+          total_videos: 0
+        },
+        instagram: { profiles_scraped: 0, total_posts: 0 }
+      },
+      data: {
+        tiktok: {
+          profiles: {},
+          hashtags: {},
+          keywords: {}
+        },
+        instagram: { profiles: {} }
+      }
+    }
+
+    // Process TikTok accounts (profiles)
+    const tiktokAccounts = (brand.accounts || []).filter(acc => acc.platform === 'TikTok')
+
+    for (const account of tiktokAccounts) {
+      console.log(`\n🎬 Processing TikTok Profile: ${account.username}`)
+
+      try {
+        if (useApify) {
+          // Use Apify scraper (returns formatted data)
+          const scrapedData = await apifyScrapeTikTokProfile(account.url, 50)
+          result.data.tiktok.profiles[account.username] = scrapedData
+          result.summary.tiktok.profiles_scraped++
+          result.summary.tiktok.total_videos += scrapedData.video_count
+          console.log(`✅ ${account.username}: ${scrapedData.video_count} videos scraped via Apify`)
+        } else {
+          // Use Playwright scraper (legacy)
+          const videos = await scrapeTikTokProfile(account.url, 50)
+          const parsedVideos = videos.map(v => parseTikTokVideo(v, account.username))
+          result.data.tiktok.profiles[account.username] = parsedVideos
+          result.summary.tiktok.profiles_scraped++
+          result.summary.tiktok.total_videos += parsedVideos.length
+          console.log(`✅ ${account.username}: ${parsedVideos.length} videos scraped via Playwright`)
+        }
+      } catch (error) {
+        console.error(`❌ Error scraping ${account.username}:`, error.message)
+        result.data.tiktok.profiles[account.username] = {
+          error: error.message,
+          videos: []
+        }
+      }
+    }
+
+    // Process TikTok hashtags
+    const tiktokHashtags = brand.hashtags || []
+
+    for (const hashtag of tiktokHashtags) {
+      console.log(`\n🏷️  Processing TikTok Hashtag: ${hashtag}`)
+
+      try {
+        if (useApify) {
+          // Use Apify scraper (returns formatted data)
+          const scrapedData = await apifyScrapeTikTokHashtag(hashtag, 30)
+          result.data.tiktok.hashtags[hashtag] = scrapedData
+          result.summary.tiktok.hashtags_scraped++
+          result.summary.tiktok.total_videos += scrapedData.video_count
+          console.log(`✅ ${hashtag}: ${scrapedData.video_count} videos scraped via Apify`)
+        } else {
+          // Use Playwright scraper (legacy)
+          const videos = await scrapeTikTokHashtag(hashtag, 30)
+          const parsedVideos = videos.map(v => parseTikTokVideo(v, hashtag))
+          result.data.tiktok.hashtags[hashtag] = parsedVideos
+          result.summary.tiktok.hashtags_scraped++
+          result.summary.tiktok.total_videos += parsedVideos.length
+          console.log(`✅ ${hashtag}: ${parsedVideos.length} videos scraped via Playwright`)
+        }
+      } catch (error) {
+        console.error(`❌ Error scraping ${hashtag}:`, error.message)
+        result.data.tiktok.hashtags[hashtag] = {
+          error: error.message,
+          videos: []
+        }
+      }
+    }
+
+    // Process TikTok keywords
+    const tiktokKeywords = brand.keywords || []
+
+    for (const keyword of tiktokKeywords) {
+      console.log(`\n🔍 Processing TikTok Keyword: ${keyword}`)
+
+      try {
+        if (useApify) {
+          // Use Apify scraper (returns formatted data)
+          const scrapedData = await apifyScrapeTikTokKeyword(keyword, 30)
+          result.data.tiktok.keywords[keyword] = scrapedData
+          result.summary.tiktok.keywords_scraped++
+          result.summary.tiktok.total_videos += scrapedData.video_count
+          console.log(`✅ ${keyword}: ${scrapedData.video_count} videos scraped via Apify`)
+        } else {
+          // Use Playwright scraper (legacy)
+          const videos = await scrapeTikTokKeyword(keyword, 30)
+          const parsedVideos = videos.map(v => parseTikTokVideo(v, keyword))
+          result.data.tiktok.keywords[keyword] = parsedVideos
+          result.summary.tiktok.keywords_scraped++
+          result.summary.tiktok.total_videos += parsedVideos.length
+          console.log(`✅ ${keyword}: ${parsedVideos.length} videos scraped via Playwright`)
+        }
+      } catch (error) {
+        console.error(`❌ Error scraping ${keyword}:`, error.message)
+        result.data.tiktok.keywords[keyword] = {
+          error: error.message,
+          videos: []
+        }
+      }
+    }
+
+    // ========================================
+    // PHASE 3: TikTok Comments Enrichment
+    // ========================================
+    if (useApify && result.summary.tiktok.total_videos > 0) {
+      console.log(`\n💬 Starting TikTok Comments Enrichment Phase...`);
+
+      try {
+        // Collect all videos from all sources
+        const allVideos = [];
+
+        // Add videos from profiles
+        Object.values(result.data.tiktok.profiles).forEach(profileData => {
+          if (profileData.videos && Array.isArray(profileData.videos)) {
+            allVideos.push(...profileData.videos);
+          }
+        });
+
+        // Add videos from hashtags
+        Object.values(result.data.tiktok.hashtags).forEach(hashtagData => {
+          if (hashtagData.videos && Array.isArray(hashtagData.videos)) {
+            allVideos.push(...hashtagData.videos);
+          }
+        });
+
+        // Add videos from keywords
+        Object.values(result.data.tiktok.keywords).forEach(keywordData => {
+          if (keywordData.videos && Array.isArray(keywordData.videos)) {
+            allVideos.push(...keywordData.videos);
+          }
+        });
+
+        console.log(`📊 Collected ${allVideos.length} total videos for enrichment`);
+
+        // Enrich videos with comments
+        const enrichedVideos = await apifyEnrichWithComments(allVideos);
+
+        // Map enriched videos back to their sources by video_id
+        const enrichedMap = new Map();
+        enrichedVideos.forEach(video => {
+          enrichedMap.set(video.video_id, video);
+        });
+
+        // Update profiles with enriched videos
+        Object.keys(result.data.tiktok.profiles).forEach(username => {
+          const profileData = result.data.tiktok.profiles[username];
+          if (profileData.videos && Array.isArray(profileData.videos)) {
+            profileData.videos = profileData.videos.map(v =>
+              enrichedMap.get(v.video_id) || v
+            );
+          }
+        });
+
+        // Update hashtags with enriched videos
+        Object.keys(result.data.tiktok.hashtags).forEach(hashtag => {
+          const hashtagData = result.data.tiktok.hashtags[hashtag];
+          if (hashtagData.videos && Array.isArray(hashtagData.videos)) {
+            hashtagData.videos = hashtagData.videos.map(v =>
+              enrichedMap.get(v.video_id) || v
+            );
+          }
+        });
+
+        // Update keywords with enriched videos
+        Object.keys(result.data.tiktok.keywords).forEach(keyword => {
+          const keywordData = result.data.tiktok.keywords[keyword];
+          if (keywordData.videos && Array.isArray(keywordData.videos)) {
+            keywordData.videos = keywordData.videos.map(v =>
+              enrichedMap.get(v.video_id) || v
+            );
+          }
+        });
+
+        const enrichedCount = enrichedVideos.filter(v => v.comments && v.comments.length > 0).length;
+        console.log(`✅ Comments enrichment completed: ${enrichedCount}/${allVideos.length} videos enriched`);
+
+      } catch (error) {
+        console.error(`❌ Comments enrichment error:`, error.message);
+        console.log(`⚠️  Continuing without comments...`);
+      }
+    }
+
+    // TODO: Instagram scraping will be added in Phase 2
+    const instagramAccounts = (brand.accounts || []).filter(acc => acc.platform === 'Instagram')
+    if (instagramAccounts.length > 0) {
+      console.log(`\n📸 Instagram scraping not implemented yet (${instagramAccounts.length} accounts queued)`)
+    }
+
+    // Save output to test-data folder
+    const testDataDir = path.join(__dirname, '..', 'test-data')
+    await fs.mkdir(testDataDir, { recursive: true })
+
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
+    const outputFilename = `output-${brand.name.replace(/\s+/g, '-').toLowerCase()}-${timestamp}.json`
+    const outputPath = path.join(testDataDir, outputFilename)
+
+    await fs.writeFile(outputPath, JSON.stringify(result, null, 2), 'utf-8')
+    console.log(`\n💾 Output saved: ${outputFilename}`)
+
+    // Return result
+    return res.status(200).json({
+      success: true,
+      message: 'Social scraping completed',
+      output_file: outputFilename,
+      summary: result.summary,
+      data: result.data
+    })
+
+  } catch (error) {
+    console.error('❌ Social Scraping Error:', error)
+    return res.status(500).json({
+      error: 'Social scraping failed',
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    })
+  }
+})
+
+// ============================================================
+// TIKTOK COMMENT SCRAPER (Pure JavaScript - Replicates Python Reference)
+// ============================================================
+// TikTok Comment Scraping via Apify
+// Method: Apify 'clockworks/tiktok-comments-scraper' actor
+// Input: Array of video objects with URLs
+// Output: Videos enriched with comment data
+// See: apifyEnrichWithComments() function (lines ~4749-4863)
+// ============================================================
+
+/**
+ * Separate new comments from existing ones (incremental scraping)
+ * Implements deduplication logic for multi-scrape scenarios
+ *
+ * @param {Array} scrapedComments - All scraped comments
+ * @param {Array} previousCommentIds - IDs of previously scraped comments
+ * @returns {Object} Object with newComments and existingComments arrays
+ */
+function separateNewComments(scrapedComments, previousCommentIds = []) {
+  const previousIds = new Set(previousCommentIds)
+
+  const newComments = []
+  const existingComments = []
+
+  for (const comment of scrapedComments) {
+    if (previousIds.has(comment.comment_id)) {
+      existingComments.push(comment)
+    } else {
+      newComments.push(comment)
+    }
+  }
+
+  return { newComments, existingComments }
+}
+
+/**
+ * Extract video ID from various video object structures
+ * @param {Object} video - Video object from scraper
+ * @returns {string} Video ID
+ */
+function extractVideoId(video) {
+  return video.video_id || video.id || video.videoId || video.aweme_id
+}
+
+/**
+ * Process batch comment scraping with video discovery
+ * Supports two modes:
+ * 1. Legacy: Direct video IDs ({ videos: [...] })
+ * 2. Discovery: Profile/hashtag/keyword discovery ({ brand: {...} })
+ *
+ * @param {Object} input - Input object with videos array OR brand discovery config
+ * @returns {Promise<Object>} Results object with success/error status
+ */
+async function processBatchCommentScraping(input) {
+  const startTime = Date.now()
+  const discoveredVideos = []
+
+  // Determine input mode
+  const isDiscoveryMode = input.brand && (input.brand.accounts || input.brand.hashtags || input.brand.keywords)
+  const isLegacyMode = input.videos && Array.isArray(input.videos)
+
+  if (!isDiscoveryMode && !isLegacyMode) {
+    throw new Error('Invalid input: Either provide "brand" for discovery or "videos" array for direct scraping')
+  }
+
+  // OPTIONS
+  const options = input.options || {}
+  const maxVideosPerSource = options.max_videos_per_source || 10
+  const maxCommentsPerVideo = options.max_comments_per_video || 100
+  const rateLimitMs = options.rate_limit_ms || 1000
+  const previousCommentIds = input.previous_comment_ids || {}
+
+  console.log(`\n🎬 TikTok Comment Scraper - ${isDiscoveryMode ? 'DISCOVERY' : 'DIRECT'} Mode`)
+
+  // ==================================================================
+  // PHASE 1: VIDEO DISCOVERY (if in discovery mode)
+  // ==================================================================
+
+  if (isDiscoveryMode) {
+    console.log(`\n📺 PHASE 1: Video Discovery`)
+    const { brand } = input
+
+    // 1.1 Scrape TikTok Profiles
+    const tiktokAccounts = (brand.accounts || []).filter(a => a.platform === 'TikTok')
+
+    for (const account of tiktokAccounts) {
+      try {
+        const maxVideos = account.max_videos || maxVideosPerSource
+        console.log(`\n👤 Discovering videos from profile: ${account.username} (max: ${maxVideos})`)
+
+        const videos = await scrapeTikTokProfile(account.url, maxVideos)
+
+        if (videos && videos.length > 0) {
+          for (const video of videos) {
+            const videoId = extractVideoId(video)
+            if (videoId) {
+              discoveredVideos.push({
+                video_id: videoId,
+                source_type: 'profile',
+                source_value: account.username,
+                video_metadata: video
+              })
+            }
+          }
+          console.log(`  ✅ Found ${videos.length} videos`)
+        } else {
+          console.log(`  ℹ️  No videos found`)
+        }
+      } catch (error) {
+        console.error(`  ❌ Error scraping profile ${account.username}:`, error.message)
+        // Continue to next source
+      }
+    }
+
+    // 1.2 Scrape Hashtags
+    for (const hashtag of brand.hashtags || []) {
+      try {
+        console.log(`\n🏷️  Discovering videos from hashtag: ${hashtag} (max: ${maxVideosPerSource})`)
+
+        const videos = await scrapeTikTokHashtag(hashtag, maxVideosPerSource)
+
+        if (videos && videos.length > 0) {
+          for (const video of videos) {
+            const videoId = extractVideoId(video)
+            if (videoId) {
+              discoveredVideos.push({
+                video_id: videoId,
+                source_type: 'hashtag',
+                source_value: hashtag,
+                video_metadata: video
+              })
+            }
+          }
+          console.log(`  ✅ Found ${videos.length} videos`)
+        } else {
+          console.log(`  ℹ️  No videos found`)
+        }
+      } catch (error) {
+        console.error(`  ❌ Error scraping hashtag ${hashtag}:`, error.message)
+        // Continue to next source
+      }
+    }
+
+    // 1.3 Scrape Keywords
+    for (const keyword of brand.keywords || []) {
+      try {
+        console.log(`\n🔍 Discovering videos from keyword: ${keyword} (max: ${maxVideosPerSource})`)
+
+        const videos = await scrapeTikTokKeyword(keyword, maxVideosPerSource)
+
+        if (videos && videos.length > 0) {
+          for (const video of videos) {
+            const videoId = extractVideoId(video)
+            if (videoId) {
+              discoveredVideos.push({
+                video_id: videoId,
+                source_type: 'keyword',
+                source_value: keyword,
+                video_metadata: video
+              })
+            }
+          }
+          console.log(`  ✅ Found ${videos.length} videos`)
+        } else {
+          console.log(`  ℹ️  No videos found`)
+        }
+      } catch (error) {
+        console.error(`  ❌ Error scraping keyword ${keyword}:`, error.message)
+        // Continue to next source
+      }
+    }
+
+    // Deduplicate videos by video_id
+    const uniqueVideos = []
+    const seenIds = new Set()
+
+    for (const video of discoveredVideos) {
+      if (!seenIds.has(video.video_id)) {
+        seenIds.add(video.video_id)
+        uniqueVideos.push(video)
+      }
+    }
+
+    console.log(`\n📊 Discovery Summary:`)
+    console.log(`  - Total videos discovered: ${discoveredVideos.length}`)
+    console.log(`  - Unique videos: ${uniqueVideos.length}`)
+
+    discoveredVideos.length = 0
+    discoveredVideos.push(...uniqueVideos)
+
+  } else {
+    // Legacy mode: use provided video IDs
+    console.log(`\n📺 Using provided video IDs`)
+
+    for (const video of input.videos) {
+      discoveredVideos.push({
+        video_id: video.video_id,
+        source_type: 'direct',
+        source_value: 'user_provided',
+        video_metadata: null
+      })
+    }
+  }
+
+  if (discoveredVideos.length === 0) {
+    return {
+      success: false,
+      error: 'No videos discovered or provided',
+      duration_ms: Date.now() - startTime
+    }
+  }
+
+  // ==================================================================
+  // PHASE 2: COMMENT SCRAPING
+  // ==================================================================
+
+  console.log(`\n💬 PHASE 2: Comment Scraping via Apify (${discoveredVideos.length} videos)`)
+
+  // Prepare videos for Apify enrichment with proper URLs
+  // Convert discoveredVideos to format expected by apifyEnrichWithComments
+  const videosForApify = discoveredVideos.map(v => {
+    const videoId = v.video_id
+    const metadata = v.video_metadata || {}
+
+    // Construct TikTok video URL from metadata
+    // Format: https://www.tiktok.com/@{username}/video/{video_id}
+    let video_url = null
+
+    if (metadata.author && metadata.author.uniqueId) {
+      video_url = `https://www.tiktok.com/@${metadata.author.uniqueId}/video/${videoId}`
+    } else if (metadata.video && metadata.video.id) {
+      // Fallback: try to extract from video object
+      video_url = `https://www.tiktok.com/video/${videoId}`
+    }
+
+    return {
+      ...metadata,
+      video_id: videoId,
+      video_url: video_url,  // Add explicit video_url for Apify
+      webVideoUrl: video_url,  // Apify also checks this field
+      _source_type: v.source_type,
+      _source_value: v.source_value
+    }
+  })
+
+  // Call Apify to enrich ALL videos with comments in batches
+  const enrichedVideos = await apifyEnrichWithComments(videosForApify)
+
+  // Transform enriched videos into expected result format
+  const results = []
+
+  for (let i = 0; i < enrichedVideos.length; i++) {
+    const enrichedVideo = enrichedVideos[i]
+    const videoId = enrichedVideo.video_id || extractVideoId(enrichedVideo)
+    const comments = enrichedVideo.comments || []
+
+    console.log(`\n[${i + 1}/${enrichedVideos.length}] Processing video: ${videoId}`)
+    console.log(`  Source: ${enrichedVideo._source_type} (${enrichedVideo._source_value})`)
+    console.log(`  📊 Comments received from Apify: ${comments.length}`)
+
+    try {
+      // Transform Apify comments to normalized format
+      const scrapedComments = comments.map(c => ({
+        comment_id: c.id,
+        video_id: videoId,
+        text: c.text,  // ← CRITICAL FIELD - Comment text from Apify
+        like_count: c.like_count || 0,
+        created_at: c.created_at,
+        user: {
+          username: c.author?.username || 'unknown',
+          nickname: c.author?.nickname || ''
+        },
+        raw_json: c
+      }))
+
+      // Separate new vs existing comments (deduplication)
+      const previousIds = previousCommentIds[videoId] || []
+      const { newComments, existingComments } = separateNewComments(scrapedComments, previousIds)
+
+      // Build result object
+      const result = {
+        video_id: videoId,
+        source_type: enrichedVideo._source_type,
+        source_value: enrichedVideo._source_value,
+        status: 'success',
+        total_comments_scraped: scrapedComments.length,
+        new_comments_count: newComments.length,
+        existing_comments_count: existingComments.length,
+        new_comments: newComments,
+        existing_comments: existingComments
+      }
+
+      // Include video metadata if available
+      if (options.include_video_metadata) {
+        result.video_metadata = {
+          ...enrichedVideo,
+          comments: undefined,  // Don't duplicate comments
+          _source_type: undefined,
+          _source_value: undefined
+        }
+      }
+
+      results.push(result)
+
+      console.log(`  ✅ Processed ${scrapedComments.length} comments (${newComments.length} new, ${existingComments.length} existing)`)
+
+    } catch (error) {
+      console.error(`  ❌ Error processing video ${videoId}:`, error.message)
+
+      results.push({
+        video_id: videoId,
+        source_type: enrichedVideo._source_type,
+        source_value: enrichedVideo._source_value,
+        status: 'error',
+        error: {
+          code: 'PROCESSING_ERROR',
+          message: error.message
+        }
+      })
+    }
+  }
+
+  const duration = Date.now() - startTime
+
+  console.log(`\n✅ Scraping Complete!`)
+
+  return {
+    success: true,
+    batch_id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    timestamp: new Date().toISOString(),
+    duration_ms: duration,
+    user_id: input.user_id,
+    brand_name: input.brand?.name,
+    results,
+    summary: {
+      mode: isDiscoveryMode ? 'discovery' : 'direct',
+      total_videos: discoveredVideos.length,
+      successful: results.filter(r => r.status === 'success').length,
+      failed: results.filter(r => r.status === 'error').length,
+      total_comments_scraped: results.reduce((sum, r) => sum + (r.total_comments_scraped || 0), 0),
+      total_new_comments: results.reduce((sum, r) => sum + (r.new_comments_count || 0), 0),
+      total_existing_comments: results.reduce((sum, r) => sum + (r.existing_comments_count || 0), 0)
+    }
+  }
+}
+
+// ============================================================
+// TIKTOK COMMENT SCRAPER - TEST ENDPOINT
+// ============================================================
+
+/**
+ * Test endpoint for TikTok comment scraping
+ * Reads from input-tester.json and returns JSON output
+ * No database operations - pure JSON I/O
+ */
+app.post('/api/tiktok-comments/scrape', async (req, res) => {
+  try {
+    console.log('\n🎬 TikTok Comment Scraper - Starting...')
+
+    // Read input from either request body or input-tester.json
+    let input
+    if (req.body && Object.keys(req.body).length > 0) {
+      console.log('📥 Using input from request body')
+      input = req.body
+    } else {
+      console.log('📥 Reading input from test-data/input-tester.json')
+      const inputPath = path.join(__dirname, '..', 'test-data', 'input-tester.json')
+      const inputData = await fs.readFile(inputPath, 'utf-8')
+      input = JSON.parse(inputData)
+    }
+
+    // Validate Apify token (required for comment scraping)
+    if (!process.env.APIFY_API_TOKEN) {
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: 'MISSING_APIFY_TOKEN',
+          message: 'APIFY_API_TOKEN environment variable is not set. Please check .env file.'
+        }
+      })
+    }
+
+    // Process batch scraping
+    const result = await processBatchCommentScraping(input)
+
+    // Save output to test-data folder
+    const testDataDir = path.join(__dirname, '..', 'test-data')
+
+    // Ensure test-data directory exists
+    try {
+      await fs.access(testDataDir)
+    } catch {
+      await fs.mkdir(testDataDir, { recursive: true })
+    }
+
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
+    const outputFilename = `tiktok-comments-output-${timestamp}.json`
+    const outputPath = path.join(testDataDir, outputFilename)
+
+    await fs.writeFile(outputPath, JSON.stringify(result, null, 2), 'utf-8')
+    console.log(`\n💾 Output saved: ${outputFilename}`)
+
+    // Return result
+    return res.status(200).json({
+      ...result,
+      output_file: outputFilename
+    })
+
+  } catch (error) {
+    console.error('❌ TikTok Comment Scraper Error:', error)
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      }
+    })
+  }
+})
+
+// ============================================================
+// INSTAGRAM COMMENT SCRAPER - ENRICHMENT WRAPPER
+// ============================================================
+
+/**
+ * Wrapper function to maintain backward compatibility with existing comment endpoint
+ * Uses the enrichInstagramWithComments function from src/utils/socialListening/scrapers/instagram.js
+ */
+async function apifyEnrichInstagramWithComments(posts, options = {}) {
+  const batchSize = parseInt(process.env.IG_COMMENTS_BATCH_SIZE) || 50
+  const maxComments = parseInt(process.env.IG_MAX_COMMENTS_PER_POST) || 50
+
+  return await enrichInstagramWithComments({
+    posts,
+    apifyToken: process.env.APIFY_API_TOKEN,
+    maxCommentsPerPost: maxComments,
+    batchSize,
+    timeout: 240
+  });
+}
+
+// ============================================================
+// INSTAGRAM COMMENT SCRAPER - TEST ENDPOINT
+// ============================================================
+
+/**
+ * Test endpoint for Instagram comment enrichment
+ * Input: Previously scraped Instagram posts output file
+ * Output: Posts enriched with full comments
+ */
+app.post('/api/instagram-comments/scrape', async (req, res) => {
+  try {
+    console.log('\n📸 Instagram Comment Scraper - Starting...')
+
+    // Validate Apify token
+    if (!process.env.APIFY_API_TOKEN) {
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: 'MISSING_APIFY_TOKEN',
+          message: 'APIFY_API_TOKEN environment variable is not set. Please check .env file.'
+        }
+      })
+    }
+
+    // Input can be:
+    // 1. Direct array of posts in request body
+    // 2. Reference to a previous output file
+    // 3. Path to test input file
+
+    let postsToEnrich = []
+    let sourceInfo = {}
+
+    if (req.body.posts && Array.isArray(req.body.posts)) {
+      // Direct posts array
+      console.log('📥 Using posts from request body')
+      postsToEnrich = req.body.posts
+      sourceInfo = {
+        source_type: 'request_body',
+        total_posts: postsToEnrich.length
+      }
+    } else if (req.body.output_file) {
+      // Reference to previous output file
+      console.log(`📥 Loading posts from output file: ${req.body.output_file}`)
+      const outputPath = path.join(__dirname, '..', 'test-data', req.body.output_file)
+      const outputData = await fs.readFile(outputPath, 'utf-8')
+      const previousOutput = JSON.parse(outputData)
+
+      // Extract posts from all sources
+      if (previousOutput.results && Array.isArray(previousOutput.results)) {
+        previousOutput.results.forEach(result => {
+          if (result.posts && Array.isArray(result.posts)) {
+            postsToEnrich.push(...result.posts)
+          }
+        })
+      }
+
+      sourceInfo = {
+        source_type: 'output_file',
+        output_file: req.body.output_file,
+        total_posts: postsToEnrich.length
+      }
+    } else {
+      // Use default test file
+      console.log('📥 No input provided, looking for recent Instagram output file')
+      const testDataDir = path.join(__dirname, '..', 'test-data')
+      const files = await fs.readdir(testDataDir)
+      const instagramOutputFiles = files
+        .filter(f => f.startsWith('instagram-posts-output-') && f.endsWith('.json'))
+        .sort()
+        .reverse()
+
+      if (instagramOutputFiles.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'NO_INPUT_FILE',
+            message: 'No Instagram output files found in test-data/. Please provide posts or output_file.'
+          }
+        })
+      }
+
+      const latestFile = instagramOutputFiles[0]
+      console.log(`📥 Using latest output file: ${latestFile}`)
+      const outputPath = path.join(testDataDir, latestFile)
+      const outputData = await fs.readFile(outputPath, 'utf-8')
+      const previousOutput = JSON.parse(outputData)
+
+      // Extract posts from all sources
+      if (previousOutput.results && Array.isArray(previousOutput.results)) {
+        previousOutput.results.forEach(result => {
+          if (result.posts && Array.isArray(result.posts)) {
+            postsToEnrich.push(...result.posts)
+          }
+        })
+      }
+
+      sourceInfo = {
+        source_type: 'auto_latest',
+        output_file: latestFile,
+        total_posts: postsToEnrich.length
+      }
+    }
+
+    if (postsToEnrich.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'NO_POSTS_TO_ENRICH',
+          message: 'No posts found to enrich with comments'
+        }
+      })
+    }
+
+    console.log(`\n📊 Found ${postsToEnrich.length} posts to enrich`)
+
+    // Limit posts if specified
+    const maxPostsToProcess = req.body.max_posts || postsToEnrich.length
+    const postsSubset = postsToEnrich.slice(0, maxPostsToProcess)
+
+    if (postsSubset.length < postsToEnrich.length) {
+      console.log(`⚠️  Limiting to ${postsSubset.length} posts (max_posts specified)`)
+    }
+
+    // Enrich with comments
+    const startTime = Date.now()
+    const enrichedPosts = await apifyEnrichInstagramWithComments(postsSubset, req.body.options || {})
+    const durationMs = Date.now() - startTime
+
+    // Prepare result
+    const result = {
+      success: true,
+      batch_id: `batch_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+      timestamp: new Date().toISOString(),
+      duration_ms: durationMs,
+      source: sourceInfo,
+      summary: {
+        total_posts_processed: enrichedPosts.length,
+        posts_with_comments: enrichedPosts.filter(p => (p.total_comments_scraped || 0) > 0).length,
+        posts_without_comments: enrichedPosts.filter(p => (p.total_comments_scraped || 0) === 0).length,
+        total_comments_scraped: enrichedPosts.reduce((sum, p) => sum + (p.total_comments_scraped || 0), 0),
+        average_comments_per_post: Math.round(enrichedPosts.reduce((sum, p) => sum + (p.total_comments_scraped || 0), 0) / enrichedPosts.length)
+      },
+      posts: enrichedPosts
+    }
+
+    // Save output to test-data folder
+    const testDataDir = path.join(__dirname, '..', 'test-data')
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
+    const outputFilename = `instagram-comments-output-${timestamp}.json`
+    const outputPath = path.join(testDataDir, outputFilename)
+
+    await fs.writeFile(outputPath, JSON.stringify(result, null, 2), 'utf-8')
+    console.log(`\n💾 Output saved: ${outputFilename}`)
+
+    // Return result
+    return res.status(200).json({
+      ...result,
+      output_file: outputFilename
+    })
+
+  } catch (error) {
+    console.error('❌ Instagram Comment Scraper Error:', error)
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      }
+    })
+  }
+})
+
+// Validate scraper environment variables (only for test-scraper functionality)
+console.log('\n🔍 Checking scraper configuration...')
+if (process.env.APIFY_API_TOKEN) {
+  console.log('✅ APIFY_API_TOKEN configured - Instagram scraping enabled')
+} else {
+  console.warn('⚠️  APIFY_API_TOKEN not set - Instagram scraping will fail')
+}
+console.log('✅ TikTok scraper ready (Playwright - no token required)')
+console.log('✅ Test Scraper endpoint ready at /api/social-listening')
+
+// TikTok Comment Scraper validation
+if (process.env.TIKTOK_COOKIE && process.env.TIKTOK_COMMENTS_BASEQS) {
+  console.log('✅ TikTok Comment Scraper configured and ready')
+  console.log('📝 TikTok Comments endpoint: POST /api/tiktok-comments/scrape')
+} else {
+  console.warn('⚠️  TikTok Comment Scraper not fully configured')
+  if (!process.env.TIKTOK_COOKIE) console.warn('   - Missing: TIKTOK_COOKIE')
+  if (!process.env.TIKTOK_COMMENTS_BASEQS) console.warn('   - Missing: TIKTOK_COMMENTS_BASEQS')
+}
+
+// Instagram Comment Scraper validation
+if (process.env.APIFY_API_TOKEN) {
+  console.log('✅ Instagram Comment Scraper configured and ready')
+  console.log('📝 Instagram Comments endpoint: POST /api/instagram-comments/scrape')
+  const batchSize = process.env.IG_COMMENTS_BATCH_SIZE || 50
+  const maxComments = process.env.IG_MAX_COMMENTS_PER_POST || 50
+  console.log(`   - Batch size: ${batchSize} posts per batch`)
+  console.log(`   - Max comments: ${maxComments} per post`)
+} else {
+  console.warn('⚠️  Instagram Comment Scraper not configured (APIFY_API_TOKEN required)')
+}
+
+// ==========================================
+// Instagram Scraper - Profile & Hashtag Scraping
+// ==========================================
+app.post('/api/instagram/scrape', async (req, res) => {
+  console.log(`\n📸 Instagram Scraper - Starting...`);
+
+  try {
+    const { user_id, brand, options = {} } = req.body;
+
+    // Validation
+    if (!user_id || !brand) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: user_id and brand'
+      });
+    }
+
+    console.log(`🔍 Request: user_id=${user_id}, brand=${brand.name}`);
+
+    const batchId = `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const startTime = Date.now();
+
+    // Extract Instagram accounts and hashtags from brand
+    const instagramAccounts = (brand.accounts || []).filter(
+      acc => acc.platform === 'Instagram' && acc.username
+    );
+    const hashtags = brand.hashtags || [];
+
+    if (instagramAccounts.length === 0 && hashtags.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No Instagram accounts or hashtags found in brand data'
+      });
+    }
+
+    console.log(`📊 Found ${instagramAccounts.length} profile(s) and ${hashtags.length} hashtag(s) to scrape`);
+
+    // Validate Apify token
+    const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN;
+    if (!APIFY_API_TOKEN) {
+      return res.status(500).json({
+        success: false,
+        error: 'APIFY_API_TOKEN not configured'
+      });
+    }
+
+    // Build search queries array (profiles + hashtags)
+    const searchQueries = [];
+    const queryMetadata = {}; // Track source info for each query
+
+    // Add profiles
+    for (const account of instagramAccounts) {
+      const query = account.username.startsWith('@') ? account.username : `@${account.username}`;
+      searchQueries.push(query);
+      queryMetadata[query] = {
+        type: 'profile',
+        username: account.username,
+        max_posts: account.max_posts || options.max_posts_per_source || 10
+      };
+    }
+
+    // Add hashtags
+    for (const hashtag of hashtags) {
+      const query = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+      searchQueries.push(query);
+      queryMetadata[query] = {
+        type: 'hashtag',
+        hashtag: hashtag,
+        max_posts: options.max_posts_per_source || 10
+      };
+    }
+
+    console.log(`🔍 Search queries: ${searchQueries.join(', ')}`);
+
+    // Use the Instagram scraper module
+    const maxPostsPerQuery = options.max_posts_per_source || 10;
+    const scrapedPosts = await scrapeInstagram({
+      searchQueries,
+      maxPostsPerQuery,
+      apifyToken: APIFY_API_TOKEN,
+      timeout: 300 // 5 minutes
+    });
+
+    console.log(`✅ Scraped ${scrapedPosts.length} total posts`);
+
+    // Group results by source query
+    const results = [];
+
+    for (const query of searchQueries) {
+      const metadata = queryMetadata[query];
+      const queryPosts = scrapedPosts.filter(post => post.source_query === query);
+
+      if (metadata.type === 'profile') {
+        results.push({
+          username: metadata.username,
+          profile_url: `https://www.instagram.com/${metadata.username.replace('@', '')}`,
+          source_type: 'profile',
+          status: 'success',
+          total_posts_scraped: queryPosts.length,
+          posts: queryPosts
+        });
+      } else if (metadata.type === 'hashtag') {
+        const cleanHashtag = metadata.hashtag.replace('#', '');
+        results.push({
+          hashtag: `#${cleanHashtag}`,
+          hashtag_url: `https://www.instagram.com/explore/tags/${cleanHashtag}/`,
+          source_type: 'hashtag',
+          status: 'success',
+          total_posts_scraped: queryPosts.length,
+          posts: queryPosts
+        });
+      }
+    }
+
+    const durationMs = Date.now() - startTime;
+
+    // Calculate summary
+    const profileResults = results.filter(r => !r.source_type || r.source_type === 'profile');
+    const hashtagResults = results.filter(r => r.source_type === 'hashtag');
+
+    const summary = {
+      total_sources: results.length,
+      profiles: {
+        count: instagramAccounts.length,
+        successful: profileResults.filter(r => r.status === 'success').length,
+        failed: profileResults.filter(r => r.status === 'failed').length,
+        total_posts_scraped: profileResults.reduce((sum, r) => sum + (r.total_posts_scraped || 0), 0)
+      },
+      hashtags: {
+        count: hashtags.length,
+        successful: hashtagResults.filter(r => r.status === 'success').length,
+        failed: hashtagResults.filter(r => r.status === 'failed').length,
+        total_posts_scraped: hashtagResults.reduce((sum, r) => sum + (r.total_posts_scraped || 0), 0)
+      },
+      total_posts_scraped: results.reduce((sum, r) => sum + (r.total_posts_scraped || 0), 0)
+    };
+
+    console.log(`\n✅ Instagram Scraper Complete:`, summary);
+    console.log(`⏱️ Total duration: ${(durationMs / 1000).toFixed(2)}s\n`);
+
+    // Save output to test-data folder
+    const testDataDir = path.join(__dirname, '..', 'test-data')
+
+    // Ensure test-data directory exists
+    try {
+      await fs.access(testDataDir)
+    } catch {
+      await fs.mkdir(testDataDir, { recursive: true })
+    }
+
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
+    const outputFilename = `instagram-posts-output-${timestamp}.json`
+    const outputPath = path.join(testDataDir, outputFilename)
+
+    const responseObject = {
+      success: true,
+      batch_id: batchId,
+      timestamp: new Date().toISOString(),
+      duration_ms: durationMs,
+      user_id,
+      brand_name: brand.name,
+      results,
+      summary
+    };
+
+    await fs.writeFile(outputPath, JSON.stringify(responseObject, null, 2), 'utf-8')
+    console.log(`\n💾 Output saved: ${outputFilename}`)
+
+    return res.json({
+      ...responseObject,
+      output_file: outputFilename
+    });
+
+  } catch (error) {
+    console.error(`\n❌ Instagram Scraper Error:`, error);
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {
@@ -3622,5 +6475,9 @@ app.listen(PORT, () => {
   console.log(`📡 YouTube API: http://localhost:${PORT}/api/youtube-search`)
   console.log(`🐦 Twitter API: http://localhost:${PORT}/api/twitter-analytics`)
   console.log(`📰 News API: http://localhost:${PORT}/api/news-analytics`)
+  console.log(`📱 Social Listening API: http://localhost:${PORT}/api/social-listening`)
+  console.log(`🎬 Social Scraping API: http://localhost:${PORT}/api/social-scraping/run`)
+  console.log(`💬 TikTok Comments API: POST http://localhost:${PORT}/api/tiktok-comments/scrape`)
+  console.log(`📸 Instagram Scraper API: POST http://localhost:${PORT}/api/instagram/scrape`)
   console.log(`✨ Ready to process requests\n`)
 })

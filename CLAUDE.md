@@ -337,6 +337,204 @@ const createBatchedRequests = (keywords, locations) => {
 - n8n workflow automation
 - Email reporting system
 
+---
+
+## 🎯 SOCIAL MEDIA SCRAPING - TikTok/Instagram Integration Rules
+
+### 🚨 CRITICAL UNDERSTANDING
+
+**What `social_scrapers/` Python Scripts Are:**
+- **REFERENCE DOCUMENTATION ONLY** - showing what to scrape and how to structure data
+- **NOT to be executed** - no Python subprocess calls, no child_process.exec
+- **NOT to be modified** - they are proven working implementations from another project
+- **PROVEN patterns** for cookie handling, authentication, rate limiting, and data structure
+
+**What You Must Build:**
+- **Pure JavaScript/Node.js** implementations replicating the Python logic
+- **Inline in endpoints** - following the YouTube pattern in `/server/index.js`
+- **Multi-user SaaS adaptation** - adding `user_id` to all database operations
+- **Dual environment** - both backend and serverless functions
+
+---
+
+### 📜 THE 9 CARDINAL RULES
+
+**RULE 1: NO SEPARATE SCRAPER FOLDERS**
+- ❌ NO `/lib/scrapers/` folder
+- ✅ Logic goes **INLINE** in `/server/index.js` endpoints (like YouTube)
+- ✅ Optional helpers **ONLY** in `/src/utils/socialListening/` if truly needed
+- Follow existing project architecture, don't invent new structures
+
+**RULE 2: PYTHON SCRIPTS = DOCUMENTATION**
+The `social_scrapers/tiktok/` and `social_scrapers/instagram/` Python scripts show you:
+- Input parameters (brand, sub_brands, batch_id, max_videos)
+- Data structure (video_id, profile, create_time, likes, comments, hashtags)
+- Database schema (tiktok_pages, tiktok_queries, tiktok_comments tables)
+- Scraping logic (what endpoints to hit, what to parse)
+- Output format (batch tracking, success/failure responses)
+
+DO NOT:
+- Execute these scripts via child_process
+- Modify or refactor these scripts
+- Try to integrate them as-is
+
+DO:
+- Read them like documentation
+- Understand their patterns
+- Replicate in pure JavaScript
+
+**RULE 3: PURE JAVASCRIPT IMPLEMENTATION**
+- Use **Playwright Node.js** for browser automation (same library as Python Playwright)
+- Use **axios** or **node-fetch** for HTTP requests (replaces Python requests)
+- Use **@supabase/supabase-js** for database (already installed)
+- Use **axios-retry** or **p-retry** for retry logic (replaces Python tenacity)
+- NO Python dependencies, NO subprocess execution
+
+**RULE 4: FOLLOW EXISTING PATTERNS**
+Study how YouTube is implemented:
+- Logic is **inline** in `/server/index.js` endpoint
+- Helper functions in `/src/utils/` if needed
+- Serverless function mirrors backend logic exactly
+- Direct Supabase integration in endpoint
+
+TikTok/Instagram should follow **EXACT same pattern**:
+```javascript
+// server/index.js
+app.post('/api/social-listening/tiktok', async (req, res) => {
+  const { mode, user_id, ...params } = req.body;
+
+  // Logic here - inline, not in separate files
+  if (mode === 'pages') { /* scrape profiles */ }
+  else if (mode === 'queries') { /* scrape searches */ }
+  else if (mode === 'comments') { /* scrape comments */ }
+
+  // Save to Supabase with user_id
+  // Return response
+});
+```
+
+**RULE 5: DUAL ENVIRONMENT CONSISTENCY (MANDATORY)**
+From Rule #1 of this document - ALWAYS implement BOTH:
+1. Backend endpoint in `/server/index.js` (development)
+2. Serverless function in `/api/` (production)
+3. **Identical functionality** - same inputs, same outputs, same error handling
+
+**RULE 6: MULTI-USER SAAS ADAPTATION**
+Python scripts are for single-brand usage. This project is multi-user SaaS.
+
+**Critical difference:**
+- Python: `{ video_id, brand_id, sub_brand_name, batch_id, ... }`
+- Your code: `{ video_id, user_id, brand_id, sub_brand_name, batch_id, ... }`
+
+**Every database operation must:**
+- Include `user_id` in INSERT/UPDATE
+- Filter by `user_id` in SELECT queries
+- Enable multi-tenant data isolation
+
+**RULE 7: SCALABLE PATTERN FOR ALL PLATFORMS**
+Whatever pattern you create for TikTok will be replicated for Instagram, Facebook, LinkedIn, etc.
+
+**Design considerations:**
+- Keep platform-specific code modular
+- Reuse common patterns (rate limiting, retry logic, auth handling)
+- Database schema consistent across platforms
+- API structure supports multiple platforms
+
+**Question to ask:** "Will this pattern work for Instagram too?"
+If no, rethink the approach.
+
+**RULE 8: KEEP IT SIMPLE**
+User explicitly said: "You did not have to make things complicated"
+
+- Don't create complex folder structures
+- Don't add helper functions unless they reduce real duplication
+- Keep code straightforward and readable
+- KISS principle: Keep It Simple, Stupid
+
+**RULE 9: 🔐 COOKIE/AUTH TROUBLESHOOTING**
+**If you encounter ANY cookie or authentication issues with TikTok/Instagram scrapers:**
+
+1. **FIRST** - Check the Python implementation in `social_scrapers/tiktok/` or `social_scrapers/instagram/`
+2. **Look for** - How they handle cookies, headers, User-Agent, session management
+3. **Copy proven patterns** - Don't reinvent auth/cookie handling
+4. **Reference files:**
+   - `tiktok_comment.py` - HTTP cookie handling, persistent sessions
+   - `tiktok_page.py` - Playwright session/cookie management
+   - `tiktok_query.py` - Search authentication patterns
+
+**Example patterns to copy:**
+```python
+# From tiktok_comment.py - proven cookie handling
+SESSION = requests.Session()
+SESSION.headers.update({
+    "User-Agent": os.getenv("TIKTOK_USER_AGENT"),
+    "Cookie": os.getenv("TIKTOK_COOKIE"),
+    "Referer": "https://www.tiktok.com/"
+})
+```
+
+Replicate this in JavaScript:
+```javascript
+const axios = require('axios');
+const session = axios.create({
+  headers: {
+    'User-Agent': process.env.TIKTOK_USER_AGENT,
+    'Cookie': process.env.TIKTOK_COOKIE,
+    'Referer': 'https://www.tiktok.com/'
+  }
+});
+```
+
+---
+
+### 🏗️ IMPLEMENTATION ARCHITECTURE
+
+**File Structure (Correct):**
+```
+/server/index.js                    ← TikTok/Instagram logic INLINE here
+/api/social-listening-tiktok.js     ← Serverless (mirrors backend)
+/api/social-listening-instagram.js  ← Serverless (mirrors backend)
+/src/utils/socialListening/         ← Optional helpers ONLY if needed
+  - tiktok.js (optional)
+  - instagram.js (optional)
+```
+
+**What NOT to create:**
+```
+❌ /lib/scrapers/                   ← Don't create this
+❌ /scrapers/                        ← Don't create this
+❌ /social-media/                    ← Don't create this (unless truly needed)
+```
+
+---
+
+### ✅ IMPLEMENTATION CHECKLIST
+
+Before starting ANY TikTok/Instagram work:
+- [ ] Read Python reference scripts to understand requirements
+- [ ] Check existing YouTube/Twitter patterns in `/server/index.js`
+- [ ] Confirm architecture matches project structure
+- [ ] Plan for BOTH backend + serverless
+- [ ] Include user_id in data model
+- [ ] Verify cookie/auth handling against Python reference
+
+During implementation:
+- [ ] Keep logic inline in endpoints
+- [ ] Test with small datasets first
+- [ ] Handle errors gracefully
+- [ ] Add proper logging
+- [ ] Follow rate limiting patterns from Python scripts
+
+Before marking complete:
+- [ ] Backend endpoint works
+- [ ] Serverless function works
+- [ ] Both return identical responses
+- [ ] User_id properly tracked
+- [ ] Tested in both environments
+- [ ] Pattern can be reused for other platforms
+
+---
+
 ## Development Guidelines
 
 ### Code Conventions
